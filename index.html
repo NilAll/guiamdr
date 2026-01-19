@@ -3,40 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mural de Recados - GitHub + Firebase</title>
+    <title>Guia da Cidade</title>
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
-        h1 { text-align: center; color: #333; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #218838; }
-        ul { list-style-type: none; padding: 0; }
-        li { background: white; border-bottom: 1px solid #ddd; padding: 10px; margin-bottom: 5px; border-radius: 4px; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Reset e Estilo Básico */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body {
+            /* Coloque a foto da cidade aqui */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.8)), url('https://as1.ftcdn.net/jpg/04/82/09/94/1000_F_482099416_EGkmL9vkQGmvy1QlR7gyfm0ZEWsVxPxX.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20vh;
+        }
+
+        h1 { margin-bottom: 20px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; text-align: center; }
+
+        /* Barra de Busca Estilosa */
+        .search-box {
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 18px;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.95);
+            transition: 0.3s;
+        }
+        input:focus { background: white; transform: scale(1.02); }
+
+        /* Lista de Resultados */
+        #resultados {
+            width: 90%;
+            max-width: 500px;
+            margin-top: 20px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .item {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .item h3 { font-size: 18px; color: #fff; margin-bottom: 5px; }
+        .item p { font-size: 14px; color: #ddd; }
+        .tag { 
+            display: inline-block; 
+            background: #ff9800; 
+            color: black; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <h1>📌 Mural de Recados</h1>
+    <h1>Guia Comercial</h1>
 
-    <div class="input-group">
-        <input type="text" id="mensagemInput" placeholder="Digite uma mensagem..." autocomplete="off">
-        <button id="enviarBtn">Enviar</button>
+    <div class="search-box">
+        <input type="text" id="busca" placeholder="O que você procura? (Ex: Pizza, Encanador...)" autocomplete="off">
     </div>
 
-    <ul id="listaMensagens">
-        <li style="color: gray; font-style: italic;">Carregando mensagens...</li>
-    </ul>
+    <div id="resultados"></div>
 
     <script type="module">
-        // Importa as funções que precisamos
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } 
-        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- COLE SUA CONFIGURAÇÃO DO FIREBASE ABAIXO ---
-        // (Substitua tudo entre as chaves {} pelos dados que o console do Firebase te deu)
+        // --- COLE SUA CONFIGURAÇÃO DO FIREBASE AQUI ---
         const firebaseConfig = {
             apiKey: "AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",
             authDomain: "testegithub-e1ffb.firebaseapp.com",
@@ -45,57 +103,56 @@
             messagingSenderId: "508103458559",
             appId: "1:508103458559:web:55bc2fe4dc61d7b5ee16ca"
         };
-        // ------------------------------------------------
+        // ----------------------------------------------
 
-        // 1. Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Referências aos elementos da tela
-        const input = document.getElementById('mensagemInput');
-        const btn = document.getElementById('enviarBtn');
-        const lista = document.getElementById('listaMensagens');
+        // Carregar dados na memória para busca instantânea
+        let todosLocais = [];
 
-        // 2. Função para ENVIAR dados (Backend)
-        async function enviarMensagem() {
-            const texto = input.value;
-            if (texto.trim() === "") return;
-
-            try {
-                await addDoc(collection(db, "recados"), {
-                    texto: texto,
-                    data: serverTimestamp() // Pega a hora do servidor
-                });
-                input.value = ""; // Limpa o campo
-            } catch (e) {
-                console.error("Erro ao adicionar: ", e);
-                alert("Erro ao enviar. Verifique o console.");
-            }
+        async function carregarDados() {
+            const q = query(collection(db, "guia_cidades"), orderBy("nome"));
+            const snapshot = await getDocs(q);
+            
+            todosLocais = [];
+            snapshot.forEach(doc => {
+                todosLocais.push(doc.data());
+            });
+            console.log("Dados carregados:", todosLocais.length);
         }
 
-        // Evento de clique no botão e Enter
-        btn.addEventListener('click', enviarMensagem);
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') enviarMensagem();
+        // Função de Busca em Tempo Real
+        const input = document.getElementById('busca');
+        const divResultados = document.getElementById('resultados');
+
+        input.addEventListener('keyup', (e) => {
+            const termo = e.target.value.toLowerCase();
+            divResultados.innerHTML = ""; // Limpa a tela
+
+            if(termo.length < 2) return; // Só busca se tiver 2 letras ou mais
+
+            // Filtra os locais que contém o termo no nome ou na categoria
+            const filtrados = todosLocais.filter(local => 
+                local.nomeBusca.includes(termo) || 
+                local.categoria.toLowerCase().includes(termo)
+            );
+
+            filtrados.forEach(local => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <h3>${local.nome}</h3>
+                    <p>📍 ${local.cidade}</p>
+                    <p>📞 ${local.contato}</p>
+                    <span class="tag">${local.categoria}</span>
+                `;
+                divResultados.appendChild(div);
+            });
         });
 
-        // 3. Função para RECEBER dados em Tempo Real (Onde a mágica acontece)
-        // O "onSnapshot" fica escutando o banco de dados. Se algo mudar lá, ele roda aqui.
-        const q = query(collection(db, "recados"), orderBy("data", "desc"));
-        
-        onSnapshot(q, (snapshot) => {
-            lista.innerHTML = ""; // Limpa a lista atual
-            snapshot.forEach((doc) => {
-                const msg = doc.data();
-                const li = document.createElement('li');
-                li.textContent = msg.texto;
-                lista.appendChild(li);
-            });
-            
-            if(snapshot.empty) {
-                lista.innerHTML = "<li style='text-align:center'>Nenhuma mensagem ainda. Seja o primeiro!</li>";
-            }
-        });
+        // Inicia o carregamento assim que abre o app
+        carregarDados();
 
     </script>
 </body>
