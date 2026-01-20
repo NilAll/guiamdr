@@ -9,18 +9,33 @@
         
         body {
             background-color: #222; 
+            /* MUDANÇA: Removido o filtro escuro, agora é apenas a url() */
             background-size: cover; background-position: center; background-attachment: fixed;
-            min-height: 100vh; color: white; padding: 20px 0;
+            min-height: 100vh; color: white; padding: 10px 0;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        h1 { 
-            margin-top: 15vh; text-align: center; font-weight: bold; font-size: 2.5em;
-            background: none; text-transform: none; text-shadow: 2px 2px 4px #000000;
+        /* HEADER: Título e Busca mais compactos e no topo */
+        .header-container {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-top: 20px; /* Sobe o conteúdo */
+            padding: 0 10px;
         }
 
-        .search-box { width: 90%; max-width: 500px; margin-top: 20px; margin-bottom: 20px; }
-        input { width: 100%; padding: 15px 20px; font-size: 18px; border-radius: 30px; border: none; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        h1 { 
+            margin: 0 0 10px 0;
+            font-weight: bold;
+            font-size: 2em;
+            background: none; 
+            text-transform: none; 
+            /* Sombra forte para garantir leitura na foto real */
+            text-shadow: 2px 2px 4px #000000, 0 0 10px rgba(0,0,0,0.7);
+        }
+
+        .search-box { width: 100%; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px 20px; font-size: 16px; border-radius: 30px; border: none; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
         #resultados { width: 90%; max-width: 500px; padding-bottom: 50px; }
 
@@ -39,8 +54,11 @@
 </head>
 <body>
 
-    <h1 id="appTitulo">Guia Comercial</h1> <div class="search-box">
-        <input type="text" id="busca" placeholder="🔍 Buscar..." autocomplete="off">
+    <div class="header-container">
+        <h1 id="appTitulo">Guia da Cidade</h1>
+        <div class="search-box">
+            <input type="text" id="busca" placeholder="🔍 Buscar..." autocomplete="off">
+        </div>
     </div>
 
     <div id="resultados"></div>
@@ -61,19 +79,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // 1. CARREGAR TEMA (Com proteção contra falhas)
         async function carregarTema() {
             try {
                 const docSnap = await getDoc(doc(db, "config", "geral"));
                 if (docSnap.exists()) {
                     const dados = docSnap.data();
                     if(dados.titulo) document.getElementById('appTitulo').textContent = dados.titulo;
-                    if(dados.fundo) document.body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('${dados.fundo}')`;
+                    // Apenas a URL, sem gradiente, conforme pedido
+                    if(dados.fundo) document.body.style.backgroundImage = `url('${dados.fundo}')`;
                 }
-            } catch(e) {
-                console.log("Usando tema padrão. Motivo:", e);
-                // Se der erro, mantém o título "Guia Comercial" que já está no HTML
-            }
+            } catch(e) {}
         }
         carregarTema();
 
