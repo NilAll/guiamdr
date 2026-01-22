@@ -5,8 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Guia da Cidade</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        
+        /* CSS GLOBAL */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; 
+            -webkit-user-select: none; user-select: none; /* Não seleciona texto */
+        }
+        input { -webkit-user-select: text; user-select: text; }
+
         body {
             background-color: #222; 
             background-size: cover; background-position: center; background-attachment: fixed;
@@ -43,10 +47,18 @@
         .cat-card:hover { background: #f0f0f0; }
         .cat-icon { font-size: 30px; margin-bottom: 5px; }
         .cat-name { font-size: 12px; font-weight: bold; color: #555; }
+        
         .subcat-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .btn-voltar-cat { border: none; background: none; font-size: 20px; cursor: pointer; margin-right: 10px; }
-        .subcat-list { display: flex; flex-wrap: wrap; gap: 10px; }
-        .subcat-chip { background: #e9ecef; padding: 8px 15px; border-radius: 20px; font-size: 14px; color: #333; cursor: pointer; border: 1px solid #ddd; }
+        
+        /* NOVO: SUBCATEGORIAS EM GRADE DE 2 COLUNAS */
+        .subcat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .subcat-chip { 
+            background: #f8f9fa; padding: 15px 10px; border-radius: 8px; font-size: 14px; 
+            color: #333; cursor: pointer; border: 1px solid #ddd; text-align: center; font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .subcat-chip:active { background: #e2e6ea; transform: scale(0.98); }
 
         .admin-bar-secret { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 999; transform: translateY(100%); transition: transform 0.3s; border-top: 2px solid #333; }
         .admin-bar-secret.visible { transform: translateY(0); }
@@ -143,24 +155,15 @@
             } catch(e) {}
         }
 
-        // FUNÇÃO DE RENDERIZAR CATEGORIAS (COM ORDENAÇÃO)
         function renderizarCategorias() {
-            const grid = document.getElementById('gridCategorias');
-            grid.innerHTML = "";
-            
-            // Verifica se existe uma ordem salva, senão pega alfabética
+            const grid = document.getElementById('gridCategorias'); grid.innerHTML = "";
             let ordem = estruturaCategorias["_order"];
-            if (!ordem) {
-                ordem = Object.keys(estruturaCategorias).filter(k => k !== "_order").sort();
-            }
+            if (!ordem) ordem = Object.keys(estruturaCategorias).filter(k => k !== "_order").sort();
 
             ordem.forEach(cat => {
-                // Pula se a categoria não estiver mais nas chaves (caso tenha sido deletada e a ordem não atualizada)
                 if (!estruturaCategorias.hasOwnProperty(cat)) return;
-
                 const icone = ICONES_CAT[cat] || "📂";
-                const card = document.createElement('div');
-                card.className = 'cat-card';
+                const card = document.createElement('div'); card.className = 'cat-card';
                 card.innerHTML = `<div class=\"cat-icon\">${icone}</div><div class=\"cat-name\">${cat}</div>`;
                 card.addEventListener('click', () => abrirSubcategorias(cat));
                 grid.appendChild(card);
@@ -174,8 +177,12 @@
             mostrarBotaoVoltar(true);
             const lista = document.getElementById('listaSubcats'); lista.innerHTML = "";
             const subs = estruturaCategorias[cat] || [];
-            const chipTudo = document.createElement('div'); chipTudo.className = 'subcat-chip'; chipTudo.textContent = `Ver tudo de ${cat}`;
+            
+            const chipTudo = document.createElement('div'); chipTudo.className = 'subcat-chip'; 
+            chipTudo.style.gridColumn = "1 / -1"; /* Ocupa largura total */
+            chipTudo.textContent = `Ver tudo de ${cat}`;
             chipTudo.onclick = () => { pesquisarPorTermo(cat); }; lista.appendChild(chipTudo);
+            
             subs.forEach(sub => {
                 const chip = document.createElement('div'); chip.className = 'subcat-chip'; chip.textContent = sub;
                 chip.onclick = () => { pesquisarPorTermo(sub); }; lista.appendChild(chip);

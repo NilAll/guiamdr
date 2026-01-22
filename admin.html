@@ -5,10 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Gestão Completa</title>
     <style>
+        /* BLOQUEIO DE SELEÇÃO DE TEXTO */
+        * { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        /* Permite selecionar apenas em inputs para digitar */
+        input, textarea { -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; }
+
         body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #e9ecef; max-width: 800px; margin: 0 auto; }
         
         .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn-home { text-decoration: none; background: #333; color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; }
+        .btn-home { text-decoration: none; background: #333; color: white; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px; }
         h2 { margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
@@ -20,9 +25,17 @@
         .row { display: flex; gap: 10px; }
         .col { flex: 1; }
 
-        .cat-manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
-        .cat-controls button { width: 30px; height: 30px; padding: 0; margin-left: 2px; font-size: 14px; }
+        /* LISTA DE CATEGORIAS (GERENCIADOR) */
+        .cat-manager-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: #f8f9fa; padding: 10px; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; 
+        }
+        .cat-controls { display: flex; gap: 5px; }
+        /* Botões das categorias (Visíveis) */
+        .btn-cat-arrow { background: #17a2b8; color: white; width: 30px; height: 30px; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-cat-del { background: #dc3545; color: white; width: 30px; height: 30px; border: none; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
 
+        /* Estilos Gerais */
         .box-highlight { padding: 15px; border-radius: 8px; display: none; margin-top: 15px; }
         .delivery-box { background: #fff3cd; border: 1px solid #ffeeba; }
         .publi-box { background: #d4edda; border: 1px solid #c3e6cb; }
@@ -33,8 +46,7 @@
         .btn-primary { background: #6f42c1; }
         .btn-success { background: #28a745; }
         .btn-warning { background: #ffc107; color: #333; display: none; }
-        .btn-danger { background: #dc3545; display: none; }
-        .btn-info { background: #17a2b8; width: auto; }
+        .btn-danger { background: #dc3545; display: none; } /* Padrão oculto para o formulário de locais */
         
         .btn-add { background: #17a2b8; width: auto; padding: 10px 20px; }
         .btn-update-item { background: #ffc107; color: #333; width: auto; padding: 10px 20px; border: 1px solid #e0a800; }
@@ -91,7 +103,7 @@
         <label style="color:#007bff; font-weight:bold; font-size:16px;">1. Selecione a Categoria Principal:</label>
         <select id="categoria" style="border: 2px solid #007bff;">
             <option value="">Selecione...</option>
-            </select>
+        </select>
 
         <label>Subcategoria:</label>
         <div style="display: flex; gap: 10px;">
@@ -149,7 +161,6 @@
         <div id="boxPubli" class="box-highlight publi-box">
             <h3 style="border-bottom: 1px solid #8fad96; padding-bottom: 5px; color: #155724;">📢 Configurar Publicidade</h3>
             <input type="text" id="imgPubli" placeholder="Link da Imagem do Banner (URL)">
-            
             <label>Validade:</label>
             <div style="display: flex; gap: 10px; align-items: center;">
                 <select id="tipoValidade" style="width: 40%;">
@@ -161,7 +172,6 @@
                 <input type="date" id="dataEspecifica" style="width: 30%; display: none;">
             </div>
             <div id="contadorPubli" class="validade-info"></div>
-            
             <button onclick="removerPublicidade()" style="background:#dc3545; color:white; width:auto; margin-top:15px; float:right;">🗑️ Remover Publicidade</button>
             <div style="clear:both;"></div>
         </div>
@@ -179,7 +189,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, getDoc, setDoc, onSnapshot, query, orderBy } 
+        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, getDoc, setDoc, onSnapshot, query, orderBy, where, getDocs } 
         from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -200,10 +210,9 @@
         let listaSubs = {};
         let itemMenuEditandoIndex = -1; 
 
-        // 1. CARREGAR DADOS INICIAIS
+        // 1. CARREGAR DADOS
         async function carregarDados() {
             try {
-                // Categorias
                 const docRef = doc(db, "config", "categorias");
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) listaSubs = docSnap.data();
@@ -211,7 +220,6 @@
                 renderizarGerenciadorCategorias();
                 atualizarSelectPrincipal();
 
-                // Configs
                 const confSnap = await getDoc(doc(db, "config", "geral"));
                 if(confSnap.exists()) {
                     const d = confSnap.data();
@@ -223,11 +231,10 @@
         }
         carregarDados();
 
-        // 2. LÓGICA DE CATEGORIA DINÂMICA
+        // 2. CATEGORIA DINÂMICA
         el('categoria').addEventListener('change', () => {
             const cat = el('categoria').value;
-            atualizarCamposPorCategoria(cat); // Ajusta labels
-            
+            atualizarCamposPorCategoria(cat);
             const sub = el('subcategoria');
             sub.innerHTML = '<option value="">Selecione...</option>';
             if (!cat) { sub.disabled = true; return; }
@@ -236,22 +243,23 @@
         });
 
         function atualizarCamposPorCategoria(categoria) {
-            // Regra: Se for "Classificados" muda os nomes
+            el('lblNome').textContent = "Nome do Local:";
+            el('lblCidade').textContent = "Endereço / Bairro:";
+            el('divInsta').style.display = 'block';
+
             if(categoria === 'Classificados') {
                 el('lblNome').textContent = "Título do Anúncio/Produto:";
                 el('lblCidade').textContent = "Descrição do Produto:";
                 el('lblImagem').textContent = "Link da Foto do Produto (URL):";
-                el('divInsta').style.display = 'none'; // Some Instagram
-            } else {
-                // Padrão
-                el('lblNome').textContent = "Nome do Local:";
-                el('lblCidade').textContent = "Endereço / Bairro:";
-                el('lblImagem').textContent = "Link da Logo/Foto (URL):";
-                el('divInsta').style.display = 'block'; // Mostra Instagram
+                el('divInsta').style.display = 'none';
+            } else if (categoria === 'Profissionais') {
+                el('lblNome').textContent = "Nome do Profissional:";
+                el('lblCidade').textContent = "Qualificação / Especialidade:";
+                el('lblImagem').textContent = "Link da Foto de Perfil (URL):";
             }
         }
 
-        // 3. GESTOR DE CATEGORIAS
+        // 3. GESTOR DE CATEGORIAS (CORRIGIDO)
         function renderizarGerenciadorCategorias() {
             const div = el('listaGestaoCategorias'); div.innerHTML = "";
             let ordem = listaSubs["_order"];
@@ -260,7 +268,15 @@
             ordem.forEach((cat, index) => {
                 if(cat === "_order") return;
                 const item = document.createElement('div'); item.className = 'cat-manager-item';
-                item.innerHTML = `<span style="font-weight:bold;">${cat}</span><div class="cat-controls"><button class="btn-info" onclick="moverCategoria(${index}, -1)">▲</button><button class="btn-info" onclick="moverCategoria(${index}, 1)">▼</button><button class="btn-danger" onclick="deletarCategoria('${cat}')">✕</button></div>`;
+                // AQUI FOI A CORREÇÃO: Classes dedicadas para os botões da lista
+                item.innerHTML = `
+                    <span style="font-weight:bold;">${cat}</span>
+                    <div class="cat-controls">
+                        <button class="btn-cat-arrow" onclick="moverCategoria(${index}, -1)">▲</button>
+                        <button class="btn-cat-arrow" onclick="moverCategoria(${index}, 1)">▼</button>
+                        <button class="btn-cat-del" onclick="deletarCategoria('${cat}')">✕</button>
+                    </div>
+                `;
                 div.appendChild(item);
             });
         }
@@ -272,13 +288,29 @@
             ordem.push(nome); listaSubs["_order"] = ordem;
             await salvarCategoriasBanco(); el('novaCategoriaInput').value = "";
         };
+        
         window.deletarCategoria = async (cat) => {
-            if(!confirm(`Excluir '${cat}'?`)) return;
+            const q = query(collection(db, "guia_cidades"), where("categoria", "==", cat));
+            const snapshot = await getDocs(q);
+            
+            if(!snapshot.empty) {
+                alert(`Impossível excluir! Existem ${snapshot.size} locais/itens nesta categoria.`);
+                return;
+            }
+
+            const n1 = Math.floor(Math.random() * 10) + 1;
+            const n2 = Math.floor(Math.random() * 10) + 1;
+            const resp = prompt(`Confirmação: Quanto é ${n1} + ${n2}?`);
+            
+            if(resp != (n1 + n2)) { alert("Cálculo incorreto."); return; }
+
             delete listaSubs[cat];
             let ordem = listaSubs["_order"] || [];
             listaSubs["_order"] = ordem.filter(item => item !== cat);
             await salvarCategoriasBanco();
+            alert("Excluída!");
         };
+
         window.moverCategoria = async (index, direcao) => {
             let ordem = listaSubs["_order"] || Object.keys(listaSubs).filter(k => k !== "_order").sort();
             const novoIndex = index + direcao;
@@ -293,10 +325,10 @@
             let ordem = listaSubs["_order"];
             if (!ordem) ordem = Object.keys(listaSubs).filter(k => k !== "_order").sort();
             ordem.forEach(cat => select.innerHTML += `<option value="${cat}">${cat}</option>`);
-            select.value = valorAtual; // Tenta manter selecionado
+            select.value = valorAtual;
         }
 
-        // 4. RESTO (Configs, Publi, CRUD)
+        // 4. RESTO
         el('btnSalvarConfig').addEventListener('click', async () => {
             await setDoc(doc(db, "config", "geral"), {
                 titulo: el('confNomeCidade').value, fundo: el('confImgFundo').value,
@@ -305,7 +337,6 @@
             }, { merge: true }); alert("Configurações Salvas!");
         });
 
-        // Publi e Delivery
         el('checkDelivery').addEventListener('change', (e) => { el('boxDelivery').style.display = e.target.checked ? 'block' : 'none'; el('taxaEntrega').style.display = e.target.checked ? 'block' : 'none'; });
         el('checkPubli').addEventListener('change', (e) => { el('boxPubli').style.display = e.target.checked ? 'block' : 'none'; });
         el('tipoValidade').addEventListener('change', (e) => {
@@ -313,19 +344,13 @@
             el('dataEspecifica').style.display = e.target.value === 'data' ? 'block' : 'none';
         });
         
-        // FUNÇÃO REMOVER PUBLI
         window.removerPublicidade = () => {
-            if(confirm("Tem certeza que deseja remover a publicidade deste local?")) {
-                el('checkPubli').checked = false;
-                el('imgPubli').value = "";
-                el('valorValidade').value = "";
-                el('dataEspecifica').value = "";
-                el('boxPubli').style.display = 'none';
-                el('contadorPubli').textContent = "";
+            if(confirm("Remover publicidade?")) {
+                el('checkPubli').checked = false; el('imgPubli').value = ""; el('valorValidade').value = ""; el('dataEspecifica').value = "";
+                el('boxPubli').style.display = 'none'; el('contadorPubli').textContent = "";
             }
         };
 
-        // Menu Logic
         el('btnLimparItem').addEventListener('click', () => { el('prodNome').value = ""; el('prodPreco').value = ""; el('prodDesc').value = ""; el('prodImg').value = ""; itemMenuEditandoIndex = -1; el('btnAddItem').textContent = "Adicionar +"; el('btnAddItem').className = "btn-add"; });
         el('btnAddItem').addEventListener('click', () => {
             const nome = el('prodNome').value; const preco = parseFloat(el('prodPreco').value); const desc = el('prodDesc').value; const img = el('prodImg').value;
@@ -347,7 +372,6 @@
             itemMenuEditandoIndex = idx; el('btnAddItem').textContent = "✓ Salvar"; el('btnAddItem').className = "btn-update-item"; el('prodNome').focus(); el('boxDelivery').scrollIntoView({behavior:'smooth'});
         }
 
-        // Helpers CRUD
         function calcularDataFimPubli() {
             if(!el('checkPubli').checked) return null;
             const tipo = el('tipoValidade').value; const dataAtual = new Date();
@@ -374,8 +398,6 @@
             el('btnLimparItem').click(); renderCardapio();
             el('btnSalvar').style.display = 'block'; el('btnAtualizar').style.display = 'none'; el('btnCancelar').style.display = 'none';
             el('tituloForm').textContent = "🏪 Gerenciar Cadastro";
-            
-            // Reseta labels
             atualizarCamposPorCategoria("");
         }
         el('btnCancelar').addEventListener('click', limparForm);
@@ -425,9 +447,8 @@
                 
                 el(`e-${d.id}`).addEventListener('click', () => {
                     idEditando = d.id;
-                    // Lógica para preencher selects corretamente e disparar mudança de label
                     el('categoria').value = item.categoria; 
-                    atualizarCamposPorCategoria(item.categoria); // AJUSTA OS NOMES DOS CAMPOS
+                    atualizarCamposPorCategoria(item.categoria);
                     
                     el('nome').value = item.nome; el('cidade').value = item.cidade; el('imagem').value = item.imagem || "";
                     el('contato').value = item.contato || ""; el('telFixo').value = item.telFixo || ""; el('instagram').value = item.instagram || "";
@@ -459,8 +480,8 @@
                             const diffTime = dataFim - hoje;
                             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                             
-                            if(diffDays > 0) el('contadorPubli').textContent = `🟢 Ativa: Restam ${diffDays} dias (Vence: ${dataFim.toLocaleDateString('pt-BR')})`;
-                            else el('contadorPubli').textContent = `🔴 Expirada em: ${dataFim.toLocaleDateString('pt-BR')}`;
+                            if(diffDays > 0) el('contadorPubli').textContent = `🟢 Ativa: Restam ${diffDays} dias`;
+                            else el('contadorPubli').textContent = `🔴 Expirada`;
                         }
                     }
 
