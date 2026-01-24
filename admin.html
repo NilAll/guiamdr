@@ -29,14 +29,19 @@
         .manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 10px; border: 1px solid #eee; margin-bottom: 5px; border-radius: 6px; }
         .item-lista { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 5px solid #007bff; }
 
-        /* SUBS */
+        /* SUBS e SETORES */
         .sub-manager-container { display: none; background: #fff; margin: 5px 0 15px 20px; padding: 10px; border-left: 3px solid #17a2b8; }
         .sub-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee; font-size: 13px; color: #555; }
+        
+        .sector-manager-container { display: none; background: #f1f8ff; margin: 5px 0 10px 20px; padding: 8px; border-left: 3px solid #28a745; border-radius: 4px; }
+        .sector-item { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid #ddd; font-size: 12px; color: #333; }
+
         .input-sub-add { width: 70% !important; padding: 8px !important; font-size: 13px !important; margin: 0 !important; }
 
         button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; margin-top: 10px; }
         .btn-success { background: #28a745; } .btn-warning { background: #ffc107; color: #333; display: inline-block; } .btn-danger { background: #dc3545; display: inline-block; }
         .btn-info { background: #17a2b8; color: white; display: inline-block; }
+        .btn-sector { background: #28a745; color: white; display: inline-block; font-size: 10px; padding: 3px 8px !important; margin-right: 5px; }
         .btn-mini { width: auto !important; padding: 5px 10px !important; display: inline-block !important; margin-left: 5px; }
         
         .box-highlight { padding: 15px; border-radius: 8px; display: none; margin-top: 15px; }
@@ -124,7 +129,7 @@
     </div>
 
     <div class="card" id="painelCategorias" style="border-top: 5px solid #17a2b8;">
-        <h2>📂 Categorias e Subcategorias</h2>
+        <h2>📂 Categorias, Subcategorias e Setores</h2>
         <div id="listaGestaoCategorias"></div>
         <div class="row">
             <input type="text" id="novaCategoriaInput" placeholder="Nome da Categoria Principal" class="col">
@@ -153,6 +158,9 @@
         <label>Subcategoria:</label>
         <select id="subcategoria" disabled><option value="">Selecione categoria...</option></select>
 
+        <label>Setor (Opcional):</label>
+        <select id="setor" disabled><option value="">Selecione subcategoria...</option></select>
+
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 
         <label id="lblNome">Nome do Local:</label>
@@ -160,6 +168,8 @@
         <div class="row"><input type="number" id="precoAntigo" placeholder="Preço Riscado" class="col"><input type="number" id="precoAtual" placeholder="Preço Atual" class="col"></div>
         <label id="lblCidade">Endereço / Descrição:</label>
         <input type="text" id="cidade">
+        <input type="text" id="linkMapa" placeholder="Link do Google Maps (Opcional)">
+        
         <label id="lblImagem">Fotos (URL por linha):</label>
         <textarea id="imagem" rows="3"></textarea>
         <label>Contatos:</label>
@@ -220,7 +230,7 @@
         const IMG_PADRAO_CIDADE = "https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=3070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
         let currentUser = null; 
-        let idEditando = null, cardapioAtual = [], listaSubs = {}, itemMenuEditandoIndex = -1;
+        let idEditando = null, cardapioAtual = [], listaSubs = {}, listaSetores = {}, itemMenuEditandoIndex = -1;
         let idCidadeEditando = null;
         let idUsuarioEditando = null; 
         let mapCidades = {};
@@ -340,7 +350,7 @@
         }
         window.configurarSeletorCidades = configuringSeletorCidades;
 
-        // --- SALVAMENTO COM PROTEÇÃO ---
+        // --- SALVAMENTO COM LIMPEZA COMPLETA ---
         const salvarOuAtualizar = async (isUpdate) => {
             const btn = isUpdate ? el('btnAtualizar') : el('btnSalvar');
             const txtOriginal = btn.textContent;
@@ -363,12 +373,14 @@
                     cidadeId: cidadeIdFinal,
                     nome: el('nome').value, nomeBusca: el('nome').value.toLowerCase(),
                     cidade: el('cidade').value, categoria: el('categoria').value, subcategoria: el('subcategoria').value,
+                    setor: el('setor').value || "", // NOVO: SETOR
                     contato: el('contato').value, telFixo: el('telFixo').value, instagram: el('instagram').value,
                     imagem: imgs[0] || "https://via.placeholder.com/150", imagens: imgs,
                     preco: parseFloat(el('precoAtual').value) || 0, precoAntigo: parseFloat(el('precoAntigo').value) || 0,
                     temDelivery: el('checkDelivery').checked, taxaEntrega: parseFloat(el('taxaEntrega').value) || 0,
                     cardapio: cardapioAtual,
                     publi: { ativa: el('checkPubli').checked, img: el('imgPubli').value, dataFim: calcularDataFimPubli() },
+                    linkMapa: el('linkMapa').value || "",
                     dataCadastro: new Date()
                 };
 
@@ -391,16 +403,43 @@
         el('btnSalvar').onclick = () => salvarOuAtualizar(false);
         el('btnAtualizar').onclick = () => salvarOuAtualizar(true);
 
-        // --- FUNÇÃO DE EDIÇÃO REVISADA E GLOBAL ---
+        // --- LIMPEZA DE FORMULÁRIO COMPLETA ---
+        function limparForm() {
+            idEditando=null; cardapioAtual=[]; 
+            // Inputs Texto
+            el('nome').value=""; el('imagem').value=""; el('precoAtual').value=""; el('precoAntigo').value="";
+            el('cidade').value=""; el('linkMapa').value="";
+            el('contato').value=""; el('telFixo').value=""; el('instagram').value="";
+            el('imgPubli').value=""; 
+            
+            // Checkboxes
+            el('checkPubli').checked=false; el('checkDelivery').checked=false;
+            el('boxPubli').style.display='none'; el('boxDelivery').style.display='none';
+            el('taxaEntrega').value=""; el('taxaEntrega').style.display='none';
+
+            // Selects
+            el('categoria').value="";
+            el('subcategoria').innerHTML = '<option value="">Selecione categoria...</option>';
+            el('subcategoria').disabled = true;
+            el('setor').innerHTML = '<option value="">Selecione subcategoria...</option>'; // Limpa setor
+            el('setor').disabled = true;
+
+            // Botões
+            el('btnSalvar').style.display='block'; el('btnAtualizar').style.display='none'; 
+            el('btnCancelar').style.display='none'; el('tituloForm').textContent="🏪 Gerenciar Cadastro";
+            
+            configurarSeletorCidades();
+        }
+        el('btnCancelar').onclick = limparForm;
+
+        // --- EDIÇÃO ---
         window.carregarParaEdicao = (id, item) => {
             try {
                 idEditando = id;
                 el('selCidadeCadastro').value = item.cidadeId;
-                
-                // Popula Categoria
                 el('categoria').value = item.categoria; 
                 
-                // Atualiza Subcategorias Sincronamente
+                // Popula Subcategorias
                 const sub = el('subcategoria');
                 sub.innerHTML = '<option value="">Selecione...</option>';
                 if(item.categoria && listaSubs[item.categoria]) {
@@ -409,45 +448,43 @@
                 }
                 sub.value = item.subcategoria || "";
 
-                el('nome').value = item.nome; 
-                el('cidade').value = item.cidade;
+                // Popula Setores (Novo)
+                const setorSel = el('setor');
+                setorSel.innerHTML = '<option value="">Selecione subcategoria...</option>';
+                if(item.subcategoria && listaSetores[item.subcategoria]) {
+                    setorSel.disabled = false;
+                    setorSel.innerHTML = '<option value="">Sem setor</option>';
+                    listaSetores[item.subcategoria].forEach(s => setorSel.innerHTML += `<option value="${s}">${s}</option>`);
+                    setorSel.value = item.setor || "";
+                } else {
+                    setorSel.disabled = true;
+                }
+
+                el('nome').value = item.nome; el('cidade').value = item.cidade;
+                el('linkMapa').value = item.linkMapa || "";
                 el('imagem').value = (item.imagens || [item.imagem]).join('\n');
-                el('precoAtual').value = item.preco || ""; 
-                el('precoAntigo').value = item.precoAntigo || "";
-                el('contato').value = item.contato || ""; 
-                el('telFixo').value = item.telFixo || ""; 
-                el('instagram').value = item.instagram || "";
+                el('precoAtual').value = item.preco || ""; el('precoAntigo').value = item.precoAntigo || "";
+                el('contato').value = item.contato || ""; el('telFixo').value = item.telFixo || ""; el('instagram').value = item.instagram || "";
                 
                 el('checkDelivery').checked = item.temDelivery || false; 
-                el('taxaEntrega').value = item.taxaEntrega || ""; 
-                el('taxaEntrega').style.display = item.temDelivery ? 'block' : 'none';
-                
-                cardapioAtual = item.cardapio || []; 
-                renderCardapio();
+                el('taxaEntrega').value = item.taxaEntrega || ""; el('taxaEntrega').style.display = item.temDelivery ? 'block' : 'none';
+                cardapioAtual = item.cardapio || []; renderCardapio();
                 
                 if(item.publi) { 
-                    el('checkPubli').checked = item.publi.ativa; 
-                    el('boxPubli').style.display = item.publi.ativa ? 'block' : 'none'; 
-                    el('imgPubli').value = item.publi.img || "";
+                    el('checkPubli').checked = item.publi.ativa; el('boxPubli').style.display = item.publi.ativa ? 'block' : 'none'; el('imgPubli').value = item.publi.img || "";
                     if(item.publi.dataFim) {
                         let d = item.publi.dataFim.seconds ? new Date(item.publi.dataFim.seconds * 1000) : new Date(item.publi.dataFim);
                         el('contadorPubli').textContent = `Vence em: ${d.toLocaleDateString()}`;
                     }
                 }
                 
-                el('btnSalvar').style.display = 'none'; 
-                el('btnAtualizar').style.display = 'inline-block'; 
-                el('btnCancelar').style.display = 'inline-block';
+                el('btnSalvar').style.display = 'none'; el('btnAtualizar').style.display = 'inline-block'; el('btnCancelar').style.display = 'inline-block';
                 el('tituloForm').textContent = "✏️ Editando: " + item.nome; 
-                
                 window.scrollTo({top: 400, behavior:'smooth'});
-            } catch(e) {
-                console.error("Erro ao carregar edição:", e);
-                alert("Erro ao carregar dados para edição: " + e.message);
-            }
+            } catch(e) { console.error(e); alert("Erro ao editar."); }
         };
 
-        // ... OUTRAS FUNÇÕES ...
+        // ... MÉTODOS DE USUÁRIO E CIDADE MANTIDOS ...
         window.prepararEdicaoCidade = (id, nome, uf, login, senha, fundo, logo, logoSize, logoBottom) => { idCidadeEditando = id; el('novaCidadeNome').value = nome; el('novaCidadeUF').value = uf; el('novaCidadeLogin').value = login; el('novaCidadeSenha').value = senha; el('novaCidadeFundo').value = fundo; el('novaCidadeLogo').value = logo; el('novaCidadeLogoSize').value = logoSize || ""; el('novaCidadeLogoBottom').value = logoBottom || ""; el('btnSalvarCidade').textContent = "Atualizar"; el('btnSalvarCidade').className = "btn-warning"; el('btnCancelarCidade').style.display = "inline-block"; el('tituloCidadeForm').textContent = "✏️ Editando"; el('novaCidadeLogin').disabled = false; };
         window.cancelarEdicaoCidade = () => { idCidadeEditando = null; el('novaCidadeNome').value = ""; el('novaCidadeUF').value = ""; el('novaCidadeLogin').value = ""; el('novaCidadeSenha').value = ""; el('novaCidadeFundo').value = ""; el('novaCidadeLogo').value = ""; el('novaCidadeLogoSize').value = ""; el('novaCidadeLogoBottom').value = ""; el('btnSalvarCidade').textContent = "+ Cadastrar"; el('btnSalvarCidade').className = "btn-success"; el('btnCancelarCidade').style.display = "none"; el('tituloCidadeForm').textContent = "Nova Cidade"; };
         window.salvarCidade = async () => { const nome = el('novaCidadeNome').value.trim(); const uf = el('novaCidadeUF').value.trim().toUpperCase(); const login = el('novaCidadeLogin').value.trim(); const senha = el('novaCidadeSenha').value.trim(); let fundo = el('novaCidadeFundo').value.trim(); const logoPatra = el('novaCidadeLogo').value.trim(); const logoSize = el('novaCidadeLogoSize').value.trim(); const logoBottom = el('novaCidadeLogoBottom').value.trim(); if(!nome || !uf || !senha || !login) return alert("Preencha Nome, UF, Login e Senha."); if(!fundo) fundo = IMG_PADRAO_CIDADE; const check = query(collection(db, "cidades"), where("login", "==", login)); const checkSnap = await getDocs(check); let loginEmUso = false; if(!checkSnap.empty) { if(idCidadeEditando) { if(checkSnap.docs[0].id !== idCidadeEditando) loginEmUso = true; } else { loginEmUso = true; } } if(loginEmUso) return alert(`ERRO: Usuário '${login}' já existe.`); if(login === 'master') return alert("Login 'master' é reservado."); const dados = { nome, uf, login, senha, fundo, logoPatra, logoSize, logoBottom }; if(idCidadeEditando) { await updateDoc(doc(db, "cidades", idCidadeEditando), dados); alert("Atualizado!"); } else { await addDoc(collection(db, "cidades"), dados); alert("Criado!"); } cancelarEdicaoCidade(); };
@@ -457,9 +494,102 @@
         window.cancelarEdicaoUsuario = () => { idUsuarioEditando = null; el('formEditUser').style.display = 'none'; el('editUserName').value = ""; el('editUserEmail').value = ""; el('editUserPass').value = ""; el('editUserCidade').value = ""; };
         window.salvarEdicaoUsuario = async () => { if(!idUsuarioEditando) return; const nome = el('editUserName').value.trim(); const senha = el('editUserPass').value.trim(); const cidadeId = el('editUserCidade').value; if(!nome || !senha) return alert("Nome e Senha são obrigatórios."); if(!cidadeId) return alert("Selecione uma Cidade para este usuário."); await updateDoc(doc(db, "users", idUsuarioEditando), { nome, senha, cidadeId }); alert("Usuário atualizado!"); cancelarEdicaoUsuario(); };
         window.excluirUsuario = async (id, nome) => { if(confirm(`Tem certeza que deseja excluir o usuário ${nome}?`)) await deleteDoc(doc(db, "users", id)); };
-        async function carregarCategorias() { const docSnap = await getDoc(doc(db, "config", "categorias")); listaSubs = docSnap.exists() ? docSnap.data() : { "Comercio": [], "_order": ["Comercio"] }; renderCategorias(); atualizarSelectCat(); }
-        function renderCategorias() { const div = el('listaGestaoCategorias'); div.innerHTML = ""; let ordem = listaSubs["_order"] || Object.keys(listaSubs).filter(k => k !== "_order").sort(); ordem.forEach((cat, index) => { if(cat === "_order") return; let html = `<div class="manager-item"><div><b>${cat}</b></div><div><button class="btn-info" style="width:auto; padding:5px 10px;" onclick="toggleSubs('${cat}')">📂 Subs</button><button class="btn-mini" onclick="moverCat(${index},-1)">▲</button><button class="btn-mini" onclick="moverCat(${index},1)">▼</button><button class="btn-mini btn-danger" onclick="delCat('${cat}')">✕</button></div></div><div id="subs-${cat}" class="sub-manager-container"><div style="font-weight:bold; margin-bottom:5px; color:#17a2b8;">Subcategorias de ${cat}:</div>`; const subs = listaSubs[cat] || []; if(subs.length === 0) { html += `<div style="font-size:12px; color:#999; margin-bottom:10px;">Nenhuma subcategoria.</div>`; } else { subs.forEach((sub, subIdx) => { html += `<div class="sub-item"><span>${sub}</span><button class="btn-mini btn-danger" onclick="delSub('${cat}', ${subIdx})">✕</button></div>`; }); } html += `<div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="new-sub-${cat}" class="input-sub-add" placeholder="Nova Subcategoria"><button class="btn-success btn-mini" style="margin:0;" onclick="addSub('${cat}')">Add</button></div></div>`; div.innerHTML += html; }); }
+
+        // === NOVA GESTÃO DE CATEGORIAS E SETORES ===
+        async function carregarCategorias() { 
+            const docSnap = await getDoc(doc(db, "config", "categorias"));
+            listaSubs = docSnap.exists() ? docSnap.data() : { "Comercio": [], "_order": ["Comercio"] };
+            
+            // Carregar Setores
+            const docSetores = await getDoc(doc(db, "config", "setores"));
+            listaSetores = docSetores.exists() ? docSetores.data() : {};
+
+            renderCategorias(); atualizarSelectCat(); 
+        }
+
+        function renderCategorias() { 
+            const div = el('listaGestaoCategorias'); div.innerHTML = ""; 
+            let ordem = listaSubs["_order"] || Object.keys(listaSubs).filter(k => k !== "_order").sort(); 
+            
+            ordem.forEach((cat, index) => { 
+                if(cat === "_order") return; 
+                let html = `
+                    <div class="manager-item">
+                        <div><b>${cat}</b></div>
+                        <div><button class="btn-info" style="width:auto; padding:5px 10px;" onclick="toggleSubs('${cat}')">📂 Subs</button><button class="btn-mini" onclick="moverCat(${index},-1)">▲</button><button class="btn-mini" onclick="moverCat(${index},1)">▼</button><button class="btn-mini btn-danger" onclick="delCat('${cat}')">✕</button></div>
+                    </div>
+                    <div id="subs-${cat}" class="sub-manager-container">
+                `; 
+                
+                const subs = listaSubs[cat] || []; 
+                if(subs.length === 0) { 
+                    html += `<div style="font-size:12px; color:#999; margin-bottom:10px;">Nenhuma subcategoria.</div>`; 
+                } else { 
+                    subs.forEach((sub, subIdx) => { 
+                        html += `
+                            <div class="sub-item">
+                                <div>
+                                    <span>${sub}</span>
+                                    <button class="btn-sector" onclick="toggleSetores('${sub}')">📂 Setores</button>
+                                </div>
+                                <button class="btn-mini btn-danger" onclick="delSub('${cat}', ${subIdx})">✕</button>
+                            </div>
+                            
+                            <div id="setores-${sub}" class="sector-manager-container">
+                                <b>Setores de ${sub}:</b>
+                                <div id="list-setores-${sub}"></div>
+                                <div style="display:flex; gap:5px; margin-top:5px;">
+                                    <input type="text" id="new-setor-${sub}" class="input-sub-add" placeholder="Novo Setor">
+                                    <button class="btn-success btn-mini" style="margin:0;" onclick="addSetor('${sub}')">Add</button>
+                                </div>
+                            </div>
+                        `; 
+                        
+                        // Renderiza a lista de setores logo após
+                        setTimeout(() => renderListaSetores(sub), 100);
+                    }); 
+                } 
+                html += `<div style="display:flex; gap:5px; margin-top:10px;"><input type="text" id="new-sub-${cat}" class="input-sub-add" placeholder="Nova Subcategoria"><button class="btn-success btn-mini" style="margin:0;" onclick="addSub('${cat}')">Add</button></div></div>`; 
+                div.innerHTML += html; 
+            }); 
+        }
+
         window.toggleSubs = (cat) => { const el = document.getElementById(`subs-${cat}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; };
+        window.toggleSetores = (sub) => { const el = document.getElementById(`setores-${sub}`); el.style.display = el.style.display === 'block' ? 'none' : 'block'; };
+
+        function renderListaSetores(sub) {
+            const container = document.getElementById(`list-setores-${sub}`);
+            if(!container) return;
+            container.innerHTML = "";
+            const setores = listaSetores[sub] || [];
+            if(setores.length === 0) {
+                container.innerHTML = "<div style='color:#777; font-style:italic;'>Nenhum setor.</div>";
+            } else {
+                setores.forEach((s, idx) => {
+                    container.innerHTML += `<div class="sector-item"><span>${s}</span> <button class="btn-mini btn-danger" onclick="delSetor('${sub}', ${idx})">✕</button></div>`;
+                });
+            }
+        }
+
+        window.addSetor = async (sub) => {
+            const input = document.getElementById(`new-setor-${sub}`);
+            const val = input.value.trim();
+            if(!val) return;
+            if(!listaSetores[sub]) listaSetores[sub] = [];
+            listaSetores[sub].push(val);
+            await setDoc(doc(db, "config", "setores"), listaSetores);
+            input.value = "";
+            renderListaSetores(sub);
+        };
+
+        window.delSetor = async (sub, idx) => {
+            if(!confirm("Excluir setor?")) return;
+            listaSetores[sub].splice(idx, 1);
+            await setDoc(doc(db, "config", "setores"), listaSetores);
+            renderListaSetores(sub);
+        };
+
+        // ... Add/Del Sub/Cat ...
         window.addSub = async (cat) => { const input = document.getElementById(`new-sub-${cat}`); const val = input.value.trim(); if(!val) return; if(!listaSubs[cat]) listaSubs[cat] = []; listaSubs[cat].push(val); await setDoc(doc(db, "config", "categorias"), listaSubs); input.value = ""; renderCategorias(); setTimeout(() => document.getElementById(`subs-${cat}`).style.display = 'block', 100); atualizarSelectCat(); };
         window.delSub = async (cat, index) => { if(!confirm("Excluir subcategoria?")) return; listaSubs[cat].splice(index, 1); await setDoc(doc(db, "config", "categorias"), listaSubs); renderCategorias(); setTimeout(() => document.getElementById(`subs-${cat}`).style.display = 'block', 100); atualizarSelectCat(); };
         function atualizarSelectCat() { const sel = el('categoria'); const val = sel.value; sel.innerHTML = '<option value="">Selecione...</option>'; let ordem = listaSubs["_order"] || Object.keys(listaSubs).filter(k => k !== "_order").sort(); ordem.forEach(c => sel.innerHTML += `<option value="${c}">${c}</option>`); sel.value = val; }
@@ -467,7 +597,38 @@
         window.delCat = async (cat) => { if(confirm("Excluir Categoria inteira?")) { delete listaSubs[cat]; listaSubs["_order"] = listaSubs["_order"].filter(c => c !== cat); await setDoc(doc(db, "config", "categorias"), listaSubs); renderCategorias(); atualizarSelectCat(); }};
         window.moverCat = async (i, d) => { let o = listaSubs["_order"]; let n = i+d; if(n<0||n>=o.length) return; [o[i], o[n]] = [o[n], o[i]]; listaSubs["_order"] = o; await setDoc(doc(db, "config", "categorias"), listaSubs); renderCategorias(); atualizarSelectCat(); };
         async function carregarConfigGeral() { const docSnap = await getDoc(doc(db, "config", "geral")); if(docSnap.exists()) { const d = docSnap.data(); el('confNomeCidade').value = d.titulo || ""; el('opacAzul').value = d.opacAzul || 80; el('opacPreto').value = d.opacPreto || 50; } }
-        el('categoria').addEventListener('change', () => { const cat = el('categoria').value; if(cat === 'Classificados') { el('lblNome').textContent = "Produto:"; el('lblCidade').textContent = "Descrição:"; el('divInsta').style.display='none'; } else if(cat === 'Profissionais') { el('lblNome').textContent = "Profissional:"; el('lblCidade').textContent = "Qualificação:"; el('divInsta').style.display='block'; } else { el('lblNome').textContent = "Local:"; el('lblCidade').textContent = "Endereço:"; el('divInsta').style.display='block'; } const sub = el('subcategoria'); sub.innerHTML = '<option value="">Selecione...</option>'; if(cat && listaSubs[cat] && listaSubs[cat].length > 0) { sub.disabled = false; listaSubs[cat].forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`); } else { sub.disabled = true; } });
+        el('categoria').addEventListener('change', () => { 
+            const cat = el('categoria').value; 
+            // Labels contextuais
+            if(cat === 'Classificados') { el('lblNome').textContent = "Produto:"; el('lblCidade').textContent = "Descrição:"; el('divInsta').style.display='none'; } 
+            else if(cat === 'Profissionais') { el('lblNome').textContent = "Profissional:"; el('lblCidade').textContent = "Qualificação:"; el('divInsta').style.display='block'; } 
+            else { el('lblNome').textContent = "Local:"; el('lblCidade').textContent = "Endereço:"; el('divInsta').style.display='block'; } 
+            
+            const sub = el('subcategoria'); sub.innerHTML = '<option value="">Selecione...</option>'; 
+            el('setor').innerHTML = '<option value="">Selecione subcategoria...</option>'; el('setor').disabled = true;
+
+            if(cat && listaSubs[cat] && listaSubs[cat].length > 0) { 
+                sub.disabled = false; 
+                listaSubs[cat].forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`); 
+            } else { sub.disabled = true; } 
+        });
+
+        // POPULA SETORES AO MUDAR SUB
+        el('subcategoria').addEventListener('change', () => {
+            const sub = el('subcategoria').value;
+            const setorSel = el('setor');
+            setorSel.innerHTML = '<option value="">Selecione...</option>';
+            
+            if(sub && listaSetores[sub] && listaSetores[sub].length > 0) {
+                setorSel.disabled = false;
+                setorSel.innerHTML = '<option value="">Sem setor (Opcional)</option>';
+                listaSetores[sub].forEach(s => setorSel.innerHTML += `<option value="${s}">${s}</option>`);
+            } else {
+                setorSel.innerHTML = '<option value="">Nenhum setor disponível</option>';
+                setorSel.disabled = true;
+            }
+        });
+
         window.salvarConfigGlobal = async () => { await setDoc(doc(db, "config", "geral"), { titulo: el('confNomeCidade').value, opacAzul: el('opacAzul').value, opacPreto: el('opacPreto').value }, { merge: true }); alert("Salvo!"); };
         el('checkDelivery').onchange = e => { el('boxDelivery').style.display = e.target.checked ? 'block':'none'; el('taxaEntrega').style.display = e.target.checked ? 'block':'none'; };
         el('checkPubli').onchange = e => el('boxPubli').style.display = e.target.checked ? 'block':'none';
@@ -481,41 +642,8 @@
         window.deletarLocalSeguro = async (id) => { const a=Math.floor(Math.random()*10), b=Math.floor(Math.random()*10); if(prompt(`${a}+${b}?`) == (a+b)) await deleteDoc(doc(db, "guia_cidades", id)); };
         window.zerarBanco = async () => { if(currentUser.role !== 'master') return; if(prompt("Tem certeza? Digite 'RESETAR'") === 'RESETAR') { const q = query(collection(db, "guia_cidades")); const snap = await getDocs(q); const batch = writeBatch(db); snap.forEach(doc => batch.delete(doc.ref)); await batch.commit(); alert("Dados apagados!"); }};
         el('btnCancelar').onclick = limparForm;
-        function limparForm() { idEditando=null; cardapioAtual=[]; el('nome').value=""; el('imagem').value=""; el('precoAtual').value=""; el('precoAntigo').value=""; el('btnSalvar').style.display='block'; el('btnAtualizar').style.display='none'; el('btnCancelar').style.display='none'; el('tituloForm').textContent="🏪 Gerenciar Cadastro"; configurarSeletorCidades(); }
-
-        // --- CORREÇÃO DA LISTA DE ITENS ---
-        function iniciarListenerLocais() { 
-            let q; 
-            if(currentUser.role === 'city') q = query(collection(db, "guia_cidades"), where("cidadeId", "==", currentUser.cityId)); 
-            else if(currentUser.role === 'owner') q = query(collection(db, "guia_cidades"), where("ownerId", "==", currentUser.userId)); 
-            else q = query(collection(db, "guia_cidades")); 
-            
-            onSnapshot(q, (snap) => { 
-                const lista = el('lista-locais'); lista.innerHTML = ""; 
-                let itens = []; 
-                snap.forEach(d => itens.push({id: d.id, ...d.data()})); 
-                itens.sort((a,b) => (b.dataCadastro?.seconds || 0) - (a.dataCadastro?.seconds || 0)); 
-                
-                if(itens.length === 0) lista.innerHTML = "<p style='text-align:center;color:#666'>Nada encontrado.</p>"; 
-                
-                itens.forEach(item => { 
-                    const div = document.createElement('div'); 
-                    div.className = "item-lista"; 
-                    div.innerHTML = `
-                        <div><strong>${item.nome}</strong><br><small>${item.categoria}</small></div>
-                        <div>
-                            <button class="btn-mini btn-warning">✏️</button>
-                            <button class="btn-mini btn-danger">✕</button>
-                        </div>`; 
-                    
-                    // EVENTOS JS CORRETOS E SEGUROS
-                    div.querySelector('.btn-warning').addEventListener('click', () => { window.carregarParaEdicao(item.id, item); });
-                    div.querySelector('.btn-danger').addEventListener('click', () => { deletarLocalSeguro(item.id); });
-                    
-                    lista.appendChild(div); 
-                }); 
-            }); 
-        }
+        
+        function iniciarListenerLocais() { let q; if(currentUser.role === 'city') q = query(collection(db, "guia_cidades"), where("cidadeId", "==", currentUser.cityId)); else if(currentUser.role === 'owner') q = query(collection(db, "guia_cidades"), where("ownerId", "==", currentUser.userId)); else q = query(collection(db, "guia_cidades")); onSnapshot(q, (snap) => { const lista = el('lista-locais'); lista.innerHTML = ""; let itens = []; snap.forEach(d => itens.push({id: d.id, ...d.data()})); itens.sort((a,b) => (b.dataCadastro?.seconds || 0) - (a.dataCadastro?.seconds || 0)); if(itens.length === 0) lista.innerHTML = "<p style='text-align:center;color:#666'>Nada encontrado.</p>"; itens.forEach(item => { const div = document.createElement('div'); div.className = "item-lista"; div.innerHTML = `<div><strong>${item.nome}</strong><br><small>${item.categoria}</small></div><div><button class="btn-mini btn-warning">✏️</button><button class="btn-mini btn-danger">✕</button></div>`; div.querySelector('.btn-warning').addEventListener('click', () => { window.carregarParaEdicao(item.id, item); }); div.querySelector('.btn-danger').addEventListener('click', () => { deletarLocalSeguro(item.id); }); lista.appendChild(div); }); }); }
     </script>
 </body>
 </html>

@@ -8,14 +8,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-user-select: none; user-select: none; }
         body { background: #222; height: 100dvh; width: 100vw; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* CORREÇÃO DO PULO: Altura fixa relativa à tela */
-        .hero-container { 
-            width: 100%; 
-            height: 35vh; /* Reserva 35% da altura antes de carregar */
-            position: relative; 
-            background: #333;
-            flex-shrink: 0;
-        }
+        .hero-container { width: 100%; height: 35vh; position: relative; background: #333; flex-shrink: 0; }
         .hero { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; }
         
         .bottom-wrapper { width: 100%; max-width: 500px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #eee; }
@@ -24,27 +17,30 @@
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
         h1 { margin: 0; font-size: 20px; color: #222; font-weight: 800; }
         
-        /* Preço em Destaque */
         .price-badge { text-align: right; }
         .price-val { font-size: 18px; font-weight: bold; color: #28a745; display: block; }
         .old-price-val { font-size: 11px; text-decoration: line-through; color: #999; }
 
         .sub-info { color: #666; margin-top: 4px; font-size: 13px; }
         
-        /* Mini Galeria */
-        .gallery-thumbs { display: flex; gap: 5px; margin-top: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 2px solid transparent; cursor: pointer; }
-        .thumb.active { border-color: #007bff; }
+        /* MINIATURAS REMOVIDAS VIA CSS (display: none) */
+        .gallery-thumbs { display: none; }
 
-        .actions-bar { display: flex; gap: 8px; margin-top: 15px; }
-        .btn-action { flex: 1; padding: 10px 0; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; text-align: center; font-size: 11px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-transform: uppercase; cursor: pointer; }
-        .btn-call { background: #007bff; } .btn-whats { background: #25D366; } .btn-insta { background: #E1306C; } .btn-delivery { background: #ff9800; color: #333; border: 1px solid #e68900; }
+        .actions-bar { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
+        .btn-action { flex: 1; padding: 10px 0; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; text-align: center; font-size: 11px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-transform: uppercase; cursor: pointer; min-width: 70px; }
+        
+        /* CORES DOS BOTÕES */
+        .btn-call { background: #007bff; } 
+        .btn-whats { background: #25D366; } 
+        .btn-insta { background: #E1306C; } 
+        .btn-delivery { background: #ff9800; color: #333; border: 1px solid #e68900; }
+        .btn-maps { background: #4285F4; }
+        .btn-gallery { background: #6f42c1; } /* Roxo para Galeria */
 
         .publi-container { width: 100%; aspect-ratio: 1 / 1; background: #ddd; position: relative; margin-top: auto; display: none; }
         .publi-img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
         .publi-label { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; text-transform: uppercase; }
 
-        /* Menu Section (dentro do scroll agora) */
         .menu-section { display: none; background: white; margin-top: 10px; padding: 15px; }
         .menu-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
         .btn-add { background: #28a745; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
@@ -55,14 +51,21 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
         .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; max-height: 85vh; display: flex; flex-direction: column; }
         
+        /* LIGHTBOX COM NAVEGAÇÃO */
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 2000; display: none; align-items: center; justify-content: center; }
         .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
+        .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 2002; }
+        
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; font-size: 40px; padding: 10px; cursor: pointer; z-index: 2001; }
+        .nav-prev { left: 10px; }
+        .nav-next { right: 10px; }
     </style>
 </head>
 <body>
     <a href="index.html" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; z-index: 50;">⬅ Voltar</a>
-    <div class="hero-container"><img id="capa" class="hero" src="" onclick="abrirFotoCapa()"></div>
+    
+    <div class="hero-container"><img id="capa" class="hero" src="" onclick="abrirGaleria(0)"></div>
+    
     <div class="bottom-wrapper">
         <div class="info-card">
             <div class="header-row">
@@ -73,12 +76,13 @@
                 </div>
             </div>
             <p class="sub-info" id="endereco">...</p>
-            <div id="galleryThumbs" class="gallery-thumbs" style="display:none"></div>
-
+            
             <div class="actions-bar">
                 <a id="btnLigar" href="#" class="btn-action btn-call">LIGAR</a>
                 <a id="btnZapPerfil" href="#" class="btn-action btn-whats">WHATS</a>
                 <a id="btnInsta" href="#" class="btn-action btn-insta" target="_blank">INSTA</a>
+                <a id="btnRota" href="#" class="btn-action btn-maps" target="_blank">📍 ROTA</a>
+                <div id="btnGaleria" class="btn-action btn-gallery" onclick="abrirGaleria(0)">📷 GALERIA</div>
                 <div id="btnDelivery" class="btn-action btn-delivery" onclick="alternarDelivery()">DELIVERY</div>
             </div>
         </div>
@@ -97,7 +101,13 @@
     <div id="btnCart" class="fab-cart" onclick="abrirCarrinho()">🛒<div id="cartCount" class="cart-badge">0</div></div>
     
     <div id="cartModal" class="modal-overlay" onclick="fecharCarrinho(event)"><div class="modal-content" onclick="event.stopPropagation()"><div style="display:flex; justify-content:space-between; margin-bottom:15px;"><span style="font-weight:bold">Seu Pedido</span><button onclick="fecharCarrinho()" style="background:none; border:none; font-size:24px">×</button></div><div id="cartItemsList" style="overflow-y:auto; flex:1"></div><button id="btnFinalizarZap" style="background:#25D366; color:white; width:100%; padding:12px; border:none; margin-top:10px; border-radius:8px; font-weight:bold;">Enviar Pedido</button></div></div>
-    <div id="lightbox" class="lightbox" onclick="fecharFotoCapa()"><button class="btn-close-lightbox">×</button><img id="imgLightbox" src=""></div>
+    
+    <div id="lightbox" class="lightbox" onclick="fecharSeForFundo(event)">
+        <button class="btn-close-lightbox" onclick="fecharFotoCapa()">×</button>
+        <button class="nav-btn nav-prev" onclick="mudarFoto(-1, event)">❮</button>
+        <img id="imgLightbox" src="">
+        <button class="nav-btn nav-next" onclick="mudarFoto(1, event)">❯</button>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -107,25 +117,24 @@
         
         const params = new URLSearchParams(window.location.search); const id = params.get('id');
         let localData = null, carrinho = [], bannersCache = [];
+        let allImages = []; // Armazena todas as fotos para o lightbox
+        let currentImgIdx = 0; // Índice da foto atual no lightbox
 
         async function carregarDetalhes() {
             if(!id) return window.location.href = "index.html";
             const docSnap = await getDoc(doc(db, "guia_cidades", id));
             if (docSnap.exists()) {
                 localData = docSnap.data();
-                // IMAGENS (Galeria vs Unica)
-                const imgs = (localData.imagens && localData.imagens.length > 0) ? localData.imagens : (localData.imagem ? [localData.imagem] : ["https://via.placeholder.com/400x200"]);
-                document.getElementById('capa').src = imgs[0];
                 
-                // Renderiza Miniaturas se tiver + de 1
-                if(imgs.length > 1) {
-                    const gal = document.getElementById('galleryThumbs');
-                    gal.style.display = 'flex';
-                    imgs.forEach(src => {
-                        const t = document.createElement('img'); t.src = src; t.className = 'thumb';
-                        t.onclick = () => { document.getElementById('capa').src = src; };
-                        gal.appendChild(t);
-                    });
+                // CARREGA IMAGENS (PERFIL + GALERIA)
+                allImages = (localData.imagens && localData.imagens.length > 0) ? localData.imagens : (localData.imagem ? [localData.imagem] : ["https://via.placeholder.com/400x200"]);
+                
+                // Define a capa (sempre a primeira)
+                document.getElementById('capa').src = allImages[0];
+                
+                // Botão Galeria: Só mostra se tiver mais de 1 foto
+                if(allImages.length > 1) {
+                    document.getElementById('btnGaleria').style.display = 'flex';
                 }
 
                 document.getElementById('nome').textContent = localData.nome;
@@ -139,10 +148,23 @@
                     if(localData.precoAntigo > 0) document.getElementById('oldPrice').textContent = `R$ ${localData.precoAntigo.toFixed(2)}`;
                 }
 
+                // BOTÕES
                 if(localData.telFixo) { const btn = document.getElementById('btnLigar'); btn.href = `tel:${localData.telFixo.replace(/\D/g,'')}`; btn.style.display = 'flex'; }
                 if(localData.contato) { const btn = document.getElementById('btnZapPerfil'); btn.href = `https://wa.me/55${localData.contato.replace(/\D/g,'')}`; btn.style.display = 'flex'; }
                 if(localData.categoria !== 'Classificados' && localData.instagram) { const btn = document.getElementById('btnInsta'); btn.href = localData.instagram; btn.style.display = 'flex'; }
 
+                // MAPA
+                const btnRota = document.getElementById('btnRota');
+                if(localData.linkMapa) {
+                    btnRota.href = localData.linkMapa;
+                    btnRota.style.display = 'flex';
+                } else if (localData.cidade) {
+                    const busca = encodeURIComponent(localData.cidade + " " + localData.nome);
+                    btnRota.href = `https://www.google.com/maps/search/?api=1&query=${busca}`;
+                    btnRota.style.display = 'flex';
+                }
+
+                // DELIVERY
                 if(localData.temDelivery) {
                     document.getElementById('btnDelivery').style.display = 'flex';
                     const lista = document.getElementById('lista-produtos');
@@ -154,6 +176,32 @@
             inicializarPublis();
         }
 
+        // --- FUNÇÕES GALERIA / LIGHTBOX ---
+        window.abrirGaleria = (idx = 0) => {
+            currentImgIdx = idx;
+            atualizarLightbox();
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+        window.atualizarLightbox = () => {
+            document.getElementById('imgLightbox').src = allImages[currentImgIdx];
+        }
+
+        window.mudarFoto = (dir, e) => {
+            if(e) e.stopPropagation(); // Evita fechar ao clicar na seta
+            currentImgIdx += dir;
+            // Loop infinito
+            if(currentImgIdx < 0) currentImgIdx = allImages.length - 1;
+            if(currentImgIdx >= allImages.length) currentImgIdx = 0;
+            atualizarLightbox();
+        }
+
+        window.fecharFotoCapa = () => { document.getElementById('lightbox').style.display = 'none'; }
+        
+        window.fecharSeForFundo = (e) => {
+            if(e.target.id === 'lightbox') fecharFotoCapa();
+        }
+
         window.alternarDelivery = () => {
             const menu = document.getElementById('area-cardapio');
             const publi = document.getElementById('area-publi');
@@ -161,15 +209,13 @@
             else { publi.style.display = 'none'; menu.style.display = 'block'; }
         }
 
-        // --- SISTEMA PUBLI (Mesmo código de rotação) ---
+        // --- SISTEMA PUBLI ---
         async function inicializarPublis() {
             try {
                 const snap = await getDocs(collection(db, "guia_cidades"));
-                const hoje = new Date();
                 snap.forEach(d => {
                     const dt = d.data();
                     if(dt.publi && dt.publi.ativa && dt.publi.img) {
-                        // Verifica data... (simplificado)
                         bannersCache.push({img: dt.publi.img, id: d.id});
                     }
                 });
@@ -185,14 +231,31 @@
             document.getElementById('area-publi').style.display = 'block';
         }
 
-        // Carrinho e Lightbox (Simplificado para caber)
-        window.abrirFotoCapa = () => { document.getElementById('imgLightbox').src = document.getElementById('capa').src; document.getElementById('lightbox').style.display = 'flex'; }
-        window.fecharFotoCapa = () => { document.getElementById('lightbox').style.display = 'none'; }
-        
-        // Funções de Carrinho (addCart, fecharCarrinho, etc) devem ser mantidas como no arquivo anterior.
-        // Adicionei apenas o placeholder para não estourar o limite de caracteres aqui. 
-        // A lógica é idêntica à versão anterior.
-        window.addCart = (idx) => { /* Lógica de adicionar ao array carrinho */ document.getElementById('btnCart').style.display='flex'; };
+        // --- Carrinho ---
+        window.addCart = (idx) => { 
+            const item = localData.cardapio[idx];
+            carrinho.push(item);
+            atualizarCarrinho();
+        };
+        function atualizarCarrinho() {
+            document.getElementById('cartCount').textContent = carrinho.length;
+            document.getElementById('btnCart').style.display = carrinho.length > 0 ? 'flex' : 'none';
+            const lista = document.getElementById('cartItemsList');
+            lista.innerHTML = "";
+            let total = 0;
+            carrinho.forEach((item, i) => {
+                total += parseFloat(item.preco);
+                lista.innerHTML += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee"><span>${item.nome}</span><span>R$ ${item.preco} <button onclick="removeCart(${i})" style="color:red;border:none;background:none">x</button></span></div>`;
+            });
+            document.getElementById('btnFinalizarZap').textContent = `Enviar Pedido - Total: R$ ${total.toFixed(2)}`;
+            document.getElementById('btnFinalizarZap').onclick = () => {
+                let msg = `Olá, gostaria de pedir:\n`;
+                carrinho.forEach(i => msg += `- ${i.nome}\n`);
+                msg += `Total: R$ ${total.toFixed(2)}`;
+                window.open(`https://wa.me/55${localData.contato.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
+            }
+        }
+        window.removeCart = (i) => { carrinho.splice(i,1); atualizarCarrinho(); };
         window.abrirCarrinho = () => document.getElementById('cartModal').style.display='flex';
         window.fecharCarrinho = () => document.getElementById('cartModal').style.display='none';
 
