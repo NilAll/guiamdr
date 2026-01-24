@@ -10,7 +10,7 @@
     <style>
         /* CSS GLOBAL */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-user-select: none; user-select: none; }
-        input { -webkit-user-select: text; user-select: text; }
+        input, select { -webkit-user-select: text; user-select: text; }
         body { background-color: #222; background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; color: white; padding: 10px 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
         .grad-top { position: fixed; top: 0; left: 0; width: 100%; height: 25%; pointer-events: none; z-index: 1; }
@@ -47,8 +47,8 @@
         .price-display { font-size: 14px; font-weight: bold; color: #28a745; white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; line-height: 1; }
         .old-price { text-decoration: line-through; color: #999; font-size: 10px; }
 
-        #painelNavegacao { width: 90%; max-width: 500px; display: none; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px 20px 60px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: #333; margin-bottom: 20px; position: relative; z-index: 10; min-height: 300px; }
-        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px; }
+        #painelNavegacao { width: 90%; max-width: 500px; display: none; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px 20px 60px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: #333; margin-bottom: 20px; position: relative; z-index: 10; }
+        .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .cat-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid #eee; }
         .cat-icon { font-size: 30px; margin-bottom: 5px; }
         .subcat-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
@@ -61,7 +61,7 @@
         .city-item { display: block; padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 18px; font-weight: bold; color: #333; transition: background 0.2s; }
         .city-item:hover { background: #f0f8ff; color: #007bff; }
         
-        .form-user input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .form-user input, .form-user select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-family: 'Segoe UI', sans-serif; font-size: 16px; }
         .btn-cad-user { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
     </style>
 </head>
@@ -105,9 +105,15 @@
         <div class="city-modal-content form-user" onclick="event.stopPropagation()">
             <h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2>
             <p style="color:#666; font-size:13px;">Preencha para receber seus dados de acesso.</p>
+            
+            <select id="cadCidadeSelect">
+                <option value="">Selecione sua Cidade</option>
+            </select>
+
             <input type="text" id="cadNome" placeholder="Nome Completo">
             <input type="email" id="cadEmail" placeholder="E-mail">
             <input type="password" id="cadSenha" placeholder="Crie uma Senha">
+            
             <button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Confirmar Cadastro</button>
             <button onclick="fecharModalCadastro()" style="margin-top:10px; background:none; border:none; color:#666; text-decoration:underline;">Cancelar</button>
         </div>
@@ -131,18 +137,20 @@
         window.fecharModalCadastro = (e) => { if(!e || e.target.id === 'modalCadastroUser') document.getElementById('modalCadastroUser').style.display = 'none'; };
 
         window.realizarCadastroUser = async () => {
+            const cidadeId = document.getElementById('cadCidadeSelect').value;
             const nome = document.getElementById('cadNome').value.trim();
             const email = document.getElementById('cadEmail').value.trim();
             const senha = document.getElementById('cadSenha').value.trim();
             const btn = document.getElementById('btnConfirmarCad');
 
+            if(!cidadeId) return alert("Selecione sua cidade!");
             if(!nome || !email || !senha) return alert("Preencha todos os campos!");
 
             btn.textContent = "Processando...";
             btn.disabled = true;
 
             try {
-                await addDoc(collection(db, "users"), { nome: nome, email: email, senha: senha, role: 'owner', dataCadastro: new Date() });
+                await addDoc(collection(db, "users"), { nome: nome, email: email, senha: senha, role: 'owner', cidadeId: cidadeId, dataCadastro: new Date() });
                 const templateParams = { to_name: nome, to_email: email, user_login: email, user_password: senha };
                 await emailjs.send('service_cuesjea', 'template_dftiawx', templateParams);
                 alert("Cadastro realizado! Verifique seu e-mail com os dados de acesso.");
@@ -158,12 +166,20 @@
         async function carregarCidades() {
             const snap = await getDocs(collection(db, "cidades"));
             const divLista = document.getElementById('listaCidadesSelect');
-            divLista.innerHTML = ""; listaCidades = [];
+            const selectCad = document.getElementById('cadCidadeSelect');
+            
+            divLista.innerHTML = ""; 
+            selectCad.innerHTML = '<option value="">Selecione sua Cidade</option>';
+            listaCidades = [];
+            
             if(snap.empty) { divLista.innerHTML = "<p>Nenhuma cidade cadastrada.</p>"; return; }
+            
             snap.forEach(doc => {
                 const cid = doc.data(); const item = { id: doc.id, ...cid }; listaCidades.push(item);
                 const el = document.createElement('div'); el.className = 'city-item'; el.textContent = `${cid.nome} - ${cid.uf}`; el.onclick = () => selecionarCidade(item); divLista.appendChild(el);
+                const opt = document.createElement('option'); opt.value = doc.id; opt.textContent = `${cid.nome} - ${cid.uf}`; selectCad.appendChild(opt);
             });
+            
             const cidadeSalva = listaCidades.find(c => c.id === cidadeAtualId);
             if(!cidadeAtualId || !cidadeSalva) abrirModalCidades(false);
             else aplicarCidade(cidadeSalva);
@@ -178,14 +194,10 @@
             document.getElementById('displayCidade').textContent = `📍 ${cidade.nome} - ${cidade.uf}`;
             if(cidade.fundo) document.body.style.backgroundImage = `url('${cidade.fundo}')`;
             else document.body.style.backgroundImage = `url('https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=3070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`;
-            
             const logo = document.getElementById('logoPatra');
             if(cidade.logoPatra) { 
-                logo.src = cidade.logoPatra; 
-                logo.style.display = 'block'; 
-                // APLICAÇÃO DO TAMANHO E POSIÇÃO
-                logo.style.width = (cidade.logoSize || 30) + '%';
-                logo.style.bottom = (cidade.logoBottom || 15) + '%';
+                logo.src = cidade.logoPatra; logo.style.display = 'block'; 
+                logo.style.width = (cidade.logoSize || 30) + '%'; logo.style.bottom = (cidade.logoBottom || 15) + '%';
             } else { logo.style.display = 'none'; }
             document.getElementById('appContent').style.display = 'flex';
         }
@@ -249,10 +261,23 @@
             subs.forEach(sub => { const chip = document.createElement('div'); chip.className = 'subcat-chip'; chip.textContent = sub; chip.onclick = () => { pesquisarPorSubcategoria(sub); }; lista.appendChild(chip); });
         }
 
+        // BUSCA ATUALIZADA E EXPANDIDA
         function executarBusca(termo) {
             const divRes = document.getElementById('resultados'); divRes.innerHTML = "";
-            const filtrados = locaisFiltradosCidade.filter(l => l.nomeBusca.includes(termo) || l.categoria.toLowerCase().includes(termo) || (l.subcategoria && l.subcategoria.toLowerCase().includes(termo)));
+            
+            const filtrados = locaisFiltradosCidade.filter(l => {
+                // Proteção contra campos inexistentes (retrocompatibilidade)
+                const nome = (l.nomeBusca || l.nome || '').toLowerCase();
+                const cat = (l.categoria || '').toLowerCase();
+                const sub = (l.subcategoria || '').toLowerCase();
+                // Inclui a descrição/cidade na busca (para achar classificados)
+                const desc = (l.cidade || '').toLowerCase(); 
+                
+                return nome.includes(termo) || cat.includes(termo) || sub.includes(termo) || desc.includes(termo);
+            });
+
             if(filtrados.length === 0) { divRes.innerHTML = "<p style='text-align:center; color:white; background:rgba(0,0,0,0.5); padding:10px;'>Nada encontrado.</p>"; return; }
+            
             filtrados.forEach(local => {
                 const imagem = (local.imagens && local.imagens.length > 0) ? local.imagens[0] : (local.imagem || "https://via.placeholder.com/150");
                 let precoHtml = ''; if(local.preco > 0) { const antigo = local.precoAntigo > 0 ? `<span class="old-price">R$ ${local.precoAntigo.toFixed(2)}</span>` : ''; precoHtml = `<div class="price-display">${antigo}<span>R$ ${local.preco.toFixed(2)}</span></div>`; }
