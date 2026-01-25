@@ -23,9 +23,6 @@
 
         .sub-info { color: #666; margin-top: 4px; font-size: 13px; }
         
-        /* MINIATURAS REMOVIDAS VIA CSS (display: none) */
-        .gallery-thumbs { display: none; }
-
         .actions-bar { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
         .btn-action { flex: 1; padding: 10px 0; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; text-align: center; font-size: 11px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-transform: uppercase; cursor: pointer; min-width: 70px; }
         
@@ -35,15 +32,22 @@
         .btn-insta { background: #E1306C; } 
         .btn-delivery { background: #ff9800; color: #333; border: 1px solid #e68900; }
         .btn-maps { background: #4285F4; }
-        .btn-gallery { background: #6f42c1; } /* Roxo para Galeria */
+        .btn-gallery { background: #6f42c1; } 
 
+        /* ÁREA PUBLICIDADE */
         .publi-container { width: 100%; aspect-ratio: 1 / 1; background: #ddd; position: relative; margin-top: auto; display: none; }
         .publi-img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
         .publi-label { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; text-transform: uppercase; }
 
+        /* ÁREA MENU DELIVERY */
         .menu-section { display: none; background: white; margin-top: 10px; padding: 15px; }
         .menu-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
         .btn-add { background: #28a745; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+
+        /* ÁREA GALERIA DE MINIATURAS (NOVO) */
+        .gallery-section { display: none; background: white; margin-top: 10px; padding: 15px; }
+        .grid-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .grid-thumb-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; }
 
         .fab-cart { position: fixed; bottom: 20px; right: 20px; background: #ffc107; color: #333; width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; }
         .cart-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
@@ -51,11 +55,10 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
         .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; max-height: 85vh; display: flex; flex-direction: column; }
         
-        /* LIGHTBOX COM NAVEGAÇÃO */
+        /* LIGHTBOX */
         .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 2000; display: none; align-items: center; justify-content: center; }
         .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 2002; }
-        
         .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; font-size: 40px; padding: 10px; cursor: pointer; z-index: 2001; }
         .nav-prev { left: 10px; }
         .nav-next { right: 10px; }
@@ -64,7 +67,7 @@
 <body>
     <a href="index.html" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; z-index: 50;">⬅ Voltar</a>
     
-    <div class="hero-container"><img id="capa" class="hero" src="" onclick="abrirGaleria(0)"></div>
+    <div class="hero-container"><img id="capa" class="hero" src="" onclick="abrirLightbox(0)"></div>
     
     <div class="bottom-wrapper">
         <div class="info-card">
@@ -82,9 +85,14 @@
                 <a id="btnZapPerfil" href="#" class="btn-action btn-whats">WHATS</a>
                 <a id="btnInsta" href="#" class="btn-action btn-insta" target="_blank">INSTA</a>
                 <a id="btnRota" href="#" class="btn-action btn-maps" target="_blank">📍 ROTA</a>
-                <div id="btnGaleria" class="btn-action btn-gallery" onclick="abrirGaleria(0)">📷 GALERIA</div>
+                <div id="btnGaleria" class="btn-action btn-gallery" onclick="alternarGaleria()">📷 GALERIA</div>
                 <div id="btnDelivery" class="btn-action btn-delivery" onclick="alternarDelivery()">DELIVERY</div>
             </div>
+        </div>
+
+        <div id="area-galeria" class="gallery-section">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Galeria de Fotos</h3><button onclick="alternarGaleria()" style="background:none;border:none;font-size:20px">✕</button></div>
+            <div id="grid-fotos" class="grid-thumbs"></div>
         </div>
 
         <div id="area-cardapio" class="menu-section">
@@ -117,8 +125,8 @@
         
         const params = new URLSearchParams(window.location.search); const id = params.get('id');
         let localData = null, carrinho = [], bannersCache = [];
-        let allImages = []; // Armazena todas as fotos para o lightbox
-        let currentImgIdx = 0; // Índice da foto atual no lightbox
+        let allImages = []; 
+        let currentImgIdx = 0; 
 
         async function carregarDetalhes() {
             if(!id) return window.location.href = "index.html";
@@ -126,117 +134,99 @@
             if (docSnap.exists()) {
                 localData = docSnap.data();
                 
-                // CARREGA IMAGENS (PERFIL + GALERIA)
                 allImages = (localData.imagens && localData.imagens.length > 0) ? localData.imagens : (localData.imagem ? [localData.imagem] : ["https://via.placeholder.com/400x200"]);
-                
-                // Define a capa (sempre a primeira)
                 document.getElementById('capa').src = allImages[0];
                 
                 // Botão Galeria: Só mostra se tiver mais de 1 foto
-                if(allImages.length > 1) {
-                    document.getElementById('btnGaleria').style.display = 'flex';
-                }
+                if(allImages.length > 1) { document.getElementById('btnGaleria').style.display = 'flex'; }
 
                 document.getElementById('nome').textContent = localData.nome;
                 document.getElementById('cats').textContent = `${localData.categoria} > ${localData.subcategoria || ''}`;
                 document.getElementById('endereco').textContent = localData.cidade;
 
-                // PREÇO
+                // Preço
                 if(localData.preco > 0) {
                     document.getElementById('priceBox').style.display = 'block';
-                    document.getElementById('currPrice').textContent = `R$ ${localData.preco.toFixed(2)}`;
-                    if(localData.precoAntigo > 0) document.getElementById('oldPrice').textContent = `R$ ${localData.precoAntigo.toFixed(2)}`;
+                    document.getElementById('currPrice').textContent = `R$ ${localData.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                    if(localData.precoAntigo > 0) document.getElementById('oldPrice').textContent = `R$ ${localData.precoAntigo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                 }
 
-                // BOTÕES
                 if(localData.telFixo) { const btn = document.getElementById('btnLigar'); btn.href = `tel:${localData.telFixo.replace(/\D/g,'')}`; btn.style.display = 'flex'; }
                 if(localData.contato) { const btn = document.getElementById('btnZapPerfil'); btn.href = `https://wa.me/55${localData.contato.replace(/\D/g,'')}`; btn.style.display = 'flex'; }
                 if(localData.categoria !== 'Classificados' && localData.instagram) { const btn = document.getElementById('btnInsta'); btn.href = localData.instagram; btn.style.display = 'flex'; }
 
-                // MAPA
                 const btnRota = document.getElementById('btnRota');
-                if(localData.linkMapa) {
-                    btnRota.href = localData.linkMapa;
-                    btnRota.style.display = 'flex';
-                } else if (localData.cidade) {
-                    const busca = encodeURIComponent(localData.cidade + " " + localData.nome);
-                    btnRota.href = `https://www.google.com/maps/search/?api=1&query=${busca}`;
-                    btnRota.style.display = 'flex';
-                }
+                if(localData.linkMapa) { btnRota.href = localData.linkMapa; btnRota.style.display = 'flex'; } 
+                else if (localData.cidade) { const busca = encodeURIComponent(localData.cidade + " " + localData.nome); btnRota.href = `https://www.google.com/maps/search/?api=1&query=${busca}`; btnRota.style.display = 'flex'; }
 
-                // DELIVERY
                 if(localData.temDelivery) {
                     document.getElementById('btnDelivery').style.display = 'flex';
                     const lista = document.getElementById('lista-produtos');
                     (localData.cardapio||[]).forEach((item, index) => {
-                        lista.innerHTML += `<div class="menu-item"><div style="display:flex;align-items:center;"><div><strong>${item.nome}</strong><br><small>R$ ${item.preco}</small></div></div><button class="btn-add" onclick="addCart(${index})">+</button></div>`;
+                        lista.innerHTML += `<div class="menu-item"><div style="display:flex;align-items:center;"><div><strong>${item.nome}</strong><br><small>R$ ${parseFloat(item.preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</small></div></div><button class="btn-add" onclick="addCart(${index})">+</button></div>`;
                     });
                 }
+                
+                // Pré-carrega a galeria
+                renderizarGradeGaleria();
             }
             inicializarPublis();
         }
 
-        // --- FUNÇÕES GALERIA / LIGHTBOX ---
-        window.abrirGaleria = (idx = 0) => {
-            currentImgIdx = idx;
-            atualizarLightbox();
-            document.getElementById('lightbox').style.display = 'flex';
-        }
-
-        window.atualizarLightbox = () => {
-            document.getElementById('imgLightbox').src = allImages[currentImgIdx];
-        }
-
-        window.mudarFoto = (dir, e) => {
-            if(e) e.stopPropagation(); // Evita fechar ao clicar na seta
-            currentImgIdx += dir;
-            // Loop infinito
-            if(currentImgIdx < 0) currentImgIdx = allImages.length - 1;
-            if(currentImgIdx >= allImages.length) currentImgIdx = 0;
-            atualizarLightbox();
-        }
-
-        window.fecharFotoCapa = () => { document.getElementById('lightbox').style.display = 'none'; }
-        
-        window.fecharSeForFundo = (e) => {
-            if(e.target.id === 'lightbox') fecharFotoCapa();
-        }
-
-        window.alternarDelivery = () => {
+        // --- SISTEMA DE ABAS (GALERIA / DELIVERY / PUBLI) ---
+        window.alternarGaleria = () => {
+            const galeria = document.getElementById('area-galeria');
             const menu = document.getElementById('area-cardapio');
             const publi = document.getElementById('area-publi');
-            if(menu.style.display === 'block') { menu.style.display = 'none'; if(bannersCache.length > 0) publi.style.display = 'block'; } 
-            else { publi.style.display = 'none'; menu.style.display = 'block'; }
-        }
 
-        // --- SISTEMA PUBLI ---
-        async function inicializarPublis() {
-            try {
-                const snap = await getDocs(collection(db, "guia_cidades"));
-                snap.forEach(d => {
-                    const dt = d.data();
-                    if(dt.publi && dt.publi.ativa && dt.publi.img) {
-                        bannersCache.push({img: dt.publi.img, id: d.id});
-                    }
-                });
-                if(bannersCache.length > 0) { mostrarNovaPubli(); setInterval(mostrarNovaPubli, 60000); }
-            } catch(e){}
-        }
-        function mostrarNovaPubli() {
-            if(bannersCache.length === 0) return;
-            if(document.getElementById('area-cardapio').style.display === 'block') return;
-            const item = bannersCache[Math.floor(Math.random() * bannersCache.length)];
-            const img = document.getElementById('imgPubli');
-            img.src = item.img; img.onclick = () => window.location.href=`detalhes.html?id=${item.id}`;
-            document.getElementById('area-publi').style.display = 'block';
-        }
+            menu.style.display = 'none'; // Fecha menu
+            publi.style.display = 'none'; // Fecha publi
 
-        // --- Carrinho ---
-        window.addCart = (idx) => { 
-            const item = localData.cardapio[idx];
-            carrinho.push(item);
-            atualizarCarrinho();
+            if (galeria.style.display === 'block') {
+                galeria.style.display = 'none';
+                if(bannersCache.length > 0) publi.style.display = 'block'; // Restaura publi
+            } else {
+                galeria.style.display = 'block';
+            }
         };
+
+        window.alternarDelivery = () => {
+            const galeria = document.getElementById('area-galeria');
+            const menu = document.getElementById('area-cardapio');
+            const publi = document.getElementById('area-publi');
+
+            galeria.style.display = 'none'; // Fecha galeria
+            publi.style.display = 'none'; // Fecha publi
+
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+                if(bannersCache.length > 0) publi.style.display = 'block'; // Restaura publi
+            } else {
+                menu.style.display = 'block';
+            }
+        };
+
+        function renderizarGradeGaleria() {
+            const div = document.getElementById('grid-fotos');
+            div.innerHTML = "";
+            allImages.forEach((src, idx) => {
+                div.innerHTML += `<img src="${src}" class="grid-thumb-img" onclick="abrirLightbox(${idx})">`;
+            });
+        }
+
+        // --- LIGHTBOX ---
+        window.abrirLightbox = (idx = 0) => { currentImgIdx = idx; atualizarLightbox(); document.getElementById('lightbox').style.display = 'flex'; }
+        window.atualizarLightbox = () => { document.getElementById('imgLightbox').src = allImages[currentImgIdx]; }
+        window.mudarFoto = (dir, e) => { if(e) e.stopPropagation(); currentImgIdx += dir; if(currentImgIdx < 0) currentImgIdx = allImages.length - 1; if(currentImgIdx >= allImages.length) currentImgIdx = 0; atualizarLightbox(); }
+        window.fecharFotoCapa = () => { document.getElementById('lightbox').style.display = 'none'; }
+        window.fecharSeForFundo = (e) => { if(e.target.id === 'lightbox') fecharFotoCapa(); }
+
+        // --- PUBLI ---
+        async function inicializarPublis() { try { const snap = await getDocs(collection(db, "guia_cidades")); snap.forEach(d => { const dt = d.data(); if(dt.publi && dt.publi.ativa && dt.publi.img) { bannersCache.push({img: dt.publi.img, id: d.id}); } }); if(bannersCache.length > 0) { mostrarNovaPubli(); setInterval(mostrarNovaPubli, 60000); } } catch(e){} }
+        function mostrarNovaPubli() { if(bannersCache.length === 0) return; if(document.getElementById('area-cardapio').style.display === 'block' || document.getElementById('area-galeria').style.display === 'block') return; const item = bannersCache[Math.floor(Math.random() * bannersCache.length)]; const img = document.getElementById('imgPubli'); img.src = item.img; img.onclick = () => window.location.href=`detalhes.html?id=${item.id}`; document.getElementById('area-publi').style.display = 'block'; }
+
+        // --- CARRINHO ---
+        window.addCart = (idx) => { const item = localData.cardapio[idx]; carrinho.push(item); atualizarCarrinho(); };
         function atualizarCarrinho() {
             document.getElementById('cartCount').textContent = carrinho.length;
             document.getElementById('btnCart').style.display = carrinho.length > 0 ? 'flex' : 'none';
@@ -245,13 +235,13 @@
             let total = 0;
             carrinho.forEach((item, i) => {
                 total += parseFloat(item.preco);
-                lista.innerHTML += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee"><span>${item.nome}</span><span>R$ ${item.preco} <button onclick="removeCart(${i})" style="color:red;border:none;background:none">x</button></span></div>`;
+                lista.innerHTML += `<div style="display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee"><span>${item.nome}</span><span>R$ ${parseFloat(item.preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})} <button onclick="removeCart(${i})" style="color:red;border:none;background:none">x</button></span></div>`;
             });
-            document.getElementById('btnFinalizarZap').textContent = `Enviar Pedido - Total: R$ ${total.toFixed(2)}`;
+            document.getElementById('btnFinalizarZap').textContent = `Enviar Pedido - Total: R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
             document.getElementById('btnFinalizarZap').onclick = () => {
                 let msg = `Olá, gostaria de pedir:\n`;
                 carrinho.forEach(i => msg += `- ${i.nome}\n`);
-                msg += `Total: R$ ${total.toFixed(2)}`;
+                msg += `Total: R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                 window.open(`https://wa.me/55${localData.contato.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
             }
         }
