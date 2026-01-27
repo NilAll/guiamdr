@@ -23,6 +23,22 @@
         .header-top { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 15px; }
         .header-logo { height: 50px; cursor: pointer; transition: transform 0.2s; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
         
+        /* MENU HAMBURGUER */
+        .btn-hamburger { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .btn-voltar-home { position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 24px; cursor: pointer; display: none; padding: 10px; }
+        
+        .main-menu-dropdown { 
+            position: absolute; top: 55px; right: 10px; 
+            background: white; border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
+            display: none; flex-direction: column; 
+            width: 180px; z-index: 1000; overflow: hidden; 
+            text-align: left; 
+        }
+        .menu-opt { padding: 15px; color: #333; font-size: 14px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .menu-opt:hover { background: #f5f5f5; }
+        .menu-opt:last-child { border-bottom: none; }
+
         .search-box { width: 100%; margin-bottom: 20px; position: relative; z-index: 10; display: flex; align-items: center; }
         .search-icon { position: absolute; left: 20px; color: #999; font-size: 18px; pointer-events: none; z-index: 11; }
         input { width: 100%; padding: 12px 20px; font-size: 16px; border-radius: 30px; border: none; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; background: rgba(255, 255, 255, 0.95); font-weight: 500; }
@@ -50,7 +66,6 @@
         .card-footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
         .tag { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #555; }
         
-        /* CARD VIP ESTILO MENU (FOTO ESQUERDA) */
         .vip-gift-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; overflow: hidden; display: flex; padding: 15px; align-items: center; }
         .vip-gift-img { width: 110px; height: 110px; border-radius: 8px; object-fit: cover; background: #eee; margin-right: 15px; flex-shrink: 0; }
         .vip-gift-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 110px; }
@@ -68,9 +83,6 @@
         .btn-cad-user { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
         .btn-want-vip { background: #25d366; margin-top: 10px; }
         .form-user input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; text-align: center; }
-        
-        .btn-hamburger { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 26px; cursor: pointer; padding: 10px; }
-        .btn-voltar-home { position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 24px; cursor: pointer; display: none; padding: 10px; }
     </style>
 </head>
 <body>
@@ -81,7 +93,15 @@
             <div class="header-top">
                 <button id="btnVoltarInicio" class="btn-voltar-home" onclick="clickVoltar()">⬅</button>
                 <img src="logo.png" class="header-logo" alt="Guia" onclick="resetarApp()">
-                <button class="btn-hamburger" onclick="window.location.href='admin.html'">⚙️</button>
+                
+                <button class="btn-hamburger" onclick="toggleMenu()">☰</button>
+                
+                <div id="mainMenu" class="main-menu-dropdown">
+                    <div class="menu-opt" onclick="abrirModalVipAccess()">💎 Área VIP</div>
+                    <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro</div>
+                    <div class="menu-opt" onclick="abrirModalCidades(true)">📍 Trocar Cidade</div>
+                    <div class="menu-opt" onclick="window.location.href='admin.html'">⚙️ Admin</div>
+                </div>
             </div>
             <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="busca" placeholder="Carregando..." autocomplete="off"></div>
         </div>
@@ -106,8 +126,10 @@
 
     <div id="modalCidades" class="city-modal" style="display:none"><div class="city-modal-content"><h2 style="margin-top:0; color:#007bff;">Bem-vindo!</h2><p>Selecione sua cidade:</p><div id="listaCidadesSelect" style="max-height:300px;overflow-y:auto"></div></div></div>
 
+    <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2><select id="cadCidadeSelect"><option value="">Selecione sua Cidade</option></select><input id="cadNome" placeholder="Nome"><input id="cadEmail" placeholder="Email"><input id="cadSenha" type="password" placeholder="Senha"><button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Cadastrar</button><button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button></div></div>
+
     <script type="module">
-        const VERSAO_ATUAL="3.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="3.2"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -118,7 +140,19 @@
 
         (function(){ emailjs.init("vOaHzeApkyntx09x6"); })();
 
-        window.abrirModalVipAccess = () => { document.getElementById('modalVipAccess').style.display = 'flex'; };
+        // --- MENU HAMBURGUER (RESTAURADO) ---
+        window.toggleMenu = () => { 
+            const m = document.getElementById('mainMenu'); 
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
+        };
+        // Fecha menu ao clicar fora
+        document.addEventListener('click', e => { 
+            if(document.getElementById('mainMenu').style.display === 'flex' && !e.target.closest('.btn-hamburger') && !e.target.closest('.main-menu-dropdown')) {
+                document.getElementById('mainMenu').style.display = 'none';
+            }
+        });
+
+        window.abrirModalVipAccess = () => { document.getElementById('modalVipAccess').style.display = 'flex'; window.toggleMenu(); };
         window.fecharModalVip = (e) => { if(!e || e.target.id === 'modalVipAccess') document.getElementById('modalVipAccess').style.display = 'none'; };
         
         window.validarVip = async () => {
@@ -248,6 +282,8 @@
         carregarDadosIniciais();
         
         window.abrirModalCadastroUser=()=>{document.getElementById('modalCadastroUser').style.display='flex';window.toggleMenu&&window.toggleMenu();};
+        window.abrirModalCidades=(c)=>{document.getElementById('modalCidades').style.display='flex';document.getElementById('btnCancelarCidade').style.display=c?'inline-block':'none';window.toggleMenu&&window.toggleMenu();};
+        window.fecharModalCidades=()=>{document.getElementById('modalCidades').style.display='none';};
         window.fecharModalCadastro=(e)=>{if(!e||e.target.id==='modalCadastroUser')document.getElementById('modalCadastroUser').style.display='none';};
         window.realizarCadastroUser=async()=>{ const cid=document.getElementById('cadCidadeSelect').value; const nom=document.getElementById('cadNome').value.trim(); const ema=document.getElementById('cadEmail').value.trim(); const sen=document.getElementById('cadSenha').value.trim(); if(!cid||!nom||!ema||!sen) return alert("Preencha tudo"); try { await addDoc(collection(db,"users"),{nome:nom,email:ema,senha:sen,role:'owner',cidadeId:cid,dataCadastro:new Date()}); await emailjs.send('service_cuesjea','template_dftiawx',{to_name:nom,to_email:ema,user_login:ema,user_password:sen}); alert("Cadastro feito!"); window.location.href="admin.html"; } catch(e){console.error(e);alert("Erro ao cadastrar.");} };
     </script>
