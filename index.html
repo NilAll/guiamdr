@@ -16,15 +16,25 @@
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
     <style>
-        /* CSS GLOBAL */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-user-select: none; user-select: none; }
         input, select { -webkit-user-select: text; user-select: text; }
         body { background-color: #222; background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; color: white; padding: 10px 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        .grad-top { position: fixed; top: 0; left: 0; width: 100%; height: 25%; pointer-events: none; z-index: 1; }
-        .grad-bottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 20%; pointer-events: none; z-index: 1; }
+        /* DEGRADÊS */
+        #gradTop { position: fixed; top: 0; left: 0; width: 100%; height: 30%; pointer-events: none; z-index: 1; background: linear-gradient(to bottom, rgba(0,0,0, 0.8), transparent); }
+        #gradBottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 30%; pointer-events: none; z-index: 1; background: linear-gradient(to top, rgba(0,0,0, 0.8), transparent); }
         
-        .sponsor-logo { position: fixed; left: 50%; transform: translateX(-50%); z-index: 5; pointer-events: none; display: none; max-width: 180px; }
+        /* LOGO PATROCINADOR - POSIÇÃO DINÂMICA PELO JS */
+        .sponsor-logo { 
+            position: fixed; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 5; 
+            pointer-events: none; 
+            display: none; 
+            max-width: 180px; 
+            /* A propriedade 'bottom' é controlada pelo JS (carregarCidades) */
+        }
 
         #appContent { display: none; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
 
@@ -32,12 +42,9 @@
         .header-top { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 15px; }
         
         .header-logo { 
-            height: 50px; 
-            width: auto; 
-            object-fit: contain;
+            height: 50px; width: auto; object-fit: contain;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-            cursor: pointer;
-            transition: transform 0.1s;
+            cursor: pointer; transition: transform 0.2s;
         }
         .header-logo:active { transform: scale(0.95); }
 
@@ -48,10 +55,28 @@
         .menu-opt { padding: 15px; color: #333; font-size: 14px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 500; display: flex; align-items: center; gap: 10px; }
         .menu-opt:hover { background: #f5f5f5; }
 
-        .city-display { color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 15px; font-weight: 500; text-shadow: 0 1px 3px rgba(0,0,0,0.5); cursor: pointer; }
-
-        .search-box { width: 100%; margin-bottom: 20px; position: relative; z-index: 10; }
-        input { width: 100%; padding: 12px 20px; font-size: 16px; border-radius: 30px; border: none; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; background: rgba(255, 255, 255, 0.95); font-weight: 500; }
+        /* BUSCA COM LUPA CINZA E TEXTO CENTRALIZADO */
+        .search-box { width: 100%; margin-bottom: 20px; position: relative; z-index: 10; display: flex; align-items: center; }
+        .search-icon { 
+            position: absolute; 
+            left: 20px; 
+            color: #999; /* Cinza Suave */
+            font-size: 18px; 
+            pointer-events: none; 
+            z-index: 11; 
+        }
+        input { 
+            width: 100%; 
+            padding: 12px 20px; /* Padding igual nas laterais garante o centro */
+            font-size: 16px; 
+            border-radius: 30px; 
+            border: none; 
+            outline: none; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            text-align: center; /* Centraliza o texto */
+            background: rgba(255, 255, 255, 0.95); 
+            font-weight: 500; 
+        }
         ::placeholder { color: #555; font-weight: bold; opacity: 1; }
 
         #resultados { width: 90%; max-width: 500px; padding-bottom: 50px; display: none; position: relative; z-index: 10; }
@@ -69,8 +94,7 @@
 
         #painelNavegacao { width: 90%; max-width: 500px; display: none; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px 20px 60px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: #333; margin-bottom: 20px; position: relative; z-index: 10; }
         .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-        .cat-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid #eee; transition: background 0.1s; }
-        .cat-card:active { background: #f0f0f0; }
+        .cat-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid #eee; }
         .cat-icon { font-size: 30px; margin-bottom: 5px; }
         .subcat-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .btn-voltar-cat { border: none; background: none; font-size: 20px; cursor: pointer; margin-right: 10px; padding: 5px; }
@@ -87,15 +111,16 @@
     </style>
 </head>
 <body>
-    <div id="gradTop" class="grad-top"></div><div id="gradBottom" class="grad-bottom"></div><img id="logoPatra" class="sponsor-logo" src="">
+    <div id="gradTop"></div>
+    <div id="gradBottom"></div>
+    
+    <img id="logoPatra" class="sponsor-logo" src="">
     
     <div id="appContent">
         <div class="header-container">
             <div class="header-top">
                 <button id="btnVoltarInicio" class="btn-voltar-home" onclick="clickVoltar()">⬅</button>
-                
                 <img src="logo.png" class="header-logo" alt="Guia da Cidade" onclick="resetarApp()">
-                
                 <button class="btn-hamburger" onclick="toggleMenu()">☰</button>
                 <div id="mainMenu" class="main-menu-dropdown">
                     <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro</div>
@@ -105,22 +130,14 @@
             </div>
             
             <div class="search-box">
+                <span class="search-icon">🔍</span>
                 <input type="text" id="busca" placeholder="Carregando..." autocomplete="off">
             </div>
         </div>
 
         <div id="painelNavegacao">
-            <div id="viewCategorias">
-                <h3 style="margin-bottom:10px; font-size:16px;">Categorias</h3>
-                <div id="gridCategorias" class="cat-grid"></div>
-            </div>
-            <div id="viewSubcategorias" style="display: none;">
-                <div class="subcat-header">
-                    <button class="btn-voltar-cat" onclick="voltarParaCategorias()">⬅</button>
-                    <h3 id="tituloCatSelecionada" style="margin:0; font-size:16px;">...</h3>
-                </div>
-                <div id="listaSubcats" class="subcat-list"></div>
-            </div>
+            <div id="viewCategorias"><h3 style="margin-bottom:10px; font-size:16px;">Categorias</h3><div id="gridCategorias" class="cat-grid"></div></div>
+            <div id="viewSubcategorias" style="display: none;"><div class="subcat-header"><button class="btn-voltar-cat" onclick="voltarParaCategorias()">⬅</button><h3 id="tituloCatSelecionada" style="margin:0; font-size:16px;">...</h3></div><div id="listaSubcats" class="subcat-list"></div></div>
         </div>
 
         <div id="resultados"></div>
@@ -175,7 +192,7 @@
                 const templateParams = { to_name: nome, to_email: email, user_login: email, user_password: senha };
                 await emailjs.send('service_cuesjea', 'template_dftiawx', templateParams);
                 alert("Cadastro realizado! Verifique seu e-mail com os dados de acesso."); window.location.href = "admin.html";
-            } catch(e) { console.error(e); alert("Erro ao cadastrar. Tente novamente."); btn.textContent = "Confirmar Cadastro"; btn.disabled = false; }
+            } catch(e) { console.error(e); alert("Erro ao cadastrar."); btn.textContent = "Confirmar Cadastro"; btn.disabled = false; }
         };
 
         async function carregarCidades() {
@@ -195,10 +212,16 @@
 
         window.selecionarCidade = (cidade) => { cidadeAtualId = cidade.id; localStorage.setItem("cidade_id", cidade.id); aplicarCidade(cidade); document.getElementById('modalCidades').style.display = 'none'; carregarDadosLocais(); resetarApp(); };
         function aplicarCidade(cidade) {
-            const input = document.getElementById('busca'); input.placeholder = `📍 ${cidade.nome} - ${cidade.uf}`;
-            if(cidade.fundo) document.body.style.backgroundImage = `url('${cidade.fundo}')`;
+            const input = document.getElementById('busca'); input.placeholder = `${cidade.nome} - ${cidade.uf}`;
+            if(cidade.fundo) document.body.style.backgroundImage = `url('${cidade.fundo}')`; 
+            else document.body.style.backgroundImage = `url('https://images.unsplash.com/photo-1505142468610-359e7d316be0?q=80&w=3070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`;
             const logo = document.getElementById('logoPatra');
-            if(cidade.logoPatra) { logo.src = cidade.logoPatra; logo.style.display = 'block'; logo.style.width = (cidade.logoSize || 30) + '%'; logo.style.bottom = (cidade.logoBottom || 15) + '%'; } else { logo.style.display = 'none'; }
+            if(cidade.logoPatra) { 
+                logo.src = cidade.logoPatra; 
+                logo.style.display = 'block'; 
+                logo.style.width = (cidade.logoSize || 30) + '%'; 
+                logo.style.bottom = (cidade.logoBottom || 15) + '%'; // JS controla a altura
+            } else { logo.style.display = 'none'; }
             document.getElementById('appContent').style.display = 'flex';
         }
 
@@ -235,22 +258,14 @@
         window.toggleMenu = () => { const m = document.getElementById('mainMenu'); m.style.display = (m.style.display==='flex')?'none':'flex'; };
         document.addEventListener('click', e => { if(document.getElementById('mainMenu').style.display==='flex' && !e.target.closest('.btn-hamburger') && !e.target.closest('.main-menu-dropdown')) document.getElementById('mainMenu').style.display='none'; });
 
-        // === NAVEGAÇÃO CORRIGIDA ===
-        window.clickVoltar = () => { 
-            if (viewState === 'results_sub') { abrirSubcategorias(lastCategory); return; } 
-            if (viewState === 'subcats') { voltarParaCategorias(); return; } 
-            resetarApp(); 
-        };
-        window.voltarParaCategorias = () => { 
-            document.getElementById('viewSubcategorias').style.display = 'none'; 
-            document.getElementById('viewCategorias').style.display = 'block'; 
-            document.getElementById('btnVoltarInicio').style.display = 'block'; 
-            viewState = 'cats'; 
-        };
+        // --- NAVEGAÇÃO CORRIGIDA ---
+        window.clickVoltar = () => { if (viewState === 'results_sub') { abrirSubcategorias(lastCategory); return; } if (viewState === 'subcats') { voltarParaCategorias(); return; } resetarApp(); };
+        window.voltarParaCategorias = () => { document.getElementById('viewSubcategorias').style.display = 'none'; document.getElementById('viewCategorias').style.display = 'block'; document.getElementById('btnVoltarInicio').style.display = 'block'; viewState = 'cats'; };
+        
         window.resetarApp = () => { 
             document.getElementById('busca').value = ""; 
             document.getElementById('resultados').style.display = 'none'; 
-            document.getElementById('painelNavegacao').style.display = 'none'; // Fecha o painel (MINIMIZA)
+            document.getElementById('painelNavegacao').style.display = 'none'; // MINIMIZA
             document.getElementById('btnVoltarInicio').style.display = 'none'; 
             document.getElementById('viewSubcategorias').style.display = 'none'; 
             document.getElementById('viewCategorias').style.display = 'block'; 
@@ -258,14 +273,7 @@
         };
 
         const inputBusca = document.getElementById('busca'); const painelNav = document.getElementById('painelNavegacao'); const divResultados = document.getElementById('resultados');
-        inputBusca.addEventListener('click', () => { 
-            if(inputBusca.value.trim() === "") { 
-                painelNav.style.display = 'block'; // Abre ao clicar na busca
-                divResultados.style.display = 'none'; 
-                document.getElementById('btnVoltarInicio').style.display = 'block'; 
-                if (viewState !== 'subcats') voltarParaCategorias(); 
-            }
-        });
+        inputBusca.addEventListener('click', () => { if(inputBusca.value.trim() === "") { painelNav.style.display = 'block'; divResultados.style.display = 'none'; document.getElementById('btnVoltarInicio').style.display = 'block'; if (viewState !== 'subcats') voltarParaCategorias(); }});
         inputBusca.addEventListener('keyup', (e) => { const termo = e.target.value.toLowerCase(); if(termo.length > 0) { painelNav.style.display = 'none'; divResultados.style.display = 'block'; document.getElementById('btnVoltarInicio').style.display = 'block'; viewState = 'results_search'; executarBusca(termo); } else { divResultados.style.display = 'none'; painelNav.style.display = 'block'; viewState = 'cats'; }});
         window.pesquisarPorSubcategoria = (termo) => { inputBusca.value = termo; painelNav.style.display = 'none'; divResultados.style.display = 'block'; viewState = 'results_sub'; executarBusca(termo.toLowerCase()); };
 
@@ -275,7 +283,7 @@
             ordem.forEach(cat => {
                 if(!estruturaCategorias.hasOwnProperty(cat)) return;
                 const card = document.createElement('div'); card.className = 'cat-card';
-                card.innerHTML = `<div class=\"cat-icon\">${ICONES_CAT[cat] || "📂"}</div><div class=\"cat-name\">${cat}</div>`;
+                card.innerHTML = `<div class="cat-icon">${ICONES_CAT[cat] || "📂"}</div><div class="cat-name">${cat}</div>`;
                 card.addEventListener('click', () => abrirSubcategorias(cat));
                 grid.appendChild(card);
             });
