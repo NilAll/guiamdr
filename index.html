@@ -14,8 +14,8 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: #222; background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; color: white; padding: 10px 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
-        #gradTop { position: fixed; top: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 1; background: linear-gradient(to bottom, rgba(0, 30, 100, 0.9), transparent); }
-        #gradBottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 1; background: linear-gradient(to top, rgba(0,0,0, 0.95), transparent); }
+        #gradTop { position: fixed; top: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 1; background: linear-gradient(to bottom, rgba(0, 60, 180, 0.85), transparent); }
+        #gradBottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 1; background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent); }
         .sponsor-logo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 5; pointer-events: none; display: none; max-width: 150px; }
         
         #appContent { display: none; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
@@ -23,40 +23,20 @@
         .header-top { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 15px; }
         .header-logo { height: 50px; cursor: pointer; transition: transform 0.2s; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
         
-        /* MENU HAMBURGUER */
         .btn-hamburger { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .btn-voltar-home { position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: none; border: none; color: white; font-size: 24px; cursor: pointer; display: none; padding: 10px; }
-        
-        .main-menu-dropdown { 
-            position: absolute; top: 55px; right: 10px; 
-            background: white; border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4); 
-            display: none; flex-direction: column; 
-            width: 180px; z-index: 1000; overflow: hidden; 
-            text-align: left; 
-        }
+        .main-menu-dropdown { position: absolute; top: 55px; right: 10px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); display: none; flex-direction: column; width: 180px; z-index: 1000; overflow: hidden; text-align: left; }
         .menu-opt { padding: 15px; color: #333; font-size: 14px; border-bottom: 1px solid #eee; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; }
         .menu-opt:hover { background: #f5f5f5; }
-        .menu-opt:last-child { border-bottom: none; }
-
         .search-box { width: 100%; margin-bottom: 20px; position: relative; z-index: 10; display: flex; align-items: center; }
         .search-icon { position: absolute; left: 20px; color: #999; font-size: 18px; pointer-events: none; z-index: 11; }
         input { width: 100%; padding: 12px 20px; font-size: 16px; border-radius: 30px; border: none; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-align: center; background: rgba(255, 255, 255, 0.95); font-weight: 500; }
-        
-        #painelNavegacao { 
-            width: 90%; max-width: 500px; display: none; 
-            background: rgba(255, 255, 255, 0.95); border-radius: 15px; 
-            padding: 20px 20px 60px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
-            color: #333; margin-bottom: 20px; position: relative; z-index: 10; 
-        }
-        
+        #painelNavegacao { width: 90%; max-width: 500px; display: none; background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 20px 20px 60px 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); color: #333; margin-bottom: 20px; position: relative; z-index: 10; }
         .cat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
         .cat-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; border: 1px solid #eee; }
         .cat-icon { font-size: 30px; margin-bottom: 5px; }
-        
         .vip-card { background: linear-gradient(135deg, #6a11cb, #2575fc); color: white; border: none; box-shadow: 0 4px 10px rgba(106, 17, 203, 0.4); }
         .vip-card .cat-name { font-weight: bold; }
-
         #resultados { width: 90%; max-width: 500px; padding-bottom: 80px; display: none; position: relative; z-index: 10; }
         .card { background: rgba(255, 255, 255, 0.95); border-radius: 12px; overflow: hidden; margin-bottom: 15px; color: #333; display: flex; align-items: center; padding: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); height: 90px; cursor: pointer; }
         .card-img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; margin-right: 15px; background: #ddd; flex-shrink: 0; }
@@ -65,7 +45,6 @@
         .card-content p { color: #666; font-size: 13px; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .card-footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
         .tag { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #555; }
-        
         .vip-gift-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; overflow: hidden; display: flex; padding: 15px; align-items: center; }
         .vip-gift-img { width: 110px; height: 110px; border-radius: 8px; object-fit: cover; background: #eee; margin-right: 15px; flex-shrink: 0; }
         .vip-gift-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 110px; }
@@ -73,11 +52,9 @@
         .vip-gift-store { font-size: 13px; color: #666; margin-top: 5px; }
         .btn-concorrer { background: #28a745; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer; font-size: 13px; margin-top: auto; transition: background 0.2s; }
         .btn-concorrer:active { transform: scale(0.95); background: #218838; }
-
         .subcat-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .btn-voltar-cat { border: none; background: none; font-size: 20px; cursor: pointer; margin-right: 10px; }
         .subcat-chip { background: #f8f9fa; padding: 15px 10px; border-radius: 8px; font-size: 14px; color: #333; cursor: pointer; border: 1px solid #ddd; text-align: center; font-weight: 500; margin-bottom: 5px; display: block; }
-
         .city-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .city-modal-content { background: white; width: 85%; max-width: 400px; padding: 30px 20px; border-radius: 15px; text-align: center; }
         .btn-cad-user { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
@@ -93,9 +70,7 @@
             <div class="header-top">
                 <button id="btnVoltarInicio" class="btn-voltar-home" onclick="clickVoltar()">⬅</button>
                 <img src="logo.png" class="header-logo" alt="Guia" onclick="resetarApp()">
-                
                 <button class="btn-hamburger" onclick="toggleMenu()">☰</button>
-                
                 <div id="mainMenu" class="main-menu-dropdown">
                     <div class="menu-opt" onclick="abrirModalVipAccess()">💎 Área VIP</div>
                     <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro</div>
@@ -116,7 +91,7 @@
     <div id="modalVipAccess" class="city-modal" style="display:none" onclick="fecharModalVip(event)">
         <div class="city-modal-content form-user" onclick="event.stopPropagation()">
             <h2 style="margin-top:0; color:#ffc107;">💎 Área VIP</h2>
-            <p style="color:#666; font-size:13px;">Digite a Palavra Secreta:</p>
+            <p style="color:#666; font-size:13px;">Digite sua Palavra Secreta:</p>
             <input type="text" id="vipSecretInput" placeholder="Sua Senha" onkeypress="if(event.key==='Enter') validarVip()">
             <button class="btn-cad-user" style="background:#ffc107; color:black" onclick="validarVip()">Acessar</button>
             <button class="btn-cad-user btn-want-vip" onclick="solicitarVipZap()">Quero ser VIP</button>
@@ -125,11 +100,10 @@
     </div>
 
     <div id="modalCidades" class="city-modal" style="display:none"><div class="city-modal-content"><h2 style="margin-top:0; color:#007bff;">Bem-vindo!</h2><p>Selecione sua cidade:</p><div id="listaCidadesSelect" style="max-height:300px;overflow-y:auto"></div></div></div>
-
     <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2><select id="cadCidadeSelect"><option value="">Selecione sua Cidade</option></select><input id="cadNome" placeholder="Nome"><input id="cadEmail" placeholder="Email"><input id="cadSenha" type="password" placeholder="Senha"><button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Cadastrar</button><button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button></div></div>
 
     <script type="module">
-        const VERSAO_ATUAL="3.2"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="4.1"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -140,17 +114,8 @@
 
         (function(){ emailjs.init("vOaHzeApkyntx09x6"); })();
 
-        // --- MENU HAMBURGUER (RESTAURADO) ---
-        window.toggleMenu = () => { 
-            const m = document.getElementById('mainMenu'); 
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; 
-        };
-        // Fecha menu ao clicar fora
-        document.addEventListener('click', e => { 
-            if(document.getElementById('mainMenu').style.display === 'flex' && !e.target.closest('.btn-hamburger') && !e.target.closest('.main-menu-dropdown')) {
-                document.getElementById('mainMenu').style.display = 'none';
-            }
-        });
+        window.toggleMenu = () => { const m = document.getElementById('mainMenu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; };
+        document.addEventListener('click', e => { if(document.getElementById('mainMenu').style.display === 'flex' && !e.target.closest('.btn-hamburger') && !e.target.closest('.main-menu-dropdown')) { document.getElementById('mainMenu').style.display = 'none'; } });
 
         window.abrirModalVipAccess = () => { document.getElementById('modalVipAccess').style.display = 'flex'; window.toggleMenu(); };
         window.fecharModalVip = (e) => { if(!e || e.target.id === 'modalVipAccess') document.getElementById('modalVipAccess').style.display = 'none'; };
@@ -170,7 +135,11 @@
         async function abrirAreaVipExclusiva() {
             lastCategory="Área VIP"; document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent="🎁 Sorteios da Semana"; document.getElementById('btnVoltarInicio').style.display='block'; viewState='subcats';
             const l = document.getElementById('listaSubcats'); l.innerHTML = "<p>Carregando sorteios...</p>";
-            const q = query(collection(db, "guia_cidades"), where("sorteio_ativo", "==", true));
+            
+            // Só lista quem tem delivery ativo nesta cidade
+            let q = query(collection(db, "guia_cidades"), where("temDelivery", "==", true));
+            if(cidadeAtualId) q = query(collection(db, "guia_cidades"), where("temDelivery", "==", true), where("cidadeId", "==", cidadeAtualId));
+            
             const snap = await getDocs(q);
             
             l.innerHTML = "";
@@ -193,7 +162,7 @@
                                 <div class="vip-gift-title">${item.deliveryBrinde}</div>
                                 <span class="vip-gift-store">Oferecido por: <b>${item.nome}</b></span>
                             </div>
-                            <button class="btn-concorrer" onclick="inscreverSorteio('${d.id}', '${item.deliveryBrinde}')">QUERO CONCORRER</button>
+                            <button class="btn-concorrer" onclick="inscreverSorteio('${d.id}', '${item.nome}', '${item.deliveryBrinde}')">QUERO ESSE</button>
                         </div>
                     `;
                     l.appendChild(card);
@@ -201,17 +170,27 @@
             }
         }
 
-        window.inscreverSorteio = async (localId, brinde) => {
+        window.inscreverSorteio = async (localId, lojaNome, brindeNome) => {
             if(!usuarioVipAtual) return alert("Erro de sessão.");
-            if(confirm(`Confirmar participação no sorteio: ${brinde}?`)) {
-                alert(`Inscrição Confirmada!\nSorteio: Sábado às 17h.`);
+            if(confirm(`Gerar número da sorte para: ${brindeNome}?`)) {
+                const numeroSorte = Math.floor(Math.random() * 10);
+                
+                await addDoc(collection(db, "vip_palpites"), {
+                    vipNome: usuarioVipAtual.nome,
+                    vipEmail: usuarioVipAtual.email,
+                    vipZap: usuarioVipAtual.whatsapp || "",
+                    loja: lojaNome,
+                    brinde: brindeNome,
+                    numero: numeroSorte,
+                    cidadeId: cidadeAtualId,
+                    data: new Date()
+                });
+
+                alert(`🎉 Seu número da sorte é: ${numeroSorte}!\n\nBoa sorte!`);
             }
         };
 
-        window.solicitarVipZap = async () => {
-            try { const g=await getDoc(doc(db,"config","geral")); if(g.exists()&&g.data().zapAdmin) window.open(`https://wa.me/${g.data().zapAdmin}?text=Quero ser VIP!`, '_blank'); else alert("Sem contato configurado."); } catch(e){}
-        };
-
+        window.solicitarVipZap = async () => { try { const g=await getDoc(doc(db,"config","geral")); if(g.exists()&&g.data().zapAdmin) window.open(`https://wa.me/${g.data().zapAdmin}?text=Quero ser VIP!`, '_blank'); else alert("Sem contato configurado."); } catch(e){} };
         window.clickVoltar = () => { if(viewState!=='home') { if(viewState==='subcats') voltarParaCategorias(); else resetarApp(); } };
         window.voltarParaCategorias = () => { document.getElementById('viewSubcategorias').style.display='none'; document.getElementById('viewCategorias').style.display='block'; document.getElementById('btnVoltarInicio').style.display='block'; viewState='cats'; };
         window.resetarApp = () => { document.getElementById('busca').value=""; document.getElementById('resultados').style.display='none'; document.getElementById('painelNavegacao').style.display='none'; document.getElementById('btnVoltarInicio').style.display='none'; document.getElementById('viewSubcategorias').style.display='none'; document.getElementById('viewCategorias').style.display='block'; viewState='home'; };
@@ -223,7 +202,16 @@
         async function carregarDadosIniciais() {
             await carregarCidades();
             try {
-                const g = await getDoc(doc(db,"config","geral")); if(g.exists()){ const d=g.data(); if(d.opacAzul)document.getElementById('gradTop').style.background=`linear-gradient(to bottom, rgba(0,0,255, ${d.opacAzul/100}), transparent)`; if(d.logoHeight)document.querySelector('.header-logo').style.height=d.logoHeight+'px'; if(d.logoTop)document.querySelector('.header-logo').style.marginTop=d.logoTop+'px'; }
+                const g = await getDoc(doc(db,"config","geral")); if(g.exists()){ const d=g.data(); 
+                if(d.opacAzul!==undefined) document.getElementById('gradTop').style.background = `linear-gradient(to bottom, rgba(0, 60, 180, ${d.opacAzul/100}), transparent)`;
+                if(d.opacPreto!==undefined) document.getElementById('gradBottom').style.background = `linear-gradient(to top, rgba(0,0,0, ${d.opacPreto/100}), transparent)`;
+                const header = document.querySelector('.header-logo');
+                if(d.headerSize) header.style.height=d.headerSize+'px'; 
+                if(d.headerTop) header.style.marginTop=d.headerTop+'px';
+                const sponsor = document.getElementById('logoPatra');
+                if(d.sponsorSize) sponsor.style.width=d.sponsorSize+'%';
+                if(d.sponsorBottom) sponsor.style.bottom=d.sponsorBottom+'%';
+                }
                 const c = await getDoc(doc(db,"config","categorias")); if(c.exists()) estruturaCategorias=c.data();
                 const i = await getDoc(doc(db,"config","icons")); if(i.exists()) customIcons=i.data();
                 renderizarCategorias();
@@ -241,7 +229,7 @@
         function aplicarCidade(c) {
             document.getElementById('busca').placeholder=`${c.nome} - ${c.uf}`;
             if(c.fundo) document.body.style.backgroundImage=`url('${c.fundo}')`;
-            const lp=document.getElementById('logoPatra'); if(c.logoPatra){ lp.src=c.logoPatra; lp.style.display='block'; lp.style.width=(c.logoSize||30)+'%'; lp.style.bottom=(c.logoBottom||15)+'%'; } else lp.style.display='none';
+            const lp=document.getElementById('logoPatra'); if(c.logoPatra){ lp.src=c.logoPatra; lp.style.display='block'; } else lp.style.display='none';
         }
 
         function renderizarCategorias() {
@@ -282,8 +270,6 @@
         carregarDadosIniciais();
         
         window.abrirModalCadastroUser=()=>{document.getElementById('modalCadastroUser').style.display='flex';window.toggleMenu&&window.toggleMenu();};
-        window.abrirModalCidades=(c)=>{document.getElementById('modalCidades').style.display='flex';document.getElementById('btnCancelarCidade').style.display=c?'inline-block':'none';window.toggleMenu&&window.toggleMenu();};
-        window.fecharModalCidades=()=>{document.getElementById('modalCidades').style.display='none';};
         window.fecharModalCadastro=(e)=>{if(!e||e.target.id==='modalCadastroUser')document.getElementById('modalCadastroUser').style.display='none';};
         window.realizarCadastroUser=async()=>{ const cid=document.getElementById('cadCidadeSelect').value; const nom=document.getElementById('cadNome').value.trim(); const ema=document.getElementById('cadEmail').value.trim(); const sen=document.getElementById('cadSenha').value.trim(); if(!cid||!nom||!ema||!sen) return alert("Preencha tudo"); try { await addDoc(collection(db,"users"),{nome:nom,email:ema,senha:sen,role:'owner',cidadeId:cid,dataCadastro:new Date()}); await emailjs.send('service_cuesjea','template_dftiawx',{to_name:nom,to_email:ema,user_login:ema,user_password:sen}); alert("Cadastro feito!"); window.location.href="admin.html"; } catch(e){console.error(e);alert("Erro ao cadastrar.");} };
     </script>
