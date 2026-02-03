@@ -3,30 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>Detalhes</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
+        /* RESET E CONFIGURAÇÕES GERAIS */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-user-select: none; user-select: none; }
-        body { background: #222; height: 100dvh; width: 100vw; display: flex; flex-direction: column; overflow: hidden; }
         
-        .hero-container { width: 100%; height: 35vh; position: relative; background: #333; flex-shrink: 0; }
+        body { 
+            /* MUDANÇA 1: Fundo Branco para eliminar o espaço escuro vazio */
+            background: #ffffff; 
+            
+            min-height: 100vh; 
+            width: 100vw; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-x: hidden; 
+            
+            /* Espaço para o banner quadrado não cobrir o conteúdo */
+            padding-bottom: 105vw; 
+        }
+
+        /* Ajuste para telas maiores (PC/Tablet) */
+        @media (min-width: 500px) {
+            body {
+                background: #333; /* No PC, mantém o fundo escuro fora do app para destaque */
+                padding-bottom: 0; /* Remove padding do body no PC */
+                align-items: center; /* Centraliza o app */
+            }
+            /* O App Container simula o celular no PC */
+            #app-shell {
+                width: 100%;
+                max-width: 500px;
+                background: white;
+                min-height: 100vh;
+                position: relative;
+                padding-bottom: 520px; /* Padding aplicado aqui no PC */
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            }
+        }
+        
+        /* CAPA (Hero) - Altura Fixa */
+        .hero-container { 
+            width: 100%; 
+            height: 220px; 
+            position: relative; 
+            background: #333; 
+            flex-shrink: 0; 
+        }
         .hero { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; }
         
-        .bottom-wrapper { width: 100%; max-width: 500px; margin: 0 auto; flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: #eee; }
+        /* CONTEÚDO (Centro) */
+        .bottom-wrapper { 
+            width: 100%; 
+            /* Removemos max-width aqui pois agora o #app-shell controla isso no PC */
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            
+            background: white; 
+            border-radius: 25px 25px 0 0; 
+            margin-top: -25px; 
+            padding-top: 10px; 
+            
+            position: relative; 
+            z-index: 10; 
+        }
         
-        .info-card { background: white; padding: 20px; border-bottom: 1px solid #ddd; }
+        .info-card { background: white; padding: 10px 20px 20px 20px; }
         .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
         h1 { margin: 0; font-size: 20px; color: #222; font-weight: 800; }
         
         .price-badge { text-align: right; }
         .price-val { font-size: 18px; font-weight: bold; color: #28a745; display: block; }
         .old-price-val { font-size: 11px; text-decoration: line-through; color: #999; }
-
         .sub-info { color: #666; margin-top: 4px; font-size: 13px; }
         
+        /* BOTÕES */
         .actions-bar { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
         .btn-action { flex: 1; padding: 10px 0; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; text-align: center; font-size: 11px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-transform: uppercase; cursor: pointer; min-width: 70px; }
-        
-        /* CORES DOS BOTÕES */
         .btn-call { background: #007bff; } 
         .btn-whats { background: #25D366; } 
         .btn-insta { background: #E1306C; } 
@@ -34,76 +91,130 @@
         .btn-maps { background: #4285F4; }
         .btn-gallery { background: #6f42c1; } 
 
-        /* ÁREA PUBLICIDADE */
-        .publi-container { width: 100%; aspect-ratio: 1 / 1; background: #ddd; position: relative; margin-top: auto; display: none; }
-        .publi-img { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
-        .publi-label { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 9px; text-transform: uppercase; }
-
-        /* ÁREA MENU DELIVERY */
-        .menu-section { display: none; background: white; margin-top: 10px; padding: 15px; }
+        /* ÁREAS INTERNAS */
+        .menu-section { display: none; background: white; margin-top: 10px; padding: 15px; border-top: 1px solid #eee; }
         .menu-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
         .btn-add { background: #28a745; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
 
-        /* ÁREA GALERIA DE MINIATURAS (NOVO) */
-        .gallery-section { display: none; background: white; margin-top: 10px; padding: 15px; }
+        .gallery-section { display: none; background: white; margin-top: 10px; padding: 15px; border-top: 1px solid #eee; }
         .grid-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .grid-thumb-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; }
 
-        .fab-cart { position: fixed; bottom: 20px; right: 20px; background: #ffc107; color: #333; width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 100; }
+        /* --- BANNER PUBLICITÁRIO FIXO (QUADRADO) --- */
+        #box-publicidade-fixa {
+            position: fixed;
+            bottom: 0;
+            /* Centralização robusta */
+            left: 50%; 
+            transform: translateX(-50%); 
+            
+            width: 100%;
+            max-width: 500px; 
+            aspect-ratio: 1 / 1; 
+            height: auto;
+            
+            background-color: #000;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            
+            /* MUDANÇA 2: Removida a borda amarela */
+            border-top: none; 
+            
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
+        }
+
+        #imgBannerFixo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            display: block;
+        }
+        /* ------------------------------------------- */
+
+        /* CARRINHO */
+        .fab-cart { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; /* Padrão mobile */
+            background: #ffc107; 
+            color: #333; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
+            z-index: 10000; 
+            transition: bottom 0.3s;
+        }
+        
+        /* Ajuste de posição do carrinho no PC */
+        @media (min-width: 500px) {
+            .fab-cart {
+                right: calc(50% - 230px); /* Mantém dentro da área do app no PC */
+            }
+        }
+
         .cart-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; display: none; align-items: flex-end; justify-content: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10001; display: none; align-items: flex-end; justify-content: center; }
         .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; max-height: 85vh; display: flex; flex-direction: column; }
         
         /* LIGHTBOX */
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 12000; display: none; align-items: center; justify-content: center; }
         .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 2002; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; font-size: 40px; padding: 10px; cursor: pointer; z-index: 2001; }
+        .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 12002; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; font-size: 40px; padding: 10px; cursor: pointer; z-index: 12001; }
         .nav-prev { left: 10px; }
         .nav-next { right: 10px; }
     </style>
 </head>
 <body>
-    <a href="index.html" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; z-index: 50;">⬅ Voltar</a>
     
-    <div class="hero-container"><img id="capa" class="hero" src="" onclick="abrirLightbox(0)"></div>
-    
-    <div class="bottom-wrapper">
-        <div class="info-card">
-            <div class="header-row">
-                <div><h1 id="nome">...</h1><p class="sub-info" id="cats">...</p></div>
-                <div id="priceBox" class="price-badge" style="display:none;">
-                    <div id="oldPrice" class="old-price-val"></div>
-                    <div id="currPrice" class="price-val"></div>
+    <div id="app-shell">
+        <a href="index.html" style="position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; z-index: 50;">⬅ Voltar</a>
+        
+        <div class="hero-container"><img id="capa" class="hero" src="" onclick="abrirLightbox(0)"></div>
+        
+        <div class="bottom-wrapper">
+            <div class="info-card">
+                <div class="header-row">
+                    <div><h1 id="nome">...</h1><p class="sub-info" id="cats">...</p></div>
+                    <div id="priceBox" class="price-badge" style="display:none;">
+                        <div id="oldPrice" class="old-price-val"></div>
+                        <div id="currPrice" class="price-val"></div>
+                    </div>
+                </div>
+                <p class="sub-info" id="endereco">...</p>
+                
+                <div class="actions-bar">
+                    <a id="btnLigar" href="#" class="btn-action btn-call">LIGAR</a>
+                    <a id="btnZapPerfil" href="#" class="btn-action btn-whats">WHATS</a>
+                    <a id="btnInsta" href="#" class="btn-action btn-insta" target="_blank">INSTA</a>
+                    <a id="btnRota" href="#" class="btn-action btn-maps" target="_blank">📍 ROTA</a>
+                    <div id="btnGaleria" class="btn-action btn-gallery" onclick="alternarGaleria()">📷 GALERIA</div>
+                    <div id="btnDelivery" class="btn-action btn-delivery" onclick="alternarDelivery()">DELIVERY</div>
                 </div>
             </div>
-            <p class="sub-info" id="endereco">...</p>
-            
-            <div class="actions-bar">
-                <a id="btnLigar" href="#" class="btn-action btn-call">LIGAR</a>
-                <a id="btnZapPerfil" href="#" class="btn-action btn-whats">WHATS</a>
-                <a id="btnInsta" href="#" class="btn-action btn-insta" target="_blank">INSTA</a>
-                <a id="btnRota" href="#" class="btn-action btn-maps" target="_blank">📍 ROTA</a>
-                <div id="btnGaleria" class="btn-action btn-gallery" onclick="alternarGaleria()">📷 GALERIA</div>
-                <div id="btnDelivery" class="btn-action btn-delivery" onclick="alternarDelivery()">DELIVERY</div>
+
+            <div id="area-galeria" class="gallery-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Galeria de Fotos</h3><button onclick="alternarGaleria()" style="background:none;border:none;font-size:20px">✕</button></div>
+                <div id="grid-fotos" class="grid-thumbs"></div>
+            </div>
+
+            <div id="area-cardapio" class="menu-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Cardápio</h3><button onclick="alternarDelivery()" style="background:none;border:none;font-size:20px">✕</button></div>
+                <div id="lista-produtos"></div>
             </div>
         </div>
+    </div>
 
-        <div id="area-galeria" class="gallery-section">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Galeria de Fotos</h3><button onclick="alternarGaleria()" style="background:none;border:none;font-size:20px">✕</button></div>
-            <div id="grid-fotos" class="grid-thumbs"></div>
-        </div>
-
-        <div id="area-cardapio" class="menu-section">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Cardápio</h3><button onclick="alternarDelivery()" style="background:none;border:none;font-size:20px">✕</button></div>
-            <div id="lista-produtos"></div>
-        </div>
-
-        <div id="area-publi" class="publi-container">
-            <div class="publi-label">Patrocinado</div>
-            <img id="imgPubli" class="publi-img" src="" alt="Publicidade">
-        </div>
+    <div id="box-publicidade-fixa">
+        <img id="imgBannerFixo" src="" alt="Publicidade">
     </div>
 
     <div id="btnCart" class="fab-cart" onclick="abrirCarrinho()">🛒<div id="cartCount" class="cart-badge">0</div></div>
@@ -137,14 +248,12 @@
                 allImages = (localData.imagens && localData.imagens.length > 0) ? localData.imagens : (localData.imagem ? [localData.imagem] : ["https://via.placeholder.com/400x200"]);
                 document.getElementById('capa').src = allImages[0];
                 
-                // Botão Galeria: Só mostra se tiver mais de 1 foto
                 if(allImages.length > 1) { document.getElementById('btnGaleria').style.display = 'flex'; }
 
                 document.getElementById('nome').textContent = localData.nome;
                 document.getElementById('cats').textContent = `${localData.categoria} > ${localData.subcategoria || ''}`;
                 document.getElementById('endereco').textContent = localData.cidade;
 
-                // Preço
                 if(localData.preco > 0) {
                     document.getElementById('priceBox').style.display = 'block';
                     document.getElementById('currPrice').textContent = `R$ ${localData.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
@@ -167,43 +276,23 @@
                     });
                 }
                 
-                // Pré-carrega a galeria
                 renderizarGradeGaleria();
             }
             inicializarPublis();
         }
 
-        // --- SISTEMA DE ABAS (GALERIA / DELIVERY / PUBLI) ---
         window.alternarGaleria = () => {
             const galeria = document.getElementById('area-galeria');
             const menu = document.getElementById('area-cardapio');
-            const publi = document.getElementById('area-publi');
-
-            menu.style.display = 'none'; // Fecha menu
-            publi.style.display = 'none'; // Fecha publi
-
-            if (galeria.style.display === 'block') {
-                galeria.style.display = 'none';
-                if(bannersCache.length > 0) publi.style.display = 'block'; // Restaura publi
-            } else {
-                galeria.style.display = 'block';
-            }
+            menu.style.display = 'none';
+            if (galeria.style.display === 'block') { galeria.style.display = 'none'; } else { galeria.style.display = 'block'; }
         };
 
         window.alternarDelivery = () => {
             const galeria = document.getElementById('area-galeria');
             const menu = document.getElementById('area-cardapio');
-            const publi = document.getElementById('area-publi');
-
-            galeria.style.display = 'none'; // Fecha galeria
-            publi.style.display = 'none'; // Fecha publi
-
-            if (menu.style.display === 'block') {
-                menu.style.display = 'none';
-                if(bannersCache.length > 0) publi.style.display = 'block'; // Restaura publi
-            } else {
-                menu.style.display = 'block';
-            }
+            galeria.style.display = 'none';
+            if (menu.style.display === 'block') { menu.style.display = 'none'; } else { menu.style.display = 'block'; }
         };
 
         function renderizarGradeGaleria() {
@@ -214,18 +303,50 @@
             });
         }
 
-        // --- LIGHTBOX ---
         window.abrirLightbox = (idx = 0) => { currentImgIdx = idx; atualizarLightbox(); document.getElementById('lightbox').style.display = 'flex'; }
         window.atualizarLightbox = () => { document.getElementById('imgLightbox').src = allImages[currentImgIdx]; }
         window.mudarFoto = (dir, e) => { if(e) e.stopPropagation(); currentImgIdx += dir; if(currentImgIdx < 0) currentImgIdx = allImages.length - 1; if(currentImgIdx >= allImages.length) currentImgIdx = 0; atualizarLightbox(); }
         window.fecharFotoCapa = () => { document.getElementById('lightbox').style.display = 'none'; }
         window.fecharSeForFundo = (e) => { if(e.target.id === 'lightbox') fecharFotoCapa(); }
 
-        // --- PUBLI ---
-        async function inicializarPublis() { try { const snap = await getDocs(collection(db, "guia_cidades")); snap.forEach(d => { const dt = d.data(); if(dt.publi && dt.publi.ativa && dt.publi.img) { bannersCache.push({img: dt.publi.img, id: d.id}); } }); if(bannersCache.length > 0) { mostrarNovaPubli(); setInterval(mostrarNovaPubli, 60000); } } catch(e){} }
-        function mostrarNovaPubli() { if(bannersCache.length === 0) return; if(document.getElementById('area-cardapio').style.display === 'block' || document.getElementById('area-galeria').style.display === 'block') return; const item = bannersCache[Math.floor(Math.random() * bannersCache.length)]; const img = document.getElementById('imgPubli'); img.src = item.img; img.onclick = () => window.location.href=`detalhes.html?id=${item.id}`; document.getElementById('area-publi').style.display = 'block'; }
+        // --- SISTEMA DE PUBLICIDADE (BANNER) ---
+        async function inicializarPublis() { 
+            try { 
+                const snap = await getDocs(collection(db, "guia_cidades")); 
+                snap.forEach(d => { 
+                    const dt = d.data(); 
+                    if(dt.publi && dt.publi.ativa && dt.publi.img) { 
+                        bannersCache.push({img: dt.publi.img, id: d.id}); 
+                    } 
+                }); 
+                if(bannersCache.length > 0) { 
+                    mostrarNovaPubli(); 
+                    setInterval(mostrarNovaPubli, 60000); 
+                } 
+            } catch(e){} 
+        }
+        
+        function mostrarNovaPubli() { 
+            if(bannersCache.length === 0) return; 
+            const item = bannersCache[Math.floor(Math.random() * bannersCache.length)]; 
+            
+            const img = document.getElementById('imgBannerFixo'); 
+            const box = document.getElementById('box-publicidade-fixa');
+            
+            img.src = item.img; 
+            img.onclick = () => window.location.href=`detalhes.html?id=${item.id}`; 
+            
+            box.style.display = 'flex'; 
+            
+            // Ajusta o carrinho para subir
+            const btnCart = document.getElementById('btnCart');
+            btnCart.style.bottom = "calc(100vw + 20px)"; // Sobe o carrinho acima do banner quadrado
+            
+            if(window.innerWidth >= 500) {
+                 btnCart.style.bottom = "540px";
+            }
+        }
 
-        // --- CARRINHO ---
         window.addCart = (idx) => { const item = localData.cardapio[idx]; carrinho.push(item); atualizarCarrinho(); };
         function atualizarCarrinho() {
             document.getElementById('cartCount').textContent = carrinho.length;

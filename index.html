@@ -56,7 +56,7 @@
         .tag-delivery { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .price-display { font-weight: bold; color: #333; font-size: 13px; }
 
-        /* --- MODAL GALERIA ESTILO INSTAGRAM (CORRIGIDO) --- */
+        /* MODAL GALERIA ESTILO INSTAGRAM (CORRIGIDO) */
         #modalGaleria { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #000; z-index: 3000; display: none; flex-direction: column; 
@@ -66,26 +66,26 @@
             padding: 15px; 
             display: flex; justify-content: space-between; align-items: center; 
             background: #111; color: white; border-bottom: 1px solid #333;
-            flex-shrink: 0; /* Impede encolher */
+            flex-shrink: 0; 
         }
         .galeria-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
         .btn-close-galeria { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0 10px; }
         
         .gallery-grid-view { 
             display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* 3 Colunas Exatas */
-            gap: 1px; /* Espaço mínimo */
-            padding: 0; /* Sem padding para ir de ponta a ponta */
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 1px; 
+            padding: 0; 
             width: 100%;
             overflow-y: auto; 
             flex: 1; 
-            align-content: start; /* Começa do topo */
+            align-content: start; 
         }
         
         .gallery-item { 
             position: relative;
             width: 100%;
-            aspect-ratio: 1 / 1; /* Quadrado Perfeito */
+            aspect-ratio: 1 / 1; 
             background: #222;
             overflow: hidden;
         }
@@ -94,7 +94,7 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%; 
-            object-fit: cover; /* Cobre todo o quadrado */
+            object-fit: cover; 
             display: block; 
         }
 
@@ -110,13 +110,63 @@
         .vip-gift-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 110px; }
         .vip-gift-title { font-weight: bold; font-size: 18px; color: #333; margin: 0; line-height: 1.2; }
         .vip-gift-store { font-size: 13px; color: #666; margin-top: 5px; }
+        
         .btn-concorrer { background: #28a745; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer; font-size: 13px; margin-top: auto; transition: background 0.2s; }
         .btn-concorrer:active { transform: scale(0.95); background: #218838; }
+        
         .btn-disabled { background: #6c757d !important; color: #fff !important; cursor: not-allowed !important; transform: none !important; opacity: 0.8; }
+        
+        /* BOTÃO VENCEDOR (Dourado) */
+        .btn-winner { 
+            background: linear-gradient(135deg, #ffd700, #ffb900) !important; 
+            color: #000 !important; 
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+            border: 1px solid #e0a800 !important;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.4);
+            animation: pulseWinner 2s infinite;
+        }
+        
+        @keyframes pulseWinner {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+        }
 
         .subcat-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .btn-voltar-cat { border: none; background: none; font-size: 20px; cursor: pointer; margin-right: 10px; }
-        .subcat-chip { background: #f8f9fa; padding: 15px 10px; border-radius: 8px; font-size: 14px; color: #333; cursor: pointer; border: 1px solid #ddd; text-align: center; font-weight: 500; margin-bottom: 5px; display: block; }
+        
+        /* --- ESTILOS NOVOS PARA SUBCATEGORIAS EM COLUNAS --- */
+        #listaSubcats {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 colunas */
+            gap: 10px;
+        }
+
+        .subcat-chip { 
+            background: #f8f9fa; 
+            padding: 15px 10px; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            color: #333; 
+            cursor: pointer; 
+            border: 1px solid #ddd; 
+            text-align: center; 
+            font-weight: 500; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+        }
+
+        /* O primeiro filho (Botão Ver Tudo) ocupa toda a largura */
+        #listaSubcats .subcat-chip:first-child {
+            grid-column: 1 / -1;
+            background-color: #e3f2fd;
+            border-color: #bbdefb;
+            font-weight: bold;
+        }
+        /* ---------------------------------------------------- */
+
         .city-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; }
         .city-modal-content { background: white; width: 85%; max-width: 400px; padding: 30px 20px; border-radius: 15px; text-align: center; }
         .btn-cad-user { width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; }
@@ -187,7 +237,7 @@
     <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2><select id="cadCidadeSelect"><option value="">Selecione sua Cidade</option></select><input id="cadNome" placeholder="Nome"><input id="cadEmail" placeholder="Email"><input id="cadSenha" type="password" placeholder="Senha"><button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Cadastrar</button><button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button></div></div>
 
     <script type="module">
-        const VERSAO_ATUAL="7.2"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="8.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -226,11 +276,21 @@
         async function abrirAreaVipExclusiva() {
             lastCategory="Área VIP"; document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent="🎁 Sorteios da Semana"; document.getElementById('btnVoltarInicio').style.display='block'; viewState='subcats';
             const l = document.getElementById('listaSubcats'); l.innerHTML = "<p>Carregando sorteios...</p>";
+            
             const qLocais = query(collection(db, "guia_cidades"), where("temDelivery", "==", true));
             const snapLocais = await getDocs(qLocais);
+            
             const qPalpites = query(collection(db, "vip_palpites"), where("vipEmail", "==", usuarioVipAtual.email));
             const snapPalpites = await getDocs(qPalpites);
-            const meusPalpites = {}; snapPalpites.forEach(p => { meusPalpites[p.data().localId] = p.data().numero; });
+            
+            // AGORA ARMAZENA O OBJETO COMPLETO DO PALPITE (NUMERO E STATUS DE VENCEDOR)
+            const meusPalpites = {}; 
+            snapPalpites.forEach(p => { 
+                meusPalpites[p.data().localId] = {
+                    numero: p.data().numero,
+                    isWinner: p.data().isWinner || false
+                }; 
+            });
 
             l.innerHTML = "";
             if(snapLocais.empty) {
@@ -243,10 +303,19 @@
                         const itemCardapio = item.cardapio.find(x => x.nome === item.deliveryBrinde);
                         if(itemCardapio && itemCardapio.img) imgBrinde = itemCardapio.img;
                     }
-                    const jaJogou = meusPalpites[d.id] !== undefined;
-                    const numeroSorte = meusPalpites[d.id];
+                    
+                    const dadosPalpite = meusPalpites[d.id];
                     let btnHTML = `<button class="btn-concorrer" onclick="inscreverSorteio(this, '${d.id}', '${item.nome}', '${item.deliveryBrinde}')">QUERO ESSE</button>`;
-                    if(jaJogou) { btnHTML = `<button class="btn-concorrer btn-disabled" disabled>Seu Nº: ${numeroSorte}</button>`; }
+                    
+                    if(dadosPalpite) {
+                        if(dadosPalpite.isWinner) {
+                            // BOTÃO DOURADO SE GANHOU
+                            btnHTML = `<button class="btn-concorrer btn-winner" disabled>👑 VENCEDOR</button>`;
+                        } else {
+                            // BOTÃO CINZA SE JÁ JOGOU
+                            btnHTML = `<button class="btn-concorrer btn-disabled" disabled>Seu Nº: ${dadosPalpite.numero}</button>`;
+                        }
+                    }
 
                     const card = document.createElement('div'); card.className = "vip-gift-card";
                     card.innerHTML = `<img src="${imgBrinde}" class="vip-gift-img"><div class="vip-gift-body"><div><div class="vip-gift-title">${item.deliveryBrinde}</div><span class="vip-gift-store">Oferecido por: <b>${item.nome}</b></span></div>${btnHTML}</div>`;
@@ -261,7 +330,18 @@
                 const originalText = btnElement.innerText; btnElement.innerText = "...";
                 try {
                     const numeroSorte = Math.floor(Math.random() * 10);
-                    await addDoc(collection(db, "vip_palpites"), { vipNome: usuarioVipAtual.nome, vipEmail: usuarioVipAtual.email, vipZap: usuarioVipAtual.whatsapp || "", localId: localId, loja: lojaNome, brinde: brindeNome, numero: numeroSorte, cidadeId: cidadeAtualId, data: new Date() });
+                    await addDoc(collection(db, "vip_palpites"), { 
+                        vipNome: usuarioVipAtual.nome, 
+                        vipEmail: usuarioVipAtual.email, 
+                        vipZap: usuarioVipAtual.whatsapp || "", 
+                        localId: localId, 
+                        loja: lojaNome, 
+                        brinde: brindeNome, 
+                        numero: numeroSorte, 
+                        cidadeId: cidadeAtualId, 
+                        data: new Date(),
+                        isWinner: false // Padrão falso
+                    });
                     btnElement.innerText = `Seu Nº: ${numeroSorte}`; btnElement.classList.add('btn-disabled'); btnElement.disabled = true;
                     alert(`🎉 Seu número da sorte é: ${numeroSorte}!\n\nBoa sorte!`);
                 } catch(e) { console.error(e); btnElement.innerText = originalText; alert("Erro. Tente novamente."); }
@@ -269,7 +349,24 @@
         };
 
         window.solicitarVipZap = async () => { try { const g=await getDoc(doc(db,"config","geral")); if(g.exists()&&g.data().zapAdmin) window.open(`https://wa.me/${g.data().zapAdmin}?text=Quero ser VIP!`, '_blank'); else alert("Sem contato configurado."); } catch(e){} };
-        window.clickVoltar = () => { if(viewState!=='home') { if(viewState==='subcats') voltarParaCategorias(); else resetarApp(); } };
+        
+        // --- FUNÇÃO DE VOLTAR INTELIGENTE ---
+        window.clickVoltar = () => {
+            if (viewState === 'results_sub') {
+                // Volta para a lista de subcategorias (estado intermediário)
+                document.getElementById('resultados').style.display = 'none';
+                document.getElementById('painelNavegacao').style.display = 'block';
+                document.getElementById('viewSubcategorias').style.display = 'block';
+                document.getElementById('viewCategorias').style.display = 'none';
+                document.getElementById('busca').value = ""; // Limpa a busca para ficar limpo
+                viewState = 'subcats';
+            } else if (viewState === 'subcats') {
+                voltarParaCategorias();
+            } else {
+                resetarApp();
+            }
+        };
+        
         window.voltarParaCategorias = () => { document.getElementById('viewSubcategorias').style.display='none'; document.getElementById('viewCategorias').style.display='block'; document.getElementById('btnVoltarInicio').style.display='block'; viewState='cats'; };
         window.resetarApp = () => { document.getElementById('busca').value=""; document.getElementById('resultados').style.display='none'; document.getElementById('painelNavegacao').style.display='none'; document.getElementById('btnVoltarInicio').style.display='none'; document.getElementById('viewSubcategorias').style.display='none'; document.getElementById('viewCategorias').style.display='block'; viewState='home'; };
 
@@ -379,17 +476,12 @@
             document.getElementById('galeriaTitulo').innerText = item.nome;
             const grid = document.getElementById('gridGaleriaFotos');
             grid.innerHTML = "";
-            
-            // Verifica se tem galeria e renderiza
             if (item.galeria_fotos && item.galeria_fotos.length > 0) {
                 item.galeria_fotos.forEach(obj => {
-                    // Suporte a legado (se for string, converte)
                     const url = typeof obj === 'string' ? obj : obj.url;
                     const leg = typeof obj === 'string' ? '' : (obj.legenda || '');
-                    // Escapa aspas para evitar erro no HTML
-                    const legSafe = leg.replace(/"/g, '&quot;');
-                    
-                    grid.innerHTML += `<div class="gallery-item"><img src="${url}" onclick='verFotoFull("${url}", "${legSafe}")'></div>`;
+                    const safeLeg = leg.replace(/"/g, '&quot;');
+                    grid.innerHTML += `<div class="gallery-item"><img src="${url}" onclick='verFotoFull("${url}", "${safeLeg}")'></div>`;
                 });
             } else { grid.innerHTML = "<p style='color:white; padding:20px;'>Sem fotos.</p>"; }
             document.getElementById('modalGaleria').style.display = 'flex';
