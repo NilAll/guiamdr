@@ -50,13 +50,13 @@
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
         .card-content h3 { margin: 0 0 2px 0; font-size: 17px; color: #222; font-weight: 700; line-height: 1.2; }
         .card-desc { font-size: 12px; color: #666; margin-bottom: 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-info { font-size: 11px; color: #888; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info { font-size: 11px; color: #888; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
         .card-footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
         .tag { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #555; display: inline-block; }
         .tag-delivery { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .price-display { font-weight: bold; color: #333; font-size: 13px; }
 
-        /* MODAL GALERIA */
+        /* MODAIS E POPUPS */
         #modalGaleria { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .galeria-header { width: 100%; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #111; color: white; border-bottom: 1px solid #333; flex-shrink: 0; }
         .galeria-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
@@ -65,13 +65,11 @@
         .gallery-item { position: relative; width: 100%; aspect-ratio: 1 / 1; background: #222; overflow: hidden; }
         .gallery-item img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 
-        /* LIGHTBOX */
         #modalLightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; display: none; align-items: center; justify-content: center; flex-direction: column; }
         .lightbox-img { max-width: 100%; max-height: 80vh; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .lightbox-caption { color: white; margin-top: 15px; font-size: 16px; text-align: center; padding: 0 20px; font-weight: 500; }
         .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; font-size: 30px; background: none; border: none; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.8); }
 
-        /* VIP/MODAIS */
         .vip-gift-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; overflow: hidden; display: flex; padding: 15px; align-items: center; }
         .vip-gift-img { width: 110px; height: 110px; border-radius: 8px; object-fit: cover; background: #eee; margin-right: 15px; flex-shrink: 0; }
         .vip-gift-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; height: 110px; }
@@ -86,7 +84,6 @@
         .subcat-header { display: flex; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .btn-voltar-cat { border: none; background: none; font-size: 20px; cursor: pointer; margin-right: 10px; }
         
-        /* SUBCATEGORIAS EM COLUNAS */
         #listaSubcats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .subcat-chip { background: #f8f9fa; padding: 15px 10px; border-radius: 8px; font-size: 14px; color: #333; cursor: pointer; border: 1px solid #ddd; text-align: center; font-weight: 500; display: flex; align-items: center; justify-content: center; min-height: 50px; }
         #listaSubcats .subcat-chip:first-child { grid-column: 1 / -1; background-color: #e3f2fd; border-color: #bbdefb; font-weight: bold; }
@@ -122,7 +119,13 @@
 
         <div id="painelNavegacao">
             <div id="viewCategorias"><h3 style="margin-bottom:10px; font-size:16px;">Categorias</h3><div id="gridCategorias" class="cat-grid"></div></div>
-            <div id="viewSubcategorias" style="display: none;"><div class="subcat-header"><button class="btn-voltar-cat" onclick="voltarParaCategorias()">⬅</button><h3 id="tituloCatSelecionada" style="margin:0; font-size:16px;">...</h3></div><div id="listaSubcats"></div></div>
+            <div id="viewSubcategorias" style="display: none;">
+                <div class="subcat-header">
+                    <button id="btnVoltarNav" class="btn-voltar-cat" onclick="voltarParaCategorias()">⬅</button>
+                    <h3 id="tituloCatSelecionada" style="margin:0; font-size:16px;">...</h3>
+                </div>
+                <div id="listaSubcats"></div>
+            </div>
         </div>
         <div id="resultados"></div>
     </div>
@@ -134,46 +137,29 @@
     <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2><select id="cadCidadeSelect"><option value="">Selecione sua Cidade</option></select><input id="cadNome" placeholder="Nome"><input id="cadEmail" placeholder="Email"><input id="cadSenha" type="password" placeholder="Senha"><button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Cadastrar</button><button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button></div></div>
 
     <script type="module">
-        const VERSAO_ATUAL="8.1"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="23.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         const app=initializeApp({apiKey:"AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",authDomain:"testegithub-e1ffb.firebaseapp.com",projectId:"testegithub-e1ffb",storageBucket:"testegithub-e1ffb.firebasestorage.app",messagingSenderId:"508103458559",appId:"1:508103458559:web:55bc2fe4dc61d7b5ee16ca"}); const db=getFirestore(app);
         
-        let viewState='home', lastCategory='', todosLocais=[], locaisFiltrados=[], estruturaCategorias=[], cidadeAtualId=localStorage.getItem("cidade_id"), customIcons={}, usuarioVipAtual=null;
+        let viewState='home', lastCategory='', lastSubcategory='', todosLocais=[], locaisFiltrados=[], estruturaCategorias=[], cidadeAtualId=localStorage.getItem("cidade_id"), customIcons={}, usuarioVipAtual=null;
         const ICONES_CAT = { "Comercio": "🛍️", "Alimentacao": "🍔", "Servicos": "🛠️", "Saude": "🏥", "Publico": "🏛️", "Profissionais": "👔", "Delivery": "🛵", "Classificados": "📢", "Aluguel": "🏠", "Galeria de Fotos": "📷" };
 
         (function(){ emailjs.init("vOaHzeApkyntx09x6"); })();
 
-        // --- SISTEMA DE MEMÓRIA (NOVO) ---
-        function salvarNavegacao(tipo, valor) {
-            localStorage.setItem('navState', JSON.stringify({ type: tipo, val: valor, time: Date.now() }));
-        }
-        function limparNavegacao() {
-            localStorage.removeItem('navState');
-        }
+        function salvarNavegacao(tipo, valor, extra) { localStorage.setItem('navState', JSON.stringify({ type: tipo, val: valor, extra: extra, time: Date.now() })); }
+        function limparNavegacao() { localStorage.removeItem('navState'); }
         async function restaurarNavegacao() {
             try {
                 const s = JSON.parse(localStorage.getItem('navState'));
-                if (s && (Date.now() - s.time < 15 * 60 * 1000)) { // 15 min de validade
-                    // Espera os dados carregarem antes de restaurar
+                if (s && (Date.now() - s.time < 15 * 60 * 1000)) { 
                     if (todosLocais.length === 0) await new Promise(r => setTimeout(r, 500));
-                    
-                    if (s.type === 'subcats') {
-                        abrirSubcategorias(s.val, false); // false = não salvar de novo
-                    } else if (s.type === 'results_sub') {
-                        // Se estava em resultados, o ideal é abrir a subcategoria pai primeiro e depois buscar?
-                        // Vamos simplificar: abre a busca direta.
-                        document.getElementById('busca').value = s.val;
-                        pesquisarPorSubcategoria(s.val, false);
-                    } else if (s.type === 'search') {
-                        document.getElementById('busca').value = s.val;
-                        document.getElementById('painelNavegacao').style.display='none';
-                        document.getElementById('resultados').style.display='block';
-                        document.getElementById('btnVoltarInicio').style.display='block';
-                        viewState = 'results_search';
-                        executarBusca(s.val);
-                    }
+                    if (s.type === 'subcats') { abrirSubcategorias(s.val, false); }
+                    else if (s.type === 'sectors') { abrirSetores(s.val, s.extra, false); } 
+                    else if (s.type === 'results_sub') { document.getElementById('busca').value = s.val; pesquisarPorSubcategoria(s.val, false); } 
+                    else if (s.type === 'results_sector') { pesquisarPorSetor(s.extra, s.val, false); }
+                    else if (s.type === 'search') { document.getElementById('busca').value = s.val; document.getElementById('painelNavegacao').style.display='none'; document.getElementById('resultados').style.display='block'; document.getElementById('btnVoltarInicio').style.display='block'; viewState = 'results_search'; executarBusca(s.val); }
                 }
             } catch(e) { console.log('Erro nav', e); }
         }
@@ -184,67 +170,37 @@
         window.abrirModalVipAccess = () => { document.getElementById('modalVipAccess').style.display = 'flex'; window.toggleMenu(); };
         window.fecharModalVip = (e) => { if(!e || e.target.id === 'modalVipAccess') document.getElementById('modalVipAccess').style.display = 'none'; };
         
-        window.abrirModalCidades = (podeCancelar) => { 
-            document.getElementById('modalCidades').style.display = 'flex'; 
-            document.getElementById('btnCancelarCidade').style.display = podeCancelar ? 'block' : 'none';
-            if(window.toggleMenu) document.getElementById('mainMenu').style.display = 'none'; 
-        };
+        window.abrirModalCidades = (podeCancelar) => { document.getElementById('modalCidades').style.display = 'flex'; document.getElementById('btnCancelarCidade').style.display = podeCancelar ? 'block' : 'none'; if(window.toggleMenu) document.getElementById('mainMenu').style.display = 'none'; };
         window.fecharModalCidades = () => { document.getElementById('modalCidades').style.display = 'none'; };
 
         window.validarVip = async () => {
             const word = document.getElementById('vipSecretInput').value.trim();
             if(!word) return alert("Digite a palavra secreta.");
             const q = query(collection(db, "vips"), where("palavra", "==", word)); const snap = await getDocs(q);
-            if(!snap.empty) {
-                usuarioVipAtual = snap.docs[0].data();
-                alert(`Olá ${usuarioVipAtual.nome}!`);
-                document.getElementById('modalVipAccess').style.display = 'none';
-                abrirAreaVipExclusiva();
-            } else { alert("Palavra incorreta."); }
+            if(!snap.empty) { usuarioVipAtual = snap.docs[0].data(); alert(`Olá ${usuarioVipAtual.nome}!`); document.getElementById('modalVipAccess').style.display = 'none'; abrirAreaVipExclusiva(); } else { alert("Palavra incorreta."); }
         };
 
         async function abrirAreaVipExclusiva() {
             salvarNavegacao('subcats', "Área VIP");
-            lastCategory="Área VIP"; document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent="🎁 Sorteios da Semana"; document.getElementById('btnVoltarInicio').style.display='block'; viewState='subcats';
+            lastCategory="Área VIP"; 
+            
+            // FORÇA 1 COLUNA PARA ÁREA VIP
+            document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr";
+            
+            document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent="🎁 Sorteios da Semana"; document.getElementById('btnVoltarInicio').style.display='block'; viewState='subcats';
             const l = document.getElementById('listaSubcats'); l.innerHTML = "<p>Carregando sorteios...</p>";
-            
-            const qLocais = query(collection(db, "guia_cidades"), where("temDelivery", "==", true));
-            const snapLocais = await getDocs(qLocais);
-            
-            const qPalpites = query(collection(db, "vip_palpites"), where("vipEmail", "==", usuarioVipAtual.email));
-            const snapPalpites = await getDocs(qPalpites);
-            
-            const meusPalpites = {}; 
-            snapPalpites.forEach(p => { 
-                meusPalpites[p.data().localId] = {
-                    numero: p.data().numero,
-                    isWinner: p.data().isWinner || false
-                }; 
-            });
-
+            const qLocais = query(collection(db, "guia_cidades"), where("temDelivery", "==", true)); const snapLocais = await getDocs(qLocais);
+            const qPalpites = query(collection(db, "vip_palpites"), where("vipEmail", "==", usuarioVipAtual.email)); const snapPalpites = await getDocs(qPalpites);
+            const meusPalpites = {}; snapPalpites.forEach(p => { meusPalpites[p.data().localId] = { numero: p.data().numero, isWinner: p.data().isWinner || false }; });
             l.innerHTML = "";
-            if(snapLocais.empty) {
-                l.innerHTML = "<p style='text-align:center;color:#666'>Nenhum sorteio esta semana.</p>";
-            } else {
+            if(snapLocais.empty) { l.innerHTML = "<p style='text-align:center;color:#666'>Nenhum sorteio esta semana.</p>"; } else {
                 snapLocais.forEach(d => {
                     const item = d.data();
                     let imgBrinde = "https://via.placeholder.com/300x300?text=Sem+Foto";
-                    if(item.cardapio && Array.isArray(item.cardapio)) {
-                        const itemCardapio = item.cardapio.find(x => x.nome === item.deliveryBrinde);
-                        if(itemCardapio && itemCardapio.img) imgBrinde = itemCardapio.img;
-                    }
-                    
+                    if(item.cardapio && Array.isArray(item.cardapio)) { const itemCardapio = item.cardapio.find(x => x.nome === item.deliveryBrinde); if(itemCardapio && itemCardapio.img) imgBrinde = itemCardapio.img; }
                     const dadosPalpite = meusPalpites[d.id];
                     let btnHTML = `<button class="btn-concorrer" onclick="inscreverSorteio(this, '${d.id}', '${item.nome}', '${item.deliveryBrinde}')">QUERO ESSE</button>`;
-                    
-                    if(dadosPalpite) {
-                        if(dadosPalpite.isWinner) {
-                            btnHTML = `<button class="btn-concorrer btn-winner" disabled>👑 VENCEDOR</button>`;
-                        } else {
-                            btnHTML = `<button class="btn-concorrer btn-disabled" disabled>Seu Nº: ${dadosPalpite.numero}</button>`;
-                        }
-                    }
-
+                    if(dadosPalpite) { if(dadosPalpite.isWinner) { btnHTML = `<button class="btn-concorrer btn-winner" disabled>👑 VENCEDOR</button>`; } else { btnHTML = `<button class="btn-concorrer btn-disabled" disabled>Seu Nº: ${dadosPalpite.numero}</button>`; } }
                     const card = document.createElement('div'); card.className = "vip-gift-card";
                     card.innerHTML = `<img src="${imgBrinde}" class="vip-gift-img"><div class="vip-gift-body"><div><div class="vip-gift-title">${item.deliveryBrinde}</div><span class="vip-gift-store">Oferecido por: <b>${item.nome}</b></span></div>${btnHTML}</div>`;
                     l.appendChild(card);
@@ -258,18 +214,7 @@
                 const originalText = btnElement.innerText; btnElement.innerText = "...";
                 try {
                     const numeroSorte = Math.floor(Math.random() * 10);
-                    await addDoc(collection(db, "vip_palpites"), { 
-                        vipNome: usuarioVipAtual.nome, 
-                        vipEmail: usuarioVipAtual.email, 
-                        vipZap: usuarioVipAtual.whatsapp || "", 
-                        localId: localId, 
-                        loja: lojaNome, 
-                        brinde: brindeNome, 
-                        numero: numeroSorte, 
-                        cidadeId: cidadeAtualId, 
-                        data: new Date(),
-                        isWinner: false
-                    });
+                    await addDoc(collection(db, "vip_palpites"), { vipNome: usuarioVipAtual.nome, vipEmail: usuarioVipAtual.email, vipZap: usuarioVipAtual.whatsapp || "", localId: localId, loja: lojaNome, brinde: brindeNome, numero: numeroSorte, cidadeId: cidadeAtualId, data: new Date(), isWinner: false });
                     btnElement.innerText = `Seu Nº: ${numeroSorte}`; btnElement.classList.add('btn-disabled'); btnElement.disabled = true;
                     alert(`🎉 Seu número da sorte é: ${numeroSorte}!\n\nBoa sorte!`);
                 } catch(e) { console.error(e); btnElement.innerText = originalText; alert("Erro. Tente novamente."); }
@@ -286,7 +231,19 @@
                 document.getElementById('viewCategorias').style.display = 'none';
                 document.getElementById('busca').value = ""; 
                 viewState = 'subcats';
-                salvarNavegacao('subcats', lastCategory); // Salva que voltou para subcats
+                salvarNavegacao('subcats', lastCategory); 
+            } else if (viewState === 'results_sector') {
+                abrirSetores(lastSubcategory, null, true); 
+            } else if (viewState === 'sectors') {
+                document.getElementById('resultados').style.display = 'none';
+                document.getElementById('painelNavegacao').style.display = 'block';
+                document.getElementById('viewSubcategorias').style.display = 'block';
+                document.getElementById('viewCategorias').style.display = 'none';
+                document.getElementById('busca').value = "";
+                const btnVoltarPainel = document.getElementById('btnVoltarNav');
+                btnVoltarPainel.onclick = () => voltarParaCategorias();
+                viewState = 'subcats';
+                salvarNavegacao('subcats', lastCategory); 
             } else if (viewState === 'subcats') {
                 voltarParaCategorias();
             } else {
@@ -295,7 +252,10 @@
         };
         
         window.voltarParaCategorias = () => { 
-            limparNavegacao(); // Limpa memória ao voltar para Home
+            limparNavegacao(); 
+            // RESTAURA 2 COLUNAS PARA SUBCATEGORIAS
+            document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
+            
             document.getElementById('viewSubcategorias').style.display='none'; 
             document.getElementById('viewCategorias').style.display='block'; 
             document.getElementById('btnVoltarInicio').style.display='block'; 
@@ -304,6 +264,7 @@
         
         window.resetarApp = () => { 
             limparNavegacao();
+            document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
             document.getElementById('busca').value=""; 
             document.getElementById('resultados').style.display='none'; 
             document.getElementById('painelNavegacao').style.display='none'; 
@@ -322,7 +283,7 @@
                 document.getElementById('btnVoltarInicio').style.display='block'; 
                 viewState='results_search'; 
                 executarBusca(e.target.value.toLowerCase()); 
-                salvarNavegacao('search', e.target.value); // Salva busca manual
+                salvarNavegacao('search', e.target.value); 
             } else { 
                 document.getElementById('resultados').style.display='none'; 
                 document.getElementById('painelNavegacao').style.display='block'; 
@@ -349,7 +310,7 @@
             } catch(e){}
             if(cidadeAtualId) {
                 await carregarDadosLocais();
-                restaurarNavegacao(); // Tenta restaurar onde parou
+                restaurarNavegacao(); 
             }
             document.getElementById('appContent').style.display = 'flex';
         }
@@ -385,52 +346,159 @@
 
         window.abrirSubcategorias = (c, save=true) => {
             if(save) salvarNavegacao('subcats', c);
-            lastCategory=c; document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent=c; document.getElementById('btnVoltarInicio').style.display='block'; viewState='subcats';
+            lastCategory=c; 
+            
+            // GARANTE 2 COLUNAS PARA SUBCATEGORIAS
+            document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
+            
+            document.getElementById('viewCategorias').style.display='none'; 
+            document.getElementById('viewSubcategorias').style.display='block'; 
+            document.getElementById('painelNavegacao').style.display='block'; 
+            document.getElementById('resultados').style.display='none'; 
+            document.getElementById('tituloCatSelecionada').textContent=c; 
+            const btnVoltarPainel = document.getElementById('btnVoltarNav');
+            btnVoltarPainel.onclick = () => voltarParaCategorias();
+            document.getElementById('btnVoltarInicio').style.display='block'; 
+            viewState='subcats';
             const l=document.getElementById('listaSubcats'); l.innerHTML=""; 
-            let subs = estruturaCategorias[c] || [];
-            const chipTudo = document.createElement('div'); chipTudo.className='subcat-chip'; chipTudo.textContent=`Ver tudo de ${c}`; chipTudo.onclick=()=>{ pesquisarPorSubcategoria(c); }; l.appendChild(chipTudo);
-            subs.forEach(s=>{ const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; d.onclick=()=>{pesquisarPorSubcategoria(s)}; l.appendChild(d); });
+            
+            // LÓGICA DE DELIVERY
+            if(c === "Delivery") {
+                const itensDelivery = todosLocais.filter(i => i.temDelivery);
+                const subsDelivery = [...new Set(itensDelivery.map(i => i.subcategoria))].sort();
+                
+                const chipTudo = document.createElement('div'); 
+                chipTudo.className='subcat-chip'; 
+                chipTudo.textContent=`Ver Tudo Delivery`; 
+                chipTudo.onclick=()=>{ pesquisarPorSubcategoria("Delivery"); };
+                l.appendChild(chipTudo);
+
+                subsDelivery.forEach(s=>{ 
+                    const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; 
+                    d.onclick=()=>{ verificarConteudoSubcategoria(s) }; 
+                    l.appendChild(d); 
+                });
+            } else {
+                let subs = estruturaCategorias[c] || [];
+                const chipTudo = document.createElement('div'); 
+                chipTudo.className='subcat-chip'; 
+                chipTudo.textContent=`Ver tudo de ${c}`; 
+                chipTudo.onclick=()=>{ pesquisarPorSubcategoria(c); }; 
+                l.appendChild(chipTudo);
+                
+                subs.forEach(s=>{ 
+                    const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; 
+                    d.onclick=()=>{ verificarConteudoSubcategoria(s) }; 
+                    l.appendChild(d); 
+                });
+            }
         }
+        
+        window.verificarConteudoSubcategoria = (subcat) => {
+            lastSubcategory = subcat; 
+            
+            let itensDaSub = [];
+            if(lastCategory === "Delivery") {
+                itensDaSub = todosLocais.filter(l => l.subcategoria === subcat && l.temDelivery === true);
+            } else {
+                itensDaSub = todosLocais.filter(l => l.subcategoria === subcat);
+            }
+
+            const setoresUnicos = [...new Set(itensDaSub.map(i => i.setor).filter(s => s && s.trim() !== ""))].sort();
+            if (setoresUnicos.length > 0) { abrirSetores(subcat, setoresUnicos); } else { pesquisarPorSubcategoria(subcat); }
+        };
+
+        window.abrirSetores = (subcat, listaSetores, save=true) => {
+            if(!listaSetores) {
+                let itensDaSub = [];
+                if(lastCategory === "Delivery") {
+                    itensDaSub = todosLocais.filter(l => l.subcategoria === subcat && l.temDelivery === true);
+                } else {
+                    itensDaSub = todosLocais.filter(l => l.subcategoria === subcat);
+                }
+                listaSetores = [...new Set(itensDaSub.map(i => i.setor).filter(s => s && s.trim() !== ""))].sort();
+            }
+            if(save) salvarNavegacao('sectors', subcat, listaSetores);
+            
+            // GARANTE 2 COLUNAS PARA SETORES
+            document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
+            
+            viewState = 'sectors';
+            lastSubcategory = subcat;
+            document.getElementById('viewCategorias').style.display='none';
+            document.getElementById('viewSubcategorias').style.display='block';
+            document.getElementById('painelNavegacao').style.display='block';
+            document.getElementById('resultados').style.display='none';
+            document.getElementById('tituloCatSelecionada').textContent = subcat; 
+            const btnVoltarPainel = document.getElementById('btnVoltarNav');
+            btnVoltarPainel.onclick = () => { abrirSubcategorias(lastCategory); };
+            const l = document.getElementById('listaSubcats'); l.innerHTML=""; 
+            const chipTudo = document.createElement('div'); chipTudo.className='subcat-chip'; chipTudo.textContent=`Ver tudo de ${subcat}`; chipTudo.onclick=()=>{ pesquisarPorSubcategoria(subcat); }; l.appendChild(chipTudo);
+            listaSetores.forEach(setor => { 
+                const d = document.createElement('div'); d.className='subcat-chip'; d.textContent = setor; 
+                d.onclick = () => { pesquisarPorSetor(subcat, setor); }; 
+                l.appendChild(d); 
+            });
+        };
+
+        window.pesquisarPorSetor = (subcat, setor, save=true) => {
+            if(save) salvarNavegacao('results_sector', setor, subcat);
+            document.getElementById('painelNavegacao').style.display = 'none'; document.getElementById('resultados').style.display = 'block'; viewState = 'results_sector'; 
+            const r = document.getElementById('resultados'); r.innerHTML="";
+            
+            let filtrados = [];
+            if(lastCategory === "Delivery") {
+                filtrados = todosLocais.filter(l => l.subcategoria === subcat && l.setor === setor && l.temDelivery === true);
+            } else {
+                filtrados = todosLocais.filter(l => l.subcategoria === subcat && l.setor === setor);
+            }
+            
+            renderizarListaCards(filtrados);
+        };
         
         window.pesquisarPorSubcategoria = (t, save=true) => {
             if(save) salvarNavegacao('results_sub', t);
-            document.getElementById('busca').value = t; document.getElementById('painelNavegacao').style.display = 'none'; document.getElementById('resultados').style.display = 'block'; viewState = 'results_sub'; executarBusca(t.toLowerCase());
+            document.getElementById('busca').value = t; 
+            document.getElementById('painelNavegacao').style.display = 'none'; 
+            document.getElementById('resultados').style.display = 'block'; 
+            viewState = 'results_sub'; 
+            
+            if(t === "Delivery" && lastCategory === "Delivery") {
+                const f = todosLocais.filter(l => l.temDelivery === true);
+                renderizarListaCards(f);
+            } else if (lastCategory === "Delivery") {
+                const f = todosLocais.filter(l => l.subcategoria === t && l.temDelivery === true);
+                renderizarListaCards(f);
+            } else {
+                executarBusca(t.toLowerCase());
+            }
         };
 
         async function carregarDadosLocais() { const q=query(collection(db,"guia_cidades"),orderBy("nome")); const s=await getDocs(q); todosLocais=[]; s.forEach(d=>todosLocais.push({id:d.id,...d.data()})); aplicarFiltro(); }
         function aplicarFiltro() { if(cidadeAtualId) locaisFiltrados=todosLocais.filter(x=>x.cidadeId===cidadeAtualId); }
+        
         function executarBusca(t) {
-            const r=document.getElementById('resultados'); r.innerHTML="";
-            const f=locaisFiltrados.filter(l=>(l.nomeBusca||l.nome).toLowerCase().includes(t)||(l.categoria||"").toLowerCase().includes(t)||(l.subcategoria||"").toLowerCase().includes(t));
-            if(f.length===0) r.innerHTML="<p style='color:white;text-align:center'>Nada encontrado.</p>";
-            f.forEach(i=>{ 
-                const img=(i.imagens&&i.imagens[0])||i.imagem||"https://via.placeholder.com/150"; 
-                let p=i.preco?`<div class="price-display">R$ ${i.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`:'';
-                let infoPath = i.categoria || ""; if(i.subcategoria) infoPath += " > " + i.subcategoria; if(i.setor) infoPath += " > " + i.setor;
+            const f = locaisFiltrados.filter(l=>(l.nomeBusca||l.nome).toLowerCase().includes(t) || (l.categoria||"").toLowerCase().includes(t) || (l.subcategoria||"").toLowerCase().includes(t) || (l.setor||"").toLowerCase().includes(t));
+            renderizarListaCards(f);
+        }
+
+        function renderizarListaCards(lista) {
+            const r = document.getElementById('resultados'); r.innerHTML="";
+            if(lista.length === 0) { r.innerHTML="<p style='color:white;text-align:center'>Nada encontrado.</p>"; return; }
+            lista.forEach(i => { 
+                const img = (i.imagens && i.imagens[0]) || i.imagem || "https://via.placeholder.com/150"; 
+                let p = i.preco ? `<div class="price-display">R$ ${i.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>` : '';
+                let infoPath = i.categoria || ""; if(i.subcategoria) infoPath += " > " + i.subcategoria; if(i.setor) infoPath += " > " + i.setor; 
                 let descHtml = i.descricao ? `<p class="card-desc">${i.descricao}</p>` : '';
                 let badgeDelivery = i.temDelivery ? `<span class="tag tag-delivery">🛵 Delivery</span>` : '';
-
-                r.innerHTML+=`
-                <div class="card" onclick="abrirDetalhes('${i.id}')">
-                    <img src="${img}" class="card-img">
-                    <div class="card-content">
-                        <h3>${i.nome}</h3>
-                        ${descHtml}
-                        <p class="card-info">${infoPath}</p>
-                        <div class="card-footer-row">${badgeDelivery}${p}</div>
-                    </div>
-                </div>`; 
+                r.innerHTML += `<div class="card" onclick="abrirDetalhes('${i.id}')"><img src="${img}" class="card-img"><div class="card-content"><h3>${i.nome}</h3>${descHtml}<p class="card-info">${infoPath}</p><div class="card-footer-row">${badgeDelivery}${p}</div></div></div>`; 
             });
         }
 
         window.abrirDetalhes = (id) => {
             const item = todosLocais.find(x => x.id === id);
             if(!item) return;
-            if (item.categoria === "Galeria de Fotos") {
-                abrirGaleria(item);
-            } else {
-                window.location.href = `detalhes.html?id=${id}`;
-            }
+            if (item.categoria === "Galeria de Fotos") { abrirGaleria(item); } else { window.location.href = `detalhes.html?id=${id}`; }
         };
 
         function abrirGaleria(item) {
@@ -449,13 +517,7 @@
         }
         
         window.fecharGaleria = () => { document.getElementById('modalGaleria').style.display = 'none'; };
-        
-        window.verFotoFull = (url, legenda) => { 
-            document.getElementById('imgLightbox').src = url; 
-            document.getElementById('captionLightbox').innerText = legenda || "";
-            document.getElementById('modalLightbox').style.display = 'flex'; 
-        };
-        
+        window.verFotoFull = (url, legenda) => { document.getElementById('imgLightbox').src = url; document.getElementById('captionLightbox').innerText = legenda || ""; document.getElementById('modalLightbox').style.display = 'flex'; };
         window.fecharLightbox = () => { document.getElementById('modalLightbox').style.display = 'none'; };
 
         carregarDadosIniciais();

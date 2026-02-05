@@ -15,6 +15,7 @@
         input, textarea, select { -webkit-user-select: text; user-select: text; }
         body { padding: 20px; background: #f0f2f5; max-width: 900px; margin: 0 auto; color: #333; padding-bottom: 80px; }
 
+        /* TELA DE LOGIN RESTAURADA (COM LOGO) */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
         .login-box { text-align: center; background: #2c2c2c; padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .login-input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 16px; }
@@ -70,20 +71,13 @@
         .badge-status { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
         .badge-delivery { background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9; }
         
-        /* PALPITE COM INTERAÇÃO DE VENCEDOR */
-        .palpite-row { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s;
-        }
+        .palpite-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
         .palpite-row:hover { background: #f5f5f5; }
         .palpite-num { font-size: 20px; font-weight: bold; background: #9c27b0; color: white; padding: 5px 12px; border-radius: 50%; }
         .palpite-info { flex: 1; margin-left: 15px; }
-        
-        /* ESTILO DO VENCEDOR */
         .palpite-winner { background: #d4edda !important; border-left: 5px solid #28a745; }
         .palpite-winner .palpite-num { background: #ffc107; color: #333; box-shadow: 0 0 10px #ffc107; }
 
-        /* GALERIA ADMIN */
         .gallery-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
         .gallery-item-admin { display: flex; align-items: flex-start; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .gallery-thumb-admin { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc; margin-right: 15px; background: #eee; }
@@ -475,7 +469,20 @@
         function updateSel(){const s=el('categoria');const v=s.value;s.innerHTML='<option value="">Selecione...</option>';(listaSubs["_order"]||[]).forEach(c=>s.innerHTML+=`<option value="${c}">${c}</option>`);s.value=v;}
         window.salvarVip=async()=>{const n=el('vipNome').value,e=el('vipEmail').value,p=el('vipPalavra').value,ph=el('vipPhone').value;if(!n||!p)return alert("Obrigatórios");const d={nome:n,email:e,nasc:el('vipNasc').value,palavra:p,whatsapp:ph};if(idVipEditando)await updateDoc(doc(db,"vips",idVipEditando),d);else await addDoc(collection(db,"vips"),d);alert("Salvo");cancelarEdicaoVip();};
         window.editVip=(id,n,d,e,p,ph)=>{idVipEditando=id;el('vipNome').value=n;el('vipNasc').value=d;el('vipEmail').value=e;el('vipPalavra').value=p;el('vipPhone').value=ph||"";el('btnSalvarVip').textContent="Atualizar";el('btnCancelVip').style.display='inline';};
-        window.cancelarEdicaoVip=()=>{idVipEditando=null;el('vipNome').value="";el('vipPalavra').value="";el('vipPhone').value="";el('btnSalvarVip').textContent="Cadastrar VIP";el('btnCancelVip').style.display='none';};
+        
+        // --- FUNÇÃO CORRIGIDA PARA LIMPAR TODOS OS CAMPOS DO VIP ---
+        window.cancelarEdicaoVip=()=>{
+            idVipEditando=null;
+            el('vipNome').value="";
+            el('vipNasc').value=""; // Limpa Data
+            el('vipEmail').value=""; // Limpa Email
+            el('vipPalavra').value="";
+            el('vipPhone').value="";
+            el('btnSalvarVip').textContent="Cadastrar VIP";
+            el('btnCancelVip').style.display='none';
+        };
+        // -----------------------------------------------------------
+
         window.delVip=async(id)=>{if(confirm("Apagar?"))await deleteDoc(doc(db,"vips",id));};
         window.salvarConfigGlobal=async()=>{await setDoc(doc(db,"config","geral"),{titulo:el('confNomeCidade').value,zapAdmin:el('confZapAdmin').value,opacAzul:el('opacAzul').value,opacPreto:el('opacPreto').value,headerSize:el('confHeaderSize').value,headerTop:el('confHeaderTop').value,sponsorSize:el('confSponsorSize').value,sponsorBottom:el('confSponsorBottom').value},{merge:true});alert("Salvo");};
         window.salvarCidade=async()=>{await addDoc(collection(db,"cidades"),{nome:el('novaCidadeNome').value,uf:el('novaCidadeUF').value,login:el('novaCidadeLogin').value,senha:el('novaCidadeSenha').value});alert("Cidade Salva");};
