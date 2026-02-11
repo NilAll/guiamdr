@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Detalhes</title>
+    <title>Perfil</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         /* RESET E CONFIGURAÇÕES GERAIS */
@@ -17,16 +17,38 @@
             display: flex; 
             flex-direction: column; 
             overflow-x: hidden; 
-            padding-bottom: 105vw; /* Espaço para o banner */
+            /* Espaço para o banner quadrado não cobrir o conteúdo */
+            padding-bottom: 105vw; 
         }
 
+        /* Ajuste para telas maiores (PC/Tablet) */
         @media (min-width: 500px) {
-            body { background: #333; padding-bottom: 0; align-items: center; }
-            #app-shell { width: 100%; max-width: 500px; background: white; min-height: 100vh; position: relative; padding-bottom: 520px; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+            body {
+                background: #333; 
+                padding-bottom: 0; 
+                align-items: center; 
+            }
+            #app-shell {
+                width: 100%;
+                max-width: 500px;
+                background: white;
+                min-height: 100vh;
+                position: relative;
+                padding-bottom: 520px; 
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            }
         }
         
-        /* CAPA (Hero) */
-        .hero-container { width: 100%; height: 220px; position: relative; background: #333; flex-shrink: 0; }
+        /* CAPA (Hero) - Altura Fixa */
+        .hero-container { 
+            width: 100%; 
+            height: 220px; 
+            position: relative; 
+            background: #333; 
+            flex-shrink: 0; 
+        }
         .hero { width: 100%; height: 100%; object-fit: cover; cursor: pointer; display: block; }
         
         /* CONTEÚDO (Centro) */
@@ -55,47 +77,43 @@
         /* BOTÕES */
         .actions-bar { display: flex; gap: 8px; margin-top: 15px; flex-wrap: wrap; }
         .btn-action { flex: 1; padding: 10px 0; border-radius: 8px; text-decoration: none; color: white; font-weight: bold; text-align: center; font-size: 11px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-transform: uppercase; cursor: pointer; min-width: 70px; }
-        .btn-call { background: #007bff; } .btn-whats { background: #25D366; } .btn-insta { background: #E1306C; } .btn-delivery { background: #ff9800; color: #333; border: 1px solid #e68900; } .btn-maps { background: #4285F4; } .btn-gallery { background: #6f42c1; } 
+        .btn-call { background: #007bff; } 
+        .btn-whats { background: #25D366; } 
+        .btn-insta { background: #E1306C; } 
+        .btn-delivery { background: #ff9800; color: #333; border: 1px solid #e68900; }
+        .btn-maps { background: #4285F4; }
+        .btn-gallery { background: #6f42c1; } 
 
-        /* GALERIA INTERNA */
+        /* ÁREAS INTERNAS */
+        .menu-section { display: none; background: white; margin-top: 10px; padding: 15px; border-top: 1px solid #eee; }
+        .menu-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .btn-add { background: #28a745; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
+
         .gallery-section { display: none; background: white; margin-top: 10px; padding: 15px; border-top: 1px solid #eee; }
         .grid-thumbs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .grid-thumb-img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; }
 
-        /* --- MODAL DELIVERY (CAMADA 20.000) --- */
-        .menu-section { 
+        /* --- BANNER PUBLICITÁRIO FIXO (QUADRADO) --- */
+        #box-publicidade-fixa {
             position: fixed;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%) translateY(110%); 
+            left: 50%; 
+            transform: translateX(-50%); 
             width: 100%;
             max-width: 500px; 
-            height: 85vh; 
-            background: white;
-            z-index: 20000; /* Cobre o Banner (9000) mas fica abaixo do Carrinho (21000) */
-            border-radius: 25px 25px 0 0;
-            box-shadow: 0 -10px 50px rgba(0,0,0,0.5);
-            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-        
-        .menu-section.open {
-            transform: translateX(-50%) translateY(0);
+            aspect-ratio: 1 / 1; 
+            height: auto;
+            background-color: #000;
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
         }
 
-        .menu-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; background: #fff; border-radius: 25px 25px 0 0; }
-        .menu-content-scroll { overflow-y: auto; flex: 1; padding: 20px; padding-bottom: 100px; }
-        .menu-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
-        .btn-add { background: #28a745; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; }
-        /* ------------------------------------ */
-
-        /* BANNER (CAMADA 9.000) */
-        #box-publicidade-fixa { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 500px; aspect-ratio: 1 / 1; height: auto; background-color: #000; z-index: 9000; display: none; justify-content: center; align-items: center; box-shadow: 0 -5px 30px rgba(0,0,0,0.5); }
         #imgBannerFixo { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-        /* CARRINHO (CAMADA 21.000 - SUPREMA) */
+        /* CARRINHO */
         .fab-cart { 
             position: fixed; 
             bottom: 20px; 
@@ -110,24 +128,43 @@
             justify-content: center; 
             font-size: 20px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-            z-index: 21000; /* MAIOR QUE TUDO */
-            transition: bottom 0.3s; 
-            cursor: pointer; 
+            z-index: 10000; 
+            transition: bottom 0.3s;
         }
-        @media (min-width: 500px) { .fab-cart { right: calc(50% - 230px); } }
+        
+        @media (min-width: 500px) {
+            .fab-cart { right: calc(50% - 230px); }
+        }
+
         .cart-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 25000; display: none; align-items: flex-end; justify-content: center; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10001; display: none; align-items: flex-end; justify-content: center; }
         .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 20px 20px 0 0; padding: 20px; max-height: 85vh; display: flex; flex-direction: column; }
         
         /* LIGHTBOX */
-        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 30000; display: none; align-items: center; justify-content: center; }
+        .lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 12000; display: none; align-items: center; justify-content: center; }
         .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 30002; }
-        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; font-size: 40px; padding: 10px; cursor: pointer; z-index: 30001; }
-        .nav-prev { left: 10px; } .nav-next { right: 10px; }
+        .btn-close-lightbox { position: absolute; top: 20px; right: 20px; color: white; background: rgba(0,0,0,0.5); border: none; font-size: 30px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; z-index: 12002; }
+        .nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; font-size: 40px; padding: 10px; cursor: pointer; z-index: 12001; }
+        .nav-prev { left: 10px; }
+        .nav-next { right: 10px; }
         
-        .btn-back-float { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); color: white; padding: 5px 15px; border-radius: 20px; text-decoration: none; font-weight: bold; z-index: 50; cursor: pointer; border: none; font-size: 14px; }
+        /* BOTÃO VOLTAR FLUTUANTE */
+        .btn-back-float {
+            position: absolute; 
+            top: 15px; 
+            left: 15px; 
+            background: rgba(0,0,0,0.5); 
+            color: white; 
+            padding: 5px 15px; 
+            border-radius: 20px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            z-index: 50;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -162,19 +199,16 @@
                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Galeria de Fotos</h3><button onclick="alternarGaleria()" style="background:none;border:none;font-size:20px">✕</button></div>
                 <div id="grid-fotos" class="grid-thumbs"></div>
             </div>
+
+            <div id="area-cardapio" class="menu-section">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h3 style="margin:0">Cardápio</h3><button onclick="alternarDelivery()" style="background:none;border:none;font-size:20px">✕</button></div>
+                <div id="lista-produtos"></div>
+            </div>
         </div>
     </div>
 
     <div id="box-publicidade-fixa">
         <img id="imgBannerFixo" src="" alt="Publicidade">
-    </div>
-
-    <div id="area-cardapio" class="menu-section">
-        <div class="menu-header">
-            <h3 style="margin:0">🍔 Cardápio / Pedidos</h3>
-            <button onclick="alternarDelivery()" style="background:none;border:none;font-size:28px; color:#333;">✕</button>
-        </div>
-        <div id="lista-produtos" class="menu-content-scroll"></div>
     </div>
 
     <div id="btnCart" class="fab-cart" onclick="abrirCarrinho()">🛒<div id="cartCount" class="cart-badge">0</div></div>
@@ -199,8 +233,13 @@
         let allImages = []; 
         let currentImgIdx = 0; 
         
+        // --- NOVA FUNÇÃO DE VOLTAR INTELIGENTE ---
         window.voltarSeguro = () => {
-            if (window.history.length > 1) { window.history.back(); } else { window.location.href = 'index.html'; }
+            if (window.history.length > 1) {
+                window.history.back(); // Volta para a lista anterior
+            } else {
+                window.location.href = 'index.html'; // Fallback para Home
+            }
         };
 
         async function carregarDetalhes() {
@@ -208,24 +247,30 @@
             const docSnap = await getDoc(doc(db, "guia_cidades", id));
             if (docSnap.exists()) {
                 localData = docSnap.data();
+                
                 allImages = (localData.imagens && localData.imagens.length > 0) ? localData.imagens : (localData.imagem ? [localData.imagem] : ["https://via.placeholder.com/400x200"]);
                 document.getElementById('capa').src = allImages[0];
+                
                 if(allImages.length > 1) { document.getElementById('btnGaleria').style.display = 'flex'; }
+
                 document.getElementById('nome').textContent = localData.nome;
                 document.getElementById('cats').textContent = `${localData.categoria} > ${localData.subcategoria || ''}`;
                 document.getElementById('endereco').textContent = localData.cidade;
+
                 if(localData.preco > 0) {
                     document.getElementById('priceBox').style.display = 'block';
                     document.getElementById('currPrice').textContent = `R$ ${localData.preco.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                     if(localData.precoAntigo > 0) document.getElementById('oldPrice').textContent = `R$ ${localData.precoAntigo.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
                 }
+
                 if(localData.telFixo) { const btn = document.getElementById('btnLigar'); btn.href = `tel:${localData.telFixo.replace(/\D/g,'')}`; btn.style.display = 'flex'; }
                 if(localData.contato) { const btn = document.getElementById('btnZapPerfil'); btn.href = `https://wa.me/55${localData.contato.replace(/\D/g,'')}`; btn.style.display = 'flex'; }
                 if(localData.categoria !== 'Classificados' && localData.instagram) { const btn = document.getElementById('btnInsta'); btn.href = localData.instagram; btn.style.display = 'flex'; }
+
                 const btnRota = document.getElementById('btnRota');
                 if(localData.linkMapa) { btnRota.href = localData.linkMapa; btnRota.style.display = 'flex'; } 
                 else if (localData.cidade) { const busca = encodeURIComponent(localData.cidade + " " + localData.nome); btnRota.href = `https://www.google.com/maps/search/?api=1&query=${busca}`; btnRota.style.display = 'flex'; }
-                
+
                 if(localData.temDelivery) {
                     document.getElementById('btnDelivery').style.display = 'flex';
                     const lista = document.getElementById('lista-produtos');
@@ -233,6 +278,7 @@
                         lista.innerHTML += `<div class="menu-item"><div style="display:flex;align-items:center;"><div><strong>${item.nome}</strong><br><small>R$ ${parseFloat(item.preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</small></div></div><button class="btn-add" onclick="addCart(${index})">+</button></div>`;
                     });
                 }
+                
                 renderizarGradeGaleria();
             }
             inicializarPublis();
@@ -240,30 +286,16 @@
 
         window.alternarGaleria = () => {
             const galeria = document.getElementById('area-galeria');
+            const menu = document.getElementById('area-cardapio');
+            menu.style.display = 'none';
             if (galeria.style.display === 'block') { galeria.style.display = 'none'; } else { galeria.style.display = 'block'; }
         };
 
-        // --- DELIVERY: OCULTA BANNER AO ABRIR ---
         window.alternarDelivery = () => {
+            const galeria = document.getElementById('area-galeria');
             const menu = document.getElementById('area-cardapio');
-            const banner = document.getElementById('box-publicidade-fixa');
-            const cart = document.getElementById('btnCart');
-            
-            menu.classList.toggle('open');
-            
-            if (menu.classList.contains('open')) {
-                // ABRIU: Esconde banner e baixa o carrinho para o menu
-                if(banner) banner.style.display = 'none';
-                cart.style.bottom = "20px";
-            } else {
-                // FECHOU: Se tiver publicidade, mostra e sobe o carrinho
-                if(banner && document.getElementById('imgBannerFixo').src) {
-                    banner.style.display = 'flex';
-                    const newBottom = "calc(100vw + 20px)";
-                    cart.style.bottom = newBottom;
-                    if(window.innerWidth >= 500) { cart.style.bottom = "540px"; }
-                }
-            }
+            galeria.style.display = 'none';
+            if (menu.style.display === 'block') { menu.style.display = 'none'; } else { menu.style.display = 'block'; }
         };
 
         function renderizarGradeGaleria() {
@@ -280,6 +312,7 @@
         window.fecharFotoCapa = () => { document.getElementById('lightbox').style.display = 'none'; }
         window.fecharSeForFundo = (e) => { if(e.target.id === 'lightbox') fecharFotoCapa(); }
 
+        // --- SISTEMA DE PUBLICIDADE (BANNER) ---
         async function inicializarPublis() { 
             try { 
                 const snap = await getDocs(collection(db, "guia_cidades")); 
@@ -298,25 +331,22 @@
         
         function mostrarNovaPubli() { 
             if(bannersCache.length === 0) return; 
-            
-            // Se o menu estiver aberto, não força o banner aparecer
-            const menu = document.getElementById('area-cardapio');
-            if(menu.classList.contains('open')) return;
-
             const item = bannersCache[Math.floor(Math.random() * bannersCache.length)]; 
+            
             const img = document.getElementById('imgBannerFixo'); 
             const box = document.getElementById('box-publicidade-fixa');
+            
             img.src = item.img; 
             img.onclick = () => window.location.href=`detalhes.html?id=${item.id}`; 
+            
             box.style.display = 'flex'; 
             
-            // Sobe o carrinho se o banner aparecer
+            // Ajusta o carrinho para subir
             const btnCart = document.getElementById('btnCart');
-            const newBottom = "calc(100vw + 20px)"; 
-            btnCart.style.bottom = newBottom;
+            btnCart.style.bottom = "calc(100vw + 20px)"; 
             
-            if(window.innerWidth >= 500) { 
-                btnCart.style.bottom = "540px"; 
+            if(window.innerWidth >= 500) {
+                 btnCart.style.bottom = "540px";
             }
         }
 
