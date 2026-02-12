@@ -10,23 +10,30 @@
     <script>try{emailjs.init("vOaHzeApkyntx09x6");}catch(e){}</script>
     
     <style>
-        /* ESTILOS BASE */
+        /* ESTILOS BASE (MANTIDOS) */
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-user-select: none; user-select: none; }
         input, textarea, select { -webkit-user-select: text; user-select: text; }
         body { padding: 20px; background: #f0f2f5; max-width: 900px; margin: 0 auto; color: #333; padding-bottom: 80px; }
 
-        /* TELA DE LOGIN RESTAURADA (COM LOGO) */
+        /* LOGIN */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
         .login-box { text-align: center; background: #2c2c2c; padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .login-input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 16px; }
+        .login-input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 16px; text-align: center; }
         .btn-login { background: #007bff; color: white; padding: 12px; width: 100%; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
 
+        /* HEADER */
         .header-admin { display: none; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .badge-role { background: #ffc107; color: #333; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; margin-left: 10px; }
         
-        .card { background: white; border-radius: 12px; margin-bottom: 15px; display: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border-top: 4px solid #ccc; transition: all 0.3s ease; }
+        /* CARDS */
+        .card { background: white; border-radius: 12px; margin-bottom: 15px; display: block; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border-top: 4px solid #ccc; transition: all 0.3s ease; }
         
-        #painelCidades { border-color: #ff5722; } #painelAdminsLocais { border-color: #343a40; } #painelPalpites { border-color: #9c27b0; } #painelUsuarios { border-color: #28a745; } #painelVips { border-color: #ffc107; } #painelCategorias { border-color: #17a2b8; } #painelCadastro { border-color: #007bff; } #painelLista { border-color: #6c757d; }
+        #painelCidades { border-color: #ff5722; } 
+        #painelUsuarios { border-color: #28a745; } /* VERDE PARA DESTAQUE */
+        #painelVips { border-color: #ffc107; } 
+        #painelCategorias { border-color: #17a2b8; } 
+        #painelCadastro { border-color: #007bff; } 
+        #painelLista { border-color: #6c757d; } 
 
         .card-header-area { padding: 20px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; transition: background 0.2s; }
         .card-header-area:hover { background: #f9f9f9; }
@@ -37,6 +44,7 @@
         .card.open .toggle-icon { transform: rotate(180deg); color: #333; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* FORMS E BOTOES */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; margin-top: 15px; }
         .form-full { width: 100%; margin-bottom: 15px; }
         label { font-weight: 600; font-size: 13px; color: #666; margin-bottom: 6px; display: block; }
@@ -44,47 +52,39 @@
         
         .btn { border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; color: white; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
         .btn:hover { opacity: 0.9; }
-        .btn-primary { background: #007bff; } .btn-success { background: #28a745; } .btn-danger { background: #dc3545; } .btn-warning { background: #ffc107; color: #333; } .btn-info { background: #17a2b8; } .btn-dark { background: #343a40; }
+        .btn-primary { background: #007bff; } .btn-success { background: #28a745; } .btn-danger { background: #dc3545; } .btn-warning { background: #ffc107; color: #333; } .btn-info { background: #17a2b8; } 
         .btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
         .btn-row { display: flex; gap: 10px; margin-top: 15px; }
 
-        .manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 12px 15px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 8px; }
+        .manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 12px 15px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 8px; flex-wrap: wrap; gap: 10px; }
+        
+        /* ESTILO ESPECÍFICO PARA LISTA DE USUÁRIOS */
+        .user-block { display: flex; flex-direction: column; width: 100%; border-bottom: 1px solid #ddd; padding: 15px 0; }
+        .user-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .user-name { font-size: 15px; font-weight: bold; color: #333; }
+        .user-email { font-size: 12px; color: #666; }
+        .user-loja-tag { margin-top: 5px; background: #e3f2fd; color: #0d47a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .user-controls { display: flex; gap: 10px; margin-top: 10px; }
+        .status-blocked { text-decoration: line-through; color: red; }
+        
         .cat-block { border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; overflow: hidden; background: white; }
         .cat-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #fff; cursor: pointer; }
-        .cat-actions { display: flex; gap: 5px; }
         .sub-manager-container { display: none; background: #f4f6f8; padding: 10px; border-top: 1px solid #e0e0e0; }
-        .sub-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #ddd; margin-bottom: 5px; font-size: 13px; }
-        .sector-manager-container { display: none; margin-top: 5px; padding-left: 10px; border-left: 2px solid #ccc; width: 100%; }
-        .sector-item { font-size: 12px; color: #555; padding: 3px 0; display: flex; justify-content: space-between; }
-        .input-inline { width: 70%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; }
-        .input-sub-add { width: 70% !important; display: inline-block; margin: 0; }
-
         .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; align-items: center; }
         .menu-adder { display: flex; gap: 10px; align-items: center; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        .menu-row { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f0f0f0; align-items: center; font-size: 13px; }
-        .thumb-menu { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; vertical-align: middle; margin-right: 10px; background: #eee; }
-
+        
+        /* MODAIS */
         .modal-icons { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; }
         .modal-icons-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 12px; text-align: center; }
         #inputCustomIcon { font-size: 40px; text-align: center; padding: 10px; width: 100%; margin-bottom: 20px; }
         
-        .badge-status { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; }
-        .badge-delivery { background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9; }
-        
-        .palpite-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
-        .palpite-row:hover { background: #f5f5f5; }
-        .palpite-num { font-size: 20px; font-weight: bold; background: #9c27b0; color: white; padding: 5px 12px; border-radius: 50%; }
-        .palpite-info { flex: 1; margin-left: 15px; }
-        .palpite-winner { background: #d4edda !important; border-left: 5px solid #28a745; }
-        .palpite-winner .palpite-num { background: #ffc107; color: #333; box-shadow: 0 0 10px #ffc107; }
-
+        /* GALERIA E PALPITES */
         .gallery-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .gallery-item-admin { display: flex; align-items: flex-start; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .gallery-thumb-admin { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #ccc; margin-right: 15px; background: #eee; }
+        .gallery-item-admin { display: flex; align-items: flex-start; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .gallery-thumb-admin { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; margin-right: 15px; }
         .gallery-info-admin { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .gallery-info-admin label { font-size: 11px; color: #666; margin: 0; }
-        .gallery-info-admin input { margin: 0; padding: 8px; font-size: 13px; border: 1px solid #ccc; background: #fff; width: 100%; }
-        .btn-remove-photo { align-self: center; background: #dc3545; color: white; border: none; border-radius: 6px; padding: 10px; cursor: pointer; margin-left: 10px; font-size: 14px; }
+        .palpite-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
+        .palpite-winner { background: #d4edda !important; border-left: 5px solid #28a745; }
     </style>
 </head>
 <body>
@@ -95,7 +95,7 @@
             <h3 style="color:white; margin-bottom:20px;">Acesso Administrativo</h3>
             <input id="inputUsuario" class="login-input" placeholder="Usuário">
             <input id="inputSenha" type="password" class="login-input" placeholder="Senha" onkeypress="if(event.key==='Enter') fazerLogin()">
-            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="fazerLogin()">Entrar</button>
+            <button class="btn btn-primary" style="margin-top:20px; width:100%; font-size:16px;" onclick="fazerLogin()">ENTRAR</button>
         </div>
     </div>
 
@@ -103,7 +103,10 @@
         <div class="header-left">
             <h2 style="margin:0; font-size:20px;">Painel de Gestão <span id="roleBadge" class="badge-role">...</span></h2>
         </div>
-        <a href="index.html" class="btn btn-secondary btn-sm">🏠 Ver App</a>
+        <div>
+            <a href="index.html" class="btn btn-secondary btn-sm">🏠 Ver App</a>
+            <button onclick="logout()" class="btn btn-danger btn-sm" style="margin-left:10px;">🚪 Sair</button>
+        </div>
     </div>
 
     <div class="card" id="painelCidades">
@@ -114,43 +117,24 @@
             <div id="listaCidades" style="margin-bottom:20px;">Carregando...</div>
             <div style="background:#f8f9fa; padding:15px; border-radius:8px;">
                 <h3 style="font-size:15px; margin-top:0;">Cadastrar Nova Cidade</h3>
-                <div class="form-grid"><div><label>Nome</label><input id="novaCidadeNome" placeholder="Ex: São Paulo"></div><div><label>UF</label><input id="novaCidadeUF" placeholder="SP"></div></div>
-                <div class="form-grid"><div><label>Link Fundo</label><input id="novaCidadeFundo"></div><div><label>Link Logo</label><input id="novaCidadeLogo"></div></div>
-                <div class="form-grid"><div><label>Definir Login Admin</label><input id="novaCidadeLogin"></div><div><label>Definir Senha Admin</label><input id="novaCidadeSenha"></div></div>
+                <div class="form-grid"><div><label>Nome</label><input id="novaCidadeNome"></div><div><label>UF</label><input id="novaCidadeUF"></div></div>
+                <div class="form-grid"><div><label>Login Admin</label><input id="novaCidadeLogin"></div><div><label>Senha Admin</label><input id="novaCidadeSenha"></div></div>
                 <button class="btn btn-success" style="width:100%;" onclick="salvarCidade()">+ Adicionar Cidade</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="card" id="painelAdminsLocais">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>👮 Gestão de Admins Locais</h2><span class="toggle-icon">▼</span>
-        </div>
-        <div class="card-body">
-            <div id="listaAdminsLocais">Carregando...</div>
-        </div>
-    </div>
-    
-    <div class="card" id="painelPalpites">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>🎲 Palpites dos VIPs</h2><span class="toggle-icon">▼</span>
-        </div>
-        <div class="card-body">
-            <p style="color:#666; font-size:13px; margin-bottom:15px;"><b>Clique em um palpite</b> para definir ou remover o ganhador.</p>
-            <button class="btn btn-danger btn-sm" style="margin-bottom:15px;" onclick="limparPalpites()">🗑️ Limpar Lista</button>
-            <div id="listaPalpites" style="background:#fff; border:1px solid #ddd; border-radius:8px; max-height:400px; overflow-y:auto;">
-                <div style="padding:20px; text-align:center;">Carregando palpites...</div>
             </div>
         </div>
     </div>
 
     <div class="card" id="painelUsuarios">
         <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>👥 Usuários do App</h2><span class="toggle-icon">▼</span>
+            <h2>👥 Gerenciar Usuários (Donos)</h2><span class="toggle-icon">▼</span>
         </div>
         <div class="card-body">
-            <div id="listaUsuarios"></div>
-            <div id="formEditUser" style="display:none; background:#e3f2fd; padding:15px; border-radius:8px; margin-top:20px; border:1px solid #90caf9;"><h3 style="margin-top:0; font-size:16px; color:#0d47a1;">✏️ Editando Usuário</h3><div class="form-grid"><div><label>Nome</label><input type="text" id="editUserName"></div><div><label>E-mail (Fixo)</label><input type="text" id="editUserEmail" disabled style="background:#ddd;"></div></div><div class="form-grid"><div><label>Nova Senha</label><input type="text" id="editUserPass"></div><div><label>Cidade</label><select id="editUserCidade"><option value="">Selecione...</option></select></div></div><div class="btn-row"><button class="btn btn-success" onclick="salvarEdicaoUsuario()">Salvar Alterações</button><button class="btn btn-danger" onclick="cancelarEdicaoUsuario()">Cancelar</button></div></div>
+            <p style="font-size:13px; color:#666; margin-bottom:15px; background:#fff3cd; padding:10px; border-radius:6px; border:1px solid #ffeeba;">
+                Aqui você controla quem se cadastrou para ter um estabelecimento. <br>
+                <b>Bloquear Acesso:</b> Impede o login. <br>
+                <b>Ocultar Loja:</b> O estabelecimento some do App (Busca e Listas), mas não é apagado.
+            </p>
+            <div id="listaUsuarios">Carregando...</div>
         </div>
     </div>
     
@@ -159,14 +143,20 @@
             <h2>💎 Membros VIP</h2><span class="toggle-icon">▼</span>
         </div>
         <div class="card-body">
-            <div class="form-grid"><div><label>Nome Completo</label><input id="vipNome"></div><div><label>Nascimento</label><input type="date" id="vipNasc"></div></div>
-            <div class="form-grid">
-                <div><label>WhatsApp (Com DDD)</label><input type="number" id="vipPhone" placeholder="5511999999999"></div>
-                <div><label>E-mail</label><input type="email" id="vipEmail"></div>
-            </div>
-            <div class="form-full"><label>Palavra Secreta (Senha)</label><input type="text" id="vipPalavra"></div>
-            <div class="btn-row"><button id="btnSalvarVip" class="btn btn-success" style="width:100%;" onclick="salvarVip()">Cadastrar VIP</button><button id="btnCancelVip" class="btn btn-danger" style="display:none;" onclick="cancelarEdicaoVip()">Cancelar</button></div>
+            <div class="form-grid"><div><label>Nome</label><input id="vipNome"></div><div><label>WhatsApp</label><input type="number" id="vipPhone"></div></div>
+            <div class="form-grid"><div><label>Email</label><input type="email" id="vipEmail"></div><div><label>Senha VIP</label><input type="text" id="vipPalavra"></div></div>
+            <button id="btnSalvarVip" class="btn btn-success" style="width:100%;" onclick="salvarVip()">Cadastrar VIP</button>
             <hr style="margin:20px 0; border:0; border-top:1px solid #eee;"><div id="listaVips"></div>
+        </div>
+    </div>
+
+    <div class="card" id="painelPalpites">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
+            <h2>🎲 Palpites / Sorteios</h2><span class="toggle-icon">▼</span>
+        </div>
+        <div class="card-body">
+            <button class="btn btn-danger btn-sm" style="margin-bottom:15px;" onclick="limparPalpites()">🗑️ Limpar Lista</button>
+            <div id="listaPalpites" style="border:1px solid #ddd; border-radius:8px; max-height:400px; overflow-y:auto;"></div>
         </div>
     </div>
 
@@ -186,22 +176,6 @@
         </div>
         <div class="card-body">
             <div class="form-grid"><div><label>Nome App</label><input type="text" id="confNomeCidade"></div><div><label>WhatsApp Admin</label><input type="number" id="confZapAdmin"></div></div>
-            <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin-bottom:15px;">
-                <label>🎨 Cores (0-100)</label>
-                <div class="form-grid"><div><label>Azul</label><input type="range" id="opacAzul"></div><div><label>Preto</label><input type="range" id="opacPreto"></div></div>
-            </div>
-            <div class="form-grid">
-                <div style="background:#e8f5e9; padding:15px; border-radius:8px; border:1px solid #c8e6c9;">
-                    <label style="color:#2e7d32; margin-bottom:10px;">📌 Logo do Topo</label>
-                    <label>Tamanho (px):</label><input id="confHeaderSize" type="number" placeholder="Ex: 50">
-                    <label>Distância Topo (px):</label><input id="confHeaderTop" type="number" placeholder="Ex: 10">
-                </div>
-                <div style="background:#fff3e0; padding:15px; border-radius:8px; border:1px solid #ffe0b2;">
-                    <label style="color:#ef6c00; margin-bottom:10px;">🤝 Logo Rodapé</label>
-                    <label>Tamanho (px):</label><input id="confSponsorSize" type="number" placeholder="Ex: 60">
-                    <label>Distância Rodapé (px):</label><input id="confSponsorBottom" type="number" placeholder="Ex: 15">
-                </div>
-            </div>
             <button class="btn btn-primary" style="width:100%;" onclick="salvarConfigGlobal()">Salvar Configurações</button>
         </div>
     </div>
@@ -211,44 +185,36 @@
             <h2 id="tituloForm">🏪 Cadastrar / Editar Local</h2><span class="toggle-icon">▼</span>
         </div>
         <div class="card-body">
-            <div class="form-grid" style="background:#eef; padding:15px; border-radius:8px; margin-bottom:20px;"><div><label style="color:#ff5722;">1. Cidade</label><select id="selCidadeCadastro" style="border:1px solid #ff5722"></select></div><div><label style="color:#007bff;">2. Categoria</label><select id="categoria" style="border:1px solid #007bff;"><option value="">Selecione...</option></select></div><div><label>3. Subcategoria</label><select id="subcategoria" disabled><option value="">...</option></select></div><div><label>4. Setor</label><select id="setor" disabled><option value="">...</option></select></div></div>
-            
-            <div class="form-full"><label>Nome (ou Título do Álbum)</label><input id="nome"></div>
-            <div class="form-full"><label>Descrição (Slogan/Resumo)</label><input id="descricao" maxlength="60"></div>
-
+            <div class="form-full" id="divSelCidade" style="display:none;"><label style="color:#ff5722;">Cidade</label><select id="selCidadeCadastro" style="border:1px solid #ff5722"></select></div>
+            <div class="form-grid"><div><label>Categoria</label><select id="categoria"><option value="">Selecione...</option></select></div><div><label>Subcategoria</label><select id="subcategoria" disabled><option value="">...</option></select></div></div>
+            <div class="form-full"><label>Setor (Opcional)</label><select id="setor" disabled><option value="">...</option></select></div>
+            <div class="form-full"><label>Nome do Local</label><input id="nome"></div>
+            <div class="form-full"><label>Descrição Curta</label><input id="descricao" maxlength="60"></div>
             <div id="camposPadrao">
-                <div class="form-grid"><div><label>R$ Riscado</label><input id="precoAntigo" placeholder="0,00"></div><div><label>R$ Atual</label><input id="precoAtual" placeholder="0,00"></div></div>
-                <div class="form-full"><label>Endereço Completo</label><input id="cidade"></div>
-                <div class="form-grid"><div><label>Link Google Maps</label><input id="linkMapa"></div><div><label>Link Imagem (Capa)</label><input id="imagem"></div></div>
-                <div class="form-grid"><div><label>WhatsApp</label><input id="contato"></div><div><label>Instagram</label><input id="instagram"></div><div><label>Telefone Fixo</label><input id="telFixo"></div></div>
-                
+                <div class="form-grid"><div><label>Preço (Opcional)</label><input id="precoAtual"></div><div><label>Preço Antigo</label><input id="precoAntigo"></div></div>
+                <div class="form-full"><label>Endereço</label><input id="cidade"></div>
+                <div class="form-grid"><div><label>Foto Capa (URL)</label><input id="imagem"></div><div><label>Link Maps</label><input id="linkMapa"></div></div>
+                <div class="form-grid"><div><label>WhatsApp</label><input id="contato"></div><div><label>Instagram</label><input id="instagram"></div></div>
                 <div class="checkbox-group">
-                    <label style="display:flex; align-items:center; gap:5px; color:#28a745; font-weight:bold;"><input type="checkbox" id="checkDelivery" onclick="verificarTermosDelivery(this)"> 🛵 Ativar Delivery</label>
-                    <label style="display:flex; align-items:center; gap:5px;"><input type="checkbox" id="checkPubli"> 📢 Banner</label>
-                    <label style="display:flex; align-items:center; gap:5px; color:#ffc107; font-weight:bold;"><input type="checkbox" id="checkPartner"> ⭐ Parceiro</label>
+                    <label style="color:#28a745; font-weight:bold;"><input type="checkbox" id="checkDelivery" onclick="verificarTermosDelivery(this)"> 🛵 Delivery</label>
+                    <label><input type="checkbox" id="checkPubli"> 📢 Banner</label>
+                    <label style="color:#ffc107; font-weight:bold;"><input type="checkbox" id="checkPartner"> ⭐ Parceiro</label>
                 </div>
-                
-                <div id="boxInfoDelivery" style="display:none; margin-top:15px; padding-top:15px; border-top:1px solid #ddd;">
-                    <h4 style="margin:0 0 10px 0;">📝 Criar Cardápio (Obrigatório para Sorteio)</h4>
-                    <div class="menu-adder"><div style="flex:2;"><input id="prodNome" placeholder="Nome"></div><div style="flex:1;"><input id="prodPreco" placeholder="Preço"></div><div style="flex:2;"><input id="prodImg" placeholder="Link Foto"></div><button class="btn btn-info btn-sm" onclick="addItemMenu()">+ Add</button></div>
-                    <div id="lista-cardapio-preview" style="margin-top:10px; border:1px solid #eee; padding:10px; border-radius:8px;"></div>
-                    <div style="margin-top:20px; background:#e8f5e9; padding:10px; border-radius:8px;"><label style="color:#28a745;">🎁 Selecione o Brinde VIP (Do Menu)</label><select id="deliveryBrinde" style="border:1px solid #28a745; background:white;"><option value="">Primeiro adicione itens ao menu...</option></select><p style="font-size:12px; color:#666; margin:5px 0 0 0;">*Este item será listado para o VIP escolher.</p></div>
+                <div id="boxInfoDelivery" style="display:none; margin-top:15px; border-top:1px solid #ddd; padding-top:10px;">
+                    <h4>📝 Cardápio Delivery</h4>
+                    <div class="menu-adder"><input id="prodNome" placeholder="Item"><input id="prodPreco" placeholder="Preço" style="width:80px;"><button class="btn btn-info btn-sm" onclick="addItemMenu()">Add</button></div>
+                    <div id="lista-cardapio-preview" style="margin-top:10px;"></div>
+                    <label style="margin-top:10px; color:#28a745;">🎁 Brinde do Sorteio</label>
+                    <select id="deliveryBrinde"><option value="">Adicione itens primeiro...</option></select>
                 </div>
-                <div id="boxPubli" style="display:none; margin-top:15px;"><label>Imagem do Banner</label><input id="imgPubli"></div>
+                <div id="boxPubli" style="display:none; margin-top:10px;"><label>Imagem Banner</label><input id="imgPubli"></div>
             </div>
-
-            <div id="boxGaleriaManager" style="display:none; background:#fff3e0; padding:15px; border-radius:8px; border:1px solid #ffe0b2; margin-bottom:15px;">
-                <h4 style="margin:0 0 10px 0; color:#ef6c00;">📷 Gerenciar Fotos da Galeria</h4>
-                <p style="font-size:12px; color:#666; margin-bottom:10px;">Adicione fotos com legenda. Se você limpar a lista e salvar, a galeria será apagada.</p>
-                <div class="form-grid" style="grid-template-columns: 2fr 2fr 1fr; align-items:end;">
-                    <div><label>Link da Imagem</label><input id="inputNovaFoto" placeholder="https://..."></div>
-                    <div><label>Legenda (Opcional)</label><input id="inputNovaLegenda" placeholder="Ex: Vista Aérea"></div>
-                    <button class="btn btn-warning" style="height:45px;" onclick="addFotoGaleria()">Adicionar</button>
-                </div>
+            <div id="boxGaleriaManager" style="display:none; background:#fff3e0; padding:15px; margin-bottom:15px;">
+                <h4>📷 Fotos da Galeria</h4>
+                <div class="form-grid"><div><input id="inputNovaFoto" placeholder="URL Foto"></div><button class="btn btn-warning" onclick="addFotoGaleria()">Add</button></div>
                 <div id="previewGaleria" class="gallery-list-container"></div>
             </div>
-
-            <div class="btn-row"><button id="btnSalvar" class="btn btn-save btn-success" onclick="salvarOuAtualizar()">Salvar Registro</button><button id="btnCancelar" class="btn btn-danger" style="display:none;" onclick="limparForm()">Cancelar</button></div>
+            <div class="btn-row"><button id="btnSalvar" class="btn btn-success" onclick="salvarOuAtualizar()">Salvar Registro</button><button id="btnCancelar" class="btn btn-danger" style="display:none;" onclick="limparForm()">Cancelar</button></div>
         </div>
     </div>
 
@@ -261,204 +227,208 @@
         </div>
     </div>
 
-    <div id="modalTermos" class="modal-icons"><div class="modal-icons-content"><h3 style="color:#28a745;">📜 Termos do Delivery</h3><p style="text-align:left; line-height:1.6; color:#555;">1. Pagar taxa de manutenção.<br>2. Doar <b>1 Brinde</b> a cada ciclo (aprox. 4 meses).</p><div class="btn-row" style="justify-content:center;"><button class="btn btn-success" onclick="aceitarTermos()">Concordo</button><button class="btn btn-danger" onclick="recusarTermos()">Cancelar</button></div></div></div>
-    <div id="modalIconPicker" class="modal-icons"><div class="modal-icons-content"><h3>Ícone</h3><input type="text" id="inputCustomIcon" placeholder="🍕"><div class="btn-row" style="justify-content:center;"><button class="btn btn-success" onclick="salvarIconeCustomizado()">Salvar</button><button class="btn btn-danger" onclick="closeIconPicker()">Cancelar</button></div></div></div>
+    <div id="modalTermos" class="modal-icons"><div class="modal-icons-content"><h3>Termos Delivery</h3><p>Taxa de manutenção e 1 Brinde a cada ciclo.</p><button class="btn btn-success" onclick="aceitarTermos()">Concordo</button></div></div>
+    <div id="modalIconPicker" class="modal-icons"><div class="modal-icons-content"><h3>Ícone</h3><input type="text" id="inputCustomIcon"><button class="btn btn-success" onclick="salvarIconeCustomizado()">Salvar</button></div></div>
 
     <script type="module">
-        const VERSAO_ATUAL="8.0"; 
-        if(localStorage.getItem("v_adm")!==VERSAO_ATUAL){localStorage.setItem("v_adm",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="11.0"; if(localStorage.getItem("v_adm")!==VERSAO_ATUAL){localStorage.setItem("v_adm",VERSAO_ATUAL);location.reload(true);}
         
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, getDoc, setDoc, onSnapshot, query, where, getDocs, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
-        const app=initializeApp({apiKey:"AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",authDomain:"testegithub-e1ffb.firebaseapp.com",projectId:"testegithub-e1ffb",storageBucket:"testegithub-e1ffb.firebasestorage.app",messagingSenderId:"508103458559",appId:"1:508103458559:web:55bc2fe4dc61d7b5ee16ca"}); 
-        const db=getFirestore(app); const el=id=>document.getElementById(id);
-        let currentUser=null, listaSubs={}, listaSetores={}, customIcons={}, idEditando=null, catEditing=null, idVipEditando=null, idUsuarioEditando=null, cardapio=[], fotosGaleria=[];
+        const app=initializeApp({apiKey:"AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",authDomain:"testegithub-e1ffb.firebaseapp.com",projectId:"testegithub-e1ffb",storageBucket:"testegithub-e1ffb.firebasestorage.app",messagingSenderId:"508103458559",appId:"1:508103458559:web:55bc2fe4dc61d7b5ee16ca"}); const db=getFirestore(app); const el=id=>document.getElementById(id);
+        let currentUser=null, listaSubs={}, listaSetores={}, customIcons={}, idEditando=null, catEditing=null, idVipEditando=null, cardapio=[], fotosGaleria=[], todosLocaisCache=[];
 
         window.toggleCard = (card) => { card.classList.toggle('open'); };
 
-        window.fazerLogin=async()=>{const u=el('inputUsuario').value.trim(),p=el('inputSenha').value; if(!u||!p) return alert("Preencha tudo"); if(u==='master'&&p==='master123'){currentUser={role:'master'};init();return;} try{let q=query(collection(db,"cidades"),where("login","==",u),where("senha","==",p));let s=await getDocs(q);if(!s.empty){currentUser={role:'city',cityId:s.docs[0].id};init();return;} alert("Dados incorretos");}catch(e){alert("Erro conexão");}};
+        window.fazerLogin=async()=>{
+            const u=el('inputUsuario').value.trim(),p=el('inputSenha').value; 
+            if(!u||!p) return alert("Preencha tudo"); 
+            if(u==='admin'&&p==='admin123'){ currentUser={role:'master'};init();return; } 
+            
+            try{
+                let q=query(collection(db,"users"),where("email","==",u),where("senha","==",p));
+                let s=await getDocs(q);
+                if(!s.empty){
+                    const d = s.docs[0].data();
+                    if (d.blockedAccess) { alert("Acesso Bloqueado pelo Admin."); return; } 
+                    currentUser={role:'owner', userId: s.docs[0].id, cityId: d.cidadeId};
+                    init(); return;
+                }
+                let q2=query(collection(db,"cidades"),where("login","==",u),where("senha","==",p));
+                let s2=await getDocs(q2);
+                if(!s2.empty){currentUser={role:'city',cityId:s2.docs[0].id};init();return;}
+                alert("Dados incorretos");
+            }catch(e){console.error(e);alert("Erro conexão");}
+        };
+
+        window.logout = () => { window.location.reload(); };
+
         function init(){
-            el('loginScreen').style.display='none';el('headerAdmin').style.display='flex'; const m=currentUser.role==='master'; const c=currentUser.role==='city';
+            el('loginScreen').style.display='none';el('headerAdmin').style.display='flex'; 
+            const m=currentUser.role==='master'; const c=currentUser.role==='city'; const o=currentUser.role==='owner';
+            
             el('painelCidades').style.display=m?'block':'none';
-            el('painelAdminsLocais').style.display=m?'block':'none';
-            el('painelUsuarios').style.display=m?'block':'none';
             el('painelMasterConfig').style.display=m?'block':'none';
-            el('painelPalpites').style.display=c?'block':'none';
-            el('painelVips').style.display=c?'block':'none'; 
+            
+            // AGORA O PAINEL DE USUÁRIOS É VISÍVEL PARA A CIDADE (c) E MASTER (m)
+            el('painelUsuarios').style.display=(c||m)?'block':'none'; 
+            
+            el('painelPalpites').style.display=(c||o||m)?'block':'none';
+            el('painelVips').style.display=(c||o||m)?'block':'none'; 
             el('painelCategorias').style.display='block';
             el('painelCadastro').style.display='block';
             el('painelLista').style.display='block'; 
-            loadData(); if(c) carregarPalpites();
+            
+            if(m) el('divSelCidade').style.display='block'; 
+            loadData(); if(c||o) carregarPalpites();
         }
         
         async function loadData(){
-            onSnapshot(collection(db,"cidades"),s=>{el('selCidadeCadastro').innerHTML='<option value="">Selecione a Cidade</option>'; el('listaCidades').innerHTML=""; el('listaAdminsLocais').innerHTML=""; s.forEach(d=>{el('selCidadeCadastro').innerHTML+=`<option value="${d.id}">${d.data().nome}</option>`; 
-                if(currentUser.role==='master') {
-                    el('listaCidades').innerHTML+=`<div class="manager-item"><b>${d.data().nome}</b></div>`;
-                    el('listaAdminsLocais').innerHTML+=`<div class="manager-item"><div><b>${d.data().nome}</b><br><small>User: ${d.data().login} | Senha: ${d.data().senha}</small></div><button class="btn btn-warning btn-sm" onclick="alert('Edite no painel de Cidades')">Ver</button></div>`;
-                }
-            });});
+            onSnapshot(collection(db,"cidades"),s=>{el('selCidadeCadastro').innerHTML='<option value="">Selecione a Cidade</option>'; el('listaCidades').innerHTML=""; s.forEach(d=>{el('selCidadeCadastro').innerHTML+=`<option value="${d.id}">${d.data().nome}</option>`; el('listaCidades').innerHTML+=`<div class="manager-item"><b>${d.data().nome}</b></div>`;});});
+            
             onSnapshot(doc(db,"config","categorias"),s=>{listaSubs=s.exists()?s.data():{"_order":[]};renderCats();});
             onSnapshot(doc(db,"config","setores"),s=>{listaSetores=s.exists()?s.data():{};});
             onSnapshot(doc(db,"config","icons"),s=>{customIcons=s.exists()?s.data():{};renderCats();});
-            onSnapshot(doc(db,"config","geral"),s=>{if(s.exists()){const d=s.data();el('confZapAdmin').value=d.zapAdmin||"";el('confNomeCidade').value=d.titulo||"";el('opacAzul').value=d.opacAzul||80;el('opacPreto').value=d.opacPreto||50;el('confHeaderSize').value=d.headerSize||"";el('confHeaderTop').value=d.headerTop||"";el('confSponsorSize').value=d.sponsorSize||"";el('confSponsorBottom').value=d.sponsorBottom||"";}});
-            onSnapshot(collection(db,"vips"),s=>{el('listaVips').innerHTML="";s.forEach(d=>el('listaVips').innerHTML+=`<div class="manager-item"><div><b>${d.data().nome}</b> (${d.data().palavra})<br><small>${d.data().whatsapp||'-'}</small></div><div><button class="btn btn-warning btn-sm" onclick="editVip('${d.id}','${d.data().nome}','${d.data().nasc}','${d.data().email}','${d.data().palavra}','${d.data().whatsapp}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delVip('${d.id}')">X</button></div></div>`);});
-            let q=query(collection(db,"guia_cidades")); if(currentUser.role==='city') q=query(collection(db,"guia_cidades"),where("cidadeId","==",currentUser.cityId));
-            onSnapshot(q,s=>{el('lista-locais').innerHTML="";s.forEach(d=>{const item=d.data();let badges="";if(item.temDelivery)badges+=`<span class="badge-status" style="background:#e8f5e9; color:#28a745;">🛵 Delivery</span>`;el('lista-locais').innerHTML+=`<div class="manager-item"><div><b>${item.nome}</b> ${badges}<br><small style="color:#666;">${item.categoria} > ${item.subcategoria||''}</small></div><div><button class="btn btn-warning btn-sm" onclick="editLocal('${d.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delLocal('${d.id}')">X</button></div></div>`;});});
-            if(currentUser.role==='master'){onSnapshot(collection(db,"users"),(snap)=>{el('listaUsuarios').innerHTML="";snap.forEach(doc=>{const u=doc.data();el('listaUsuarios').innerHTML+=`<div class="manager-item"><div><b>${u.nome}</b> (${u.email})</div><div><button class="btn btn-warning btn-sm" onclick="prepararEdicaoUsuario('${doc.id}','${u.nome}','${u.email}','${u.senha}','${u.cidadeId||''}')">✏️</button></div></div>`;});});}
+            onSnapshot(doc(db,"config","geral"),s=>{if(s.exists()){const d=s.data();el('confZapAdmin').value=d.zapAdmin||"";el('confNomeCidade').value=d.titulo||"";}});
+            onSnapshot(collection(db,"vips"),s=>{el('listaVips').innerHTML="";s.forEach(d=>el('listaVips').innerHTML+=`<div class="manager-item"><div><b>${d.data().nome}</b> (${d.data().palavra})</div><div><button class="btn btn-warning btn-sm" onclick="editVip('${d.id}','${d.data().nome}','${d.data().nasc}','${d.data().email}','${d.data().palavra}','${d.data().whatsapp}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delVip('${d.id}')">X</button></div></div>`);});
+            
+            let q=query(collection(db,"guia_cidades")); 
+            if(currentUser.role==='city' || currentUser.role==='owner') q=query(collection(db,"guia_cidades"),where("cidadeId","==",currentUser.cityId));
+            
+            onSnapshot(q,s=>{
+                el('lista-locais').innerHTML="";
+                todosLocaisCache = [];
+                s.forEach(d=>{
+                    const item=d.data(); 
+                    todosLocaisCache.push({id: d.id, ...item});
+                    // Filtro visual para o admin (se está oculto ou não)
+                    const statusText = item.adminHidden ? '<span style="color:red; font-weight:bold;">[OCULTO]</span>' : '';
+                    el('lista-locais').innerHTML+=`<div class="manager-item"><div><b>${item.nome}</b> ${statusText}<br><small>${item.categoria}</small></div><div><button class="btn btn-warning btn-sm" onclick="editLocal('${d.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delLocal('${d.id}')">X</button></div></div>`;
+                });
+                if(currentUser.role !== 'owner') carregarUsuariosDaCidade();
+            });
+
+            if(currentUser.role !== 'owner') carregarUsuariosDaCidade();
         }
 
-        // --- PALPITES COM VENCEDOR ---
-        function carregarPalpites() {
-            if(!currentUser.cityId) return;
-            const q = query(collection(db, "vip_palpites"), where("cidadeId", "==", currentUser.cityId));
-            onSnapshot(q, (snap) => {
-                const div = el('listaPalpites'); div.innerHTML = "";
-                if(snap.empty) { div.innerHTML = "<div style='padding:20px; text-align:center;'>Nenhum palpite nesta cidade.</div>"; return; }
-                let palpites = [];
-                snap.forEach(doc => palpites.push({ id: doc.id, ...doc.data() }));
-                palpites.sort((a,b) => (b.data?.seconds || 0) - (a.data?.seconds || 0));
-                
-                palpites.forEach(d => {
-                    const data = d.data ? new Date(d.data.seconds * 1000).toLocaleString() : '-';
-                    const isWinnerClass = d.isWinner ? 'palpite-winner' : '';
-                    const winnerText = d.isWinner ? '<br><span style="color:#28a745; font-weight:bold; font-size:11px;">👑 VENCEDOR</span>' : '';
+        // --- GESTÃO DE USUÁRIOS (NOVA LÓGICA) ---
+        function carregarUsuariosDaCidade() {
+            let qUser = collection(db,"users");
+            if (currentUser.role === 'city') qUser = query(collection(db, "users"), where("cidadeId", "==", currentUser.cityId));
+
+            onSnapshot(qUser, (snap)=>{
+                el('listaUsuarios').innerHTML="";
+                snap.forEach(doc=>{
+                    const u = doc.data();
                     
-                    let btnZap = "";
-                    if(d.vipZap) {
-                        const msg = encodeURIComponent(`Olá ${d.vipNome}! Parabéns! Você foi o ganhador do sorteio: ${d.brinde} (${d.loja}). Seu número da sorte foi ${d.numero}.`);
-                        btnZap = `<a href="https://wa.me/${d.vipZap}?text=${msg}" target="_blank" class="btn btn-success btn-sm" style="text-decoration:none; margin-left:10px;">📱 Avise</a>`;
+                    // Acha se esse usuário tem estabelecimento
+                    const localDoUser = todosLocaisCache.find(l => l.ownerId === doc.id);
+                    const nomeLocal = localDoUser ? localDoUser.nome : '<span style="color:#999">Sem loja criada</span>';
+                    const localId = localDoUser ? localDoUser.id : null;
+                    const isHidden = localDoUser ? localDoUser.adminHidden : false;
+
+                    // Botão Bloquear Acesso
+                    const btnBlockAccess = u.blockedAccess 
+                        ? `<button class="btn btn-danger btn-sm" onclick="toggleUserAccess('${doc.id}', false)">Desbloquear Acesso</button>` 
+                        : `<button class="btn btn-success btn-sm" onclick="toggleUserAccess('${doc.id}', true)">Bloquear Acesso</button>`;
+                        
+                    // Botão Ocultar Loja (Só aparece se tiver loja)
+                    let btnHideShop = "";
+                    if(localId) {
+                        btnHideShop = isHidden
+                            ? `<button class="btn btn-danger btn-sm" onclick="toggleShopVisibility('${localId}', false)">Ø Está Oculto (Publicar)</button>`
+                            : `<button class="btn btn-info btn-sm" onclick="toggleShopVisibility('${localId}', true)">👁️ Ocultar Loja</button>`;
                     }
-                    
-                    div.innerHTML += `
-                    <div class="palpite-row ${isWinnerClass}" onclick="toggleVencedor('${d.id}', ${d.isWinner}, '${d.vipNome}')">
-                        <div style="display:flex; align-items:center;">
-                            <div class="palpite-num">${d.numero}</div>
-                            <div class="palpite-info">
-                                <div style="font-weight:bold; font-size:14px;">${d.vipNome} ${winnerText}</div>
-                                <div style="font-size:12px; color:#555;">Quer: <b>${d.brinde}</b></div>
-                                <div style="font-size:10px; color:#999;">${data}</div>
+
+                    const styleBlocked = u.blockedAccess ? 'border-left: 5px solid red; background:#ffebee;' : '';
+
+                    el('listaUsuarios').innerHTML+=`
+                    <div class="user-block" style="${styleBlocked}">
+                        <div class="user-header">
+                            <div>
+                                <div class="user-name ${u.blockedAccess ? 'status-blocked' : ''}">${u.nome}</div>
+                                <div class="user-email">${u.email}</div>
+                                <div class="user-loja-tag">🏠 ${nomeLocal}</div>
                             </div>
                         </div>
-                        ${btnZap}
+                        <div class="user-controls">
+                            ${btnBlockAccess}
+                            ${btnHideShop}
+                        </div>
                     </div>`;
                 });
             });
         }
 
-        window.toggleVencedor = async (id, currentStatus, nome) => {
-            const action = currentStatus ? "remover" : "DEFINIR";
-            if(confirm(`Deseja ${action} ${nome} como VENCEDOR deste prêmio?`)) {
-                try {
-                    await updateDoc(doc(db, "vip_palpites", id), { isWinner: !currentStatus });
-                } catch(e) { console.error(e); alert("Erro ao atualizar vencedor."); }
-            }
-        };
+        window.toggleUserAccess = async (uid, status) => { await updateDoc(doc(db, "users", uid), { blockedAccess: status }); };
+        // Nova função: Altera o status da LOJA, não do usuário
+        window.toggleShopVisibility = async (lid, status) => { await updateDoc(doc(db, "guia_cidades", lid), { adminHidden: status }); };
 
-        // --- GALERIA LÓGICA ---
-        window.addFotoGaleria = () => {
-            const url = el('inputNovaFoto').value.trim();
-            const legenda = el('inputNovaLegenda').value.trim();
-            if(!url) return alert("Cole o link.");
-            fotosGaleria.push({ url: url, legenda: legenda });
-            el('inputNovaFoto').value = ""; el('inputNovaLegenda').value = "";
-            renderGaleriaPreview();
-        };
-        window.removeFotoGaleria = (index) => { fotosGaleria.splice(index, 1); renderGaleriaPreview(); };
-        window.updateFotoGaleria = (index, field, val) => { fotosGaleria[index][field] = val; };
-
-        function renderGaleriaPreview() {
-            const div = el('previewGaleria');
-            if(fotosGaleria.length === 0) {
-                div.innerHTML = "<div style='text-align:center; padding:20px; color:#888;'>Nenhuma foto adicionada.</div>";
-                return;
-            }
-            div.innerHTML = fotosGaleria.map((item, i) => {
-                const url = typeof item === 'string' ? item : item.url;
-                const leg = typeof item === 'string' ? '' : (item.legenda || '');
-                const safeUrl = url.replace(/"/g, '&quot;');
-                const safeLeg = leg.replace(/"/g, '&quot;');
-                return `
-                <div class="gallery-item-admin">
-                    <img src="${url}" class="gallery-thumb-admin" onerror="this.src='https://via.placeholder.com/60?text=Erro'">
-                    <div class="gallery-info-admin">
-                        <label>Link da Foto:</label>
-                        <input value="${safeUrl}" onchange="updateFotoGaleria(${i}, 'url', this.value)">
-                        <label>Legenda:</label>
-                        <input value="${safeLeg}" onchange="updateFotoGaleria(${i}, 'legenda', this.value)">
-                    </div>
-                    <button class="btn-remove-photo" onclick="removeFotoGaleria(${i})">X</button>
-                </div>`;
-            }).join('');
+        // --- PALPITES ---
+        function carregarPalpites() {
+            if(!currentUser.cityId) return;
+            const q = query(collection(db, "vip_palpites"), where("cidadeId", "==", currentUser.cityId));
+            onSnapshot(q, (snap) => {
+                const div = el('listaPalpites'); div.innerHTML = "";
+                let palpites = []; snap.forEach(doc => palpites.push({ id: doc.id, ...doc.data() }));
+                palpites.sort((a,b) => (b.data?.seconds || 0) - (a.data?.seconds || 0));
+                palpites.forEach(d => {
+                    const style = d.isWinner ? 'background:#d4edda; border-left:5px solid green;' : '';
+                    div.innerHTML += `<div class="palpite-row" style="${style}" onclick="toggleVencedor('${d.id}', ${d.isWinner})"><span class="palpite-num">${d.numero}</span><span style="margin-left:10px;">${d.vipNome} quer <b>${d.brinde}</b></span>${d.isWinner?' 🏆':''}</div>`;
+                });
+            });
         }
+        window.toggleVencedor = async (id, s) => { if(confirm("Mudar status de vencedor?")) await updateDoc(doc(db, "vip_palpites", id), { isWinner: !s }); };
+        window.limparPalpites = async () => { if(confirm("Limpar tudo?")) { const q = query(collection(db, "vip_palpites"), where("cidadeId", "==", currentUser.cityId)); const s = await getDocs(q); const b = writeBatch(db); s.forEach(d=>b.delete(d.ref)); await b.commit(); }};
+
+        // --- GALERIA & UPLOAD ---
+        window.addFotoGaleria = () => { fotosGaleria.push({ url: el('inputNovaFoto').value, legenda: "" }); el('inputNovaFoto').value=""; renderGaleriaPreview(); };
+        window.removeFotoGaleria = (i) => { fotosGaleria.splice(i,1); renderGaleriaPreview(); };
+        window.updateFotoGaleria = (i, f, v) => { fotosGaleria[i][f] = v; };
+        function renderGaleriaPreview() { el('previewGaleria').innerHTML = fotosGaleria.map((x,i)=>`<div class="gallery-item-admin"><img src="${x.url||x}" class="gallery-thumb-admin"><input value="${x.legenda||''}" onchange="updateFotoGaleria(${i},'legenda',this.value)" placeholder="Legenda"><button onclick="removeFotoGaleria(${i})">X</button></div>`).join(''); }
 
         el('categoria').addEventListener('change', () => {
-            const cat = el('categoria').value;
-            const s=el('subcategoria'); s.innerHTML='<option value="">Selecione...</option>'; s.disabled=true; 
+            const cat = el('categoria').value; const s=el('subcategoria'); s.innerHTML='<option value="">Selecione...</option>'; s.disabled=true; 
             if(cat && listaSubs[cat]){s.disabled=false;listaSubs[cat].forEach(x=>s.innerHTML+=`<option value="${x}">${x}</option>`);}
             if (cat === "Galeria de Fotos") { el('camposPadrao').style.display = 'none'; el('boxGaleriaManager').style.display = 'block'; } else { el('camposPadrao').style.display = 'block'; el('boxGaleriaManager').style.display = 'none'; }
         });
 
         window.salvarOuAtualizar=async()=>{
-            const isGaleria = el('categoria').value === "Galeria de Fotos"; const temDelivery = el('checkDelivery').checked;
-            let capaGaleria = "";
-            if (isGaleria && fotosGaleria.length > 0) { capaGaleria = typeof fotosGaleria[0] === 'string' ? fotosGaleria[0] : fotosGaleria[0].url; }
-            const d={cidadeId:el('selCidadeCadastro').value, nome:el('nome').value, nomeBusca:el('nome').value.toLowerCase(), descricao: el('descricao').value, categoria:el('categoria').value, subcategoria:el('subcategoria').value, setor:el('setor').value, cidade:el('cidade').value, galeria_fotos: isGaleria ? fotosGaleria : [], contato:el('contato').value, instagram:el('instagram').value, imagem: isGaleria ? capaGaleria : el('imagem').value, preco:parseFloat(el('precoAtual').value)||0, precoAntigo:parseFloat(el('precoAntigo').value)||0, isPartner:el('checkPartner').checked, temDelivery: temDelivery, deliveryBrinde:el('deliveryBrinde').value,cardapio: cardapio, publi:{ativa:el('checkPubli').checked, img:el('imgPubli').value}, linkMapa:el('linkMapa').value, telFixo:el('telFixo').value };
+            const d={cidadeId: currentUser.role==='master'?el('selCidadeCadastro').value : currentUser.cityId, nome:el('nome').value, nomeBusca:el('nome').value.toLowerCase(), descricao: el('descricao').value, categoria:el('categoria').value, subcategoria:el('subcategoria').value, setor:el('setor').value, cidade:el('cidade').value, galeria_fotos: fotosGaleria, contato:el('contato').value, instagram:el('instagram').value, imagem: el('imagem').value, preco:parseFloat(el('precoAtual').value)||0, precoAntigo:parseFloat(el('precoAntigo').value)||0, isPartner:el('checkPartner').checked, temDelivery: el('checkDelivery').checked, deliveryBrinde:el('deliveryBrinde').value,cardapio: cardapio, publi:{ativa:el('checkPubli').checked, img:el('imgPubli').value}, linkMapa:el('linkMapa').value};
             if(currentUser.role==='owner') d.ownerId = currentUser.userId;
             if(idEditando) await updateDoc(doc(db,"guia_cidades",idEditando),d); else await addDoc(collection(db,"guia_cidades"),d);
             alert("Salvo!"); limparForm();
         };
 
         window.editLocal = async (id) => {
-            try {
-                const docSnap = await getDoc(doc(db, "guia_cidades", id));
-                if (!docSnap.exists()) return alert("Erro: Item não encontrado.");
-                const d = docSnap.data();
-                idEditando = id;
-                fotosGaleria = [];
-                el('tituloForm').textContent="✏️ Editando: "+d.nome;
-                el('selCidadeCadastro').value=d.cidadeId; el('nome').value=d.nome; el('descricao').value = d.descricao || "";
-                el('categoria').value=d.categoria; el('categoria').dispatchEvent(new Event('change'));
-                setTimeout(()=>{el('subcategoria').value=d.subcategoria; el('subcategoria').dispatchEvent(new Event('change')); el('setor').value=d.setor;},500);
-
-                if (d.categoria === "Galeria de Fotos") {
-                    fotosGaleria = (d.galeria_fotos || []).map(item => {
-                        if (typeof item === 'string') return { url: item, legenda: "" };
-                        return item;
-                    });
-                    renderGaleriaPreview(); 
-                } else {
-                    el('imagem').value=d.imagem; el('linkMapa').value=d.linkMapa||""; el('contato').value=d.contato||""; el('telFixo').value=d.telFixo||""; el('instagram').value=d.instagram||""; el('precoAtual').value=d.preco||""; el('precoAntigo').value=d.precoAntigo||""; el('checkPartner').checked=d.isPartner; el('checkPubli').checked=d.publi?.ativa; el('imgPubli').value=d.publi?.img||""; if(d.publi?.ativa) el('boxPubli').style.display='block'; el('checkDelivery').checked=d.temDelivery; if(d.temDelivery) el('boxInfoDelivery').style.display='block'; cardapio = d.cardapio || []; renderMenu(); atualizarSelectBrindes(); el('deliveryBrinde').value=d.deliveryBrinde||"";
-                }
-                el('btnSalvar').innerText="Atualizar Dados"; el('btnCancelar').style.display='inline'; 
-                const cardCadastro = el('painelCadastro'); cardCadastro.style.display='block'; cardCadastro.classList.add('open'); cardCadastro.scrollIntoView({behavior:'smooth'});
-            } catch(e) { console.error(e); alert("Erro ao carregar dados."); }
+            const d = (await getDoc(doc(db, "guia_cidades", id))).data(); idEditando = id;
+            el('tituloForm').textContent="✏️ Editando: "+d.nome; el('nome').value=d.nome; el('descricao').value=d.descricao||"";
+            el('categoria').value=d.categoria; el('categoria').dispatchEvent(new Event('change'));
+            setTimeout(()=>{el('subcategoria').value=d.subcategoria; el('subcategoria').dispatchEvent(new Event('change')); el('setor').value=d.setor;},500);
+            if(d.categoria==="Galeria de Fotos") { fotosGaleria = d.galeria_fotos||[]; renderGaleriaPreview(); }
+            else { el('imagem').value=d.imagem; el('contato').value=d.contato; el('instagram').value=d.instagram; el('precoAtual').value=d.preco; el('checkDelivery').checked=d.temDelivery; if(d.temDelivery) el('boxInfoDelivery').style.display='block'; cardapio=d.cardapio||[]; renderMenu(); }
+            el('btnSalvar').innerText="Atualizar"; el('btnCancelar').style.display='inline'; el('painelCadastro').classList.add('open');
         };
 
-        window.limparForm=()=>{
-            idEditando=null; el('tituloForm').textContent="🏪 Cadastrar Local"; el('nome').value=""; el('descricao').value=""; el('cidade').value=""; el('imagem').value=""; el('btnSalvar').innerText="Cadastrar"; el('btnCancelar').style.display='none';el('checkDelivery').checked=false; el('boxInfoDelivery').style.display='none'; cardapio=[]; renderMenu(); 
-            fotosGaleria=[]; renderGaleriaPreview(); 
-            el('camposPadrao').style.display = 'block'; el('boxGaleriaManager').style.display = 'none';
-        };
-        
-        window.limparPalpites = async () => { if(!confirm("Apagar todos os palpites desta cidade?")) return; const q = query(collection(db, "vip_palpites"), where("cidadeId", "==", currentUser.cityId)); const snap = await getDocs(q); const batch = writeBatch(db); snap.forEach(doc => batch.delete(doc.ref)); await batch.commit(); alert("Limpo!"); };
-        window.addItemMenu = () => {const nome = el('prodNome').value; const preco = el('prodPreco').value; const img = el('prodImg').value;if(!nome || !preco) return alert("Preencha Nome e Preço");cardapio.push({nome, preco, img}); el('prodNome').value=""; el('prodPreco').value=""; el('prodImg').value="";renderMenu(); atualizarSelectBrindes();};
-        function renderMenu() {el('lista-cardapio-preview').innerHTML = cardapio.map((x,i)=>`<div class="menu-row"><div style="display:flex; align-items:center;">${x.img ? `<img src="${x.img}" class="thumb-menu">` : ''}<span>${x.nome} - R$ ${x.preco}</span></div><button class="btn btn-danger btn-sm" onclick="window.removeMenu(${i})">X</button></div>`).join('');}
-        window.removeMenu = (i) => { cardapio.splice(i,1); renderMenu(); atualizarSelectBrindes(); };
-        function atualizarSelectBrindes() {const sel = el('deliveryBrinde'); const atual = sel.value;sel.innerHTML = '<option value="">Selecione do Menu...</option>';cardapio.forEach(item => { sel.innerHTML += `<option value="${item.nome}">${item.nome}</option>`; });sel.value = atual;}
+        window.limparForm=()=>{ idEditando=null; el('tituloForm').textContent="🏪 Cadastrar"; el('nome').value=""; el('btnSalvar').innerText="Cadastrar"; el('btnCancelar').style.display='none'; cardapio=[]; renderMenu(); fotosGaleria=[]; renderGaleriaPreview(); };
         window.delLocal=async(id)=>{if(confirm("Apagar?"))await deleteDoc(doc(db,"guia_cidades",id));};
-        window.verificarTermosDelivery = (chk) => { if(chk.checked){el('modalTermos').style.display='flex'; chk.checked=false;} else {el('boxInfoDelivery').style.display='none';} };
-        window.aceitarTermos = () => { el('checkDelivery').checked=true; el('boxInfoDelivery').style.display='block'; el('modalTermos').style.display='none'; };
-        window.recusarTermos = () => { el('modalTermos').style.display='none'; };
-        el('checkPubli').onchange=e=>el('boxPubli').style.display=e.target.checked?'block':'none';
-        function renderCats(){const d=el('listaGestaoCategorias');d.innerHTML="";(listaSubs["_order"]||[]).forEach(c=>{let ic=customIcons[c]||"📂";d.innerHTML+=`<div class="cat-block"><div class="cat-header"><div style="font-weight:bold; font-size:15px;">${ic} ${c}</div><div class="cat-actions"><button class="btn btn-info btn-sm" onclick="openIcon('${c}')">Icon</button><button class="btn btn-warning btn-sm" onclick="editCat('${c}')">✏️</button><button class="btn btn-secondary btn-sm" onclick="toggleSubs('${c}')">Subs</button><button class="btn btn-danger btn-sm" onclick="delCat('${c}')">X</button></div></div><div id="subs-${c}" class="sub-manager-container">${(listaSubs[c]||[]).map((s,i)=>`<div class="sub-item"><div>${s}</div><div><button class="btn btn-secondary btn-sm" style="padding:2px 6px; font-size:10px;" onclick="toggleSetores('${s}')">Setores</button><button class="btn btn-danger btn-sm" style="padding:2px 6px; font-size:10px;" onclick="delSub('${c}',${i})">X</button></div></div><div id="setores-${s}" class="sector-manager-container">${(listaSetores[s]||[]).map((st,sti)=>`<div class="sector-item"><span>${st}</span> <button class="btn btn-danger btn-sm" style="padding:0 4px; font-size:10px;" onclick="delSetor('${s}',${sti})">x</button></div>`).join('')}<div style="display:flex; gap:5px; margin-top:5px;"><input id="new-setor-${s}" class="input-inline" placeholder="Novo Setor"><button class="btn btn-success btn-sm" style="padding:2px 6px;" onclick="addSetor('${s}')">+</button></div></div>`).join('')}<div style="display:flex; gap:5px; margin-top:10px; border-top:1px solid #ddd; padding-top:10px;"><input id="new-sub-${c}" placeholder="Nova Sub" style="flex:1; padding:8px;"><button class="btn btn-success btn-sm" onclick="addSub('${c}')">+ Add</button></div></div></div>`;}); updateSel();}
-        window.openIcon=c=>{catEditing=c;el('modalIconPicker').style.display='flex';el('inputCustomIcon').value=customIcons[c]||"";el('inputCustomIcon').focus();};
-        window.closeIconPicker=()=>el('modalIconPicker').style.display='none';
-        window.salvarIconeCustomizado=async()=>{const v=el('inputCustomIcon').value.trim();if(v)customIcons[catEditing]=v;else delete customIcons[catEditing];await setDoc(doc(db,"config","icons"),customIcons);closeIconPicker();};
+        
+        window.addItemMenu = () => {cardapio.push({nome:el('prodNome').value, preco:el('prodPreco').value}); el('prodNome').value=""; renderMenu();};
+        function renderMenu() {el('lista-cardapio-preview').innerHTML = cardapio.map((x,i)=>`<div>${x.nome} - ${x.preco} <button onclick="cardapio.splice(${i},1);renderMenu()">X</button></div>`).join(''); const s=el('deliveryBrinde'); s.innerHTML=""; cardapio.forEach(c=>s.innerHTML+=`<option>${c.nome}</option>`);}
+        
+        window.salvarVip=async()=>{
+            await addDoc(collection(db,"vips"), { nome:el('vipNome').value, email:el('vipEmail').value, palavra:el('vipPalavra').value, whatsapp:el('vipPhone').value });
+            alert("VIP Salvo"); el('vipNome').value=""; el('vipEmail').value=""; el('vipPalavra').value=""; el('vipPhone').value="";
+        };
+        window.editVip=(id,n,da,e,p,ph)=>{el('vipNome').value=n; el('vipEmail').value=e; el('vipPalavra').value=p; el('vipPhone').value=ph; idVipEditando=id;};
+        window.delVip=async(id)=>{if(confirm("Apagar?"))await deleteDoc(doc(db,"vips",id));};
+
+        function renderCats(){const d=el('listaGestaoCategorias');d.innerHTML="";(listaSubs["_order"]||[]).forEach(c=>{let ic=customIcons[c]||"📂";d.innerHTML+=`<div class="cat-block"><div class="cat-header"><div style="font-weight:bold;">${ic} ${c}</div><div><button class="btn btn-info btn-sm" onclick="openIcon('${c}')">Icon</button><button class="btn btn-warning btn-sm" onclick="editCat('${c}')">✏️</button><button class="btn btn-secondary btn-sm" onclick="toggleSubs('${c}')">Subs</button><button class="btn btn-danger btn-sm" onclick="delCat('${c}')">X</button></div></div><div id="subs-${c}" class="sub-manager-container">${(listaSubs[c]||[]).map((s,i)=>`<div class="sub-item"><div>${s}</div><div><button class="btn btn-secondary btn-sm" style="padding:2px;" onclick="toggleSetores('${s}')">Set</button><button class="btn btn-danger btn-sm" style="padding:2px;" onclick="delSub('${c}',${i})">X</button></div></div><div id="setores-${s}" class="sector-manager-container">${(listaSetores[s]||[]).map((st,sti)=>`<div class="sector-item"><span>${st}</span> <button class="btn btn-danger btn-sm" style="padding:0;" onclick="delSetor('${s}',${sti})">x</button></div>`).join('')}<div style="display:flex; margin-top:5px;"><input id="new-setor-${s}" class="input-inline"><button class="btn btn-success btn-sm" onclick="addSetor('${s}')">+</button></div></div>`).join('')}<div style="display:flex; margin-top:10px;"><input id="new-sub-${c}" style="flex:1;"><button class="btn btn-success btn-sm" onclick="addSub('${c}')">+ Add</button></div></div></div>`;});}
+        window.openIcon=c=>{catEditing=c;el('modalIconPicker').style.display='flex';el('inputCustomIcon').value=customIcons[c]||"";};
+        window.salvarIconeCustomizado=async()=>{const v=el('inputCustomIcon').value.trim();if(v)customIcons[catEditing]=v;else delete customIcons[catEditing];await setDoc(doc(db,"config","icons"),customIcons);el('modalIconPicker').style.display='none';};
         window.adicionarCategoria=async()=>{const n=el('novaCategoriaInput').value.trim();if(!n)return;if(!listaSubs["_order"])listaSubs["_order"]=[];listaSubs["_order"].push(n);await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();el('novaCategoriaInput').value="";};
         window.delCat=async(n)=>{if(confirm("Apagar?")){listaSubs["_order"]=listaSubs["_order"].filter(x=>x!==n);delete listaSubs[n];await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();}};
-        window.editCat=async(old)=>{const n=prompt("Novo nome:",old);if(n&&n!==old){if(listaSubs[n])return alert("Existe");listaSubs[n]=listaSubs[old];delete listaSubs[old];const i=listaSubs["_order"].indexOf(old);if(i!==-1)listaSubs["_order"][i]=n;await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();}};
         window.toggleSubs=id=>{const x=document.getElementById('subs-'+id);x.style.display=x.style.display==='block'?'none':'block';};
         window.toggleSetores=id=>{const x=document.getElementById('setores-'+id);x.style.display=x.style.display==='block'?'none':'block';};
         window.addSub=async(c)=>{const v=document.getElementById('new-sub-'+c).value.trim();if(!v)return;if(!listaSubs[c])listaSubs[c]=[];listaSubs[c].push(v);await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();};
@@ -466,29 +436,11 @@
         window.addSetor=async(s)=>{const v=document.getElementById('new-setor-'+s).value.trim();if(!v)return;if(!listaSetores[s])listaSetores[s]=[];listaSetores[s].push(v);await setDoc(doc(db,"config","setores"),listaSetores);renderCats();};
         window.delSetor=async(s,i)=>{if(confirm("Apagar?")){listaSetores[s].splice(i,1);await setDoc(doc(db,"config","setores"),listaSetores);renderCats();}};
         el('subcategoria').onchange=()=>{const s=el('subcategoria').value; const st=el('setor'); st.innerHTML='<option value="">Selecione...</option>'; st.disabled=true; if(s&&listaSetores[s]){st.disabled=false;listaSetores[s].forEach(x=>st.innerHTML+=`<option value="${x}">${x}</option>`);}};
-        function updateSel(){const s=el('categoria');const v=s.value;s.innerHTML='<option value="">Selecione...</option>';(listaSubs["_order"]||[]).forEach(c=>s.innerHTML+=`<option value="${c}">${c}</option>`);s.value=v;}
-        window.salvarVip=async()=>{const n=el('vipNome').value,e=el('vipEmail').value,p=el('vipPalavra').value,ph=el('vipPhone').value;if(!n||!p)return alert("Obrigatórios");const d={nome:n,email:e,nasc:el('vipNasc').value,palavra:p,whatsapp:ph};if(idVipEditando)await updateDoc(doc(db,"vips",idVipEditando),d);else await addDoc(collection(db,"vips"),d);alert("Salvo");cancelarEdicaoVip();};
-        window.editVip=(id,n,d,e,p,ph)=>{idVipEditando=id;el('vipNome').value=n;el('vipNasc').value=d;el('vipEmail').value=e;el('vipPalavra').value=p;el('vipPhone').value=ph||"";el('btnSalvarVip').textContent="Atualizar";el('btnCancelVip').style.display='inline';};
         
-        // --- FUNÇÃO CORRIGIDA PARA LIMPAR TODOS OS CAMPOS DO VIP ---
-        window.cancelarEdicaoVip=()=>{
-            idVipEditando=null;
-            el('vipNome').value="";
-            el('vipNasc').value=""; // Limpa Data
-            el('vipEmail').value=""; // Limpa Email
-            el('vipPalavra').value="";
-            el('vipPhone').value="";
-            el('btnSalvarVip').textContent="Cadastrar VIP";
-            el('btnCancelVip').style.display='none';
-        };
-        // -----------------------------------------------------------
-
-        window.delVip=async(id)=>{if(confirm("Apagar?"))await deleteDoc(doc(db,"vips",id));};
-        window.salvarConfigGlobal=async()=>{await setDoc(doc(db,"config","geral"),{titulo:el('confNomeCidade').value,zapAdmin:el('confZapAdmin').value,opacAzul:el('opacAzul').value,opacPreto:el('opacPreto').value,headerSize:el('confHeaderSize').value,headerTop:el('confHeaderTop').value,sponsorSize:el('confSponsorSize').value,sponsorBottom:el('confSponsorBottom').value},{merge:true});alert("Salvo");};
-        window.salvarCidade=async()=>{await addDoc(collection(db,"cidades"),{nome:el('novaCidadeNome').value,uf:el('novaCidadeUF').value,login:el('novaCidadeLogin').value,senha:el('novaCidadeSenha').value});alert("Cidade Salva");};
-        window.prepararEdicaoUsuario = (id, nome, email, senha, cidadeId) => { idUsuarioEditando = id; el('editUserName').value = nome; el('editUserEmail').value = email; el('editUserPass').value = senha; el('editUserCidade').value = cidadeId; el('formEditUser').style.display = 'block'; };
-        window.cancelarEdicaoUsuario = () => { idUsuarioEditando = null; el('formEditUser').style.display = 'none'; };
-        window.salvarEdicaoUsuario = async () => { if(!idUsuarioEditando) return; const nome = el('editUserName').value.trim(); const senha = el('editUserPass').value.trim(); const cidadeId = el('editUserCidade').value; await updateDoc(doc(db, "users", idUsuarioEditando), { nome, senha, cidadeId }); alert("Atualizado!"); cancelarEdicaoUsuario(); };
+        window.verificarTermosDelivery=(c)=>{if(c.checked){el('modalTermos').style.display='flex'; c.checked=false;}else el('boxInfoDelivery').style.display='none';};
+        window.aceitarTermos=()=>{el('checkDelivery').checked=true;el('boxInfoDelivery').style.display='block';el('modalTermos').style.display='none';};
+        window.salvarConfigGlobal=async()=>{await setDoc(doc(db,"config","geral"),{titulo:el('confNomeCidade').value,zapAdmin:el('confZapAdmin').value},{merge:true});alert("Salvo");};
+        window.salvarCidade=async()=>{await addDoc(collection(db,"cidades"),{nome:el('novaCidadeNome').value,uf:el('novaCidadeUF').value,login:el('novaCidadeLogin').value,senha:el('novaCidadeSenha').value});alert("Salvo");};
     </script>
 </body>
 </html>

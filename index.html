@@ -109,7 +109,7 @@
                 <button class="btn-hamburger" onclick="toggleMenu()">☰</button>
                 <div id="mainMenu" class="main-menu-dropdown">
                     <div class="menu-opt" onclick="abrirModalVipAccess()">💎 Área VIP</div>
-                    <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro</div>
+                    <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro Grátis</div>
                     <div class="menu-opt" onclick="abrirModalCidades(true)">📍 Trocar Cidade</div>
                     <div class="menu-opt" onclick="window.location.href='admin.html'">⚙️ Admin</div>
                 </div>
@@ -134,10 +134,21 @@
     <div id="modalLightbox" onclick="fecharLightbox()"><button class="btn-close-lightbox">✕</button><img id="imgLightbox" class="lightbox-img" src="" onclick="event.stopPropagation()"><div id="captionLightbox" class="lightbox-caption" onclick="event.stopPropagation()"></div></div>
     <div id="modalVipAccess" class="city-modal" style="display:none" onclick="fecharModalVip(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#ffc107;">💎 Área VIP</h2><p style="color:#666; font-size:13px;">Digite a Palavra Secreta:</p><input type="text" id="vipSecretInput" placeholder="Sua Senha" onkeypress="if(event.key==='Enter') validarVip()"><button class="btn-cad-user" style="background:#ffc107; color:black" onclick="validarVip()">Acessar</button><button class="btn-cad-user btn-want-vip" onclick="solicitarVipZap()">Quero ser VIP</button><button onclick="fecharModalVip()" style="margin-top:10px; background:none; border:none; color:#666; text-decoration:underline;">Cancelar</button></div></div>
     <div id="modalCidades" class="city-modal" style="display:none"><div class="city-modal-content"><h2 style="margin-top:0; color:#007bff;">Bem-vindo!</h2><p>Selecione sua cidade:</p><div id="listaCidadesSelect" style="max-height:300px;overflow-y:auto; border:1px solid #eee; border-radius:8px; margin-bottom:15px;"></div><button id="btnCancelarCidade" class="btn-cad-user" style="background:#dc3545; display:none;" onclick="fecharModalCidades()">Cancelar</button></div></div>
-    <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2><select id="cadCidadeSelect"><option value="">Selecione sua Cidade</option></select><input id="cadNome" placeholder="Nome"><input id="cadEmail" placeholder="Email"><input id="cadSenha" type="password" placeholder="Senha"><button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Cadastrar</button><button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button></div></div>
+    
+    <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)">
+        <div class="city-modal-content form-user" onclick="event.stopPropagation()">
+            <h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio Grátis</h2>
+            <p style="font-size:12px; color:#666; margin-bottom:15px;">Você será cadastrado na cidade atual.</p>
+            <input id="cadNome" placeholder="Nome Completo / Responsável">
+            <input id="cadEmail" placeholder="Email de Login">
+            <input id="cadSenha" type="password" placeholder="Senha de Acesso">
+            <button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Criar Conta Grátis</button>
+            <button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button>
+        </div>
+    </div>
 
     <script type="module">
-        const VERSAO_ATUAL="23.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="27.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -183,10 +194,7 @@
         async function abrirAreaVipExclusiva() {
             salvarNavegacao('subcats', "Área VIP");
             lastCategory="Área VIP"; 
-            
-            // FORÇA 1 COLUNA PARA ÁREA VIP
             document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr";
-            
             document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent="🎁 Sorteios da Semana"; document.getElementById('btnVoltarInicio').style.display='block'; viewState='subcats';
             const l = document.getElementById('listaSubcats'); l.innerHTML = "<p>Carregando sorteios...</p>";
             const qLocais = query(collection(db, "guia_cidades"), where("temDelivery", "==", true)); const snapLocais = await getDocs(qLocais);
@@ -253,9 +261,7 @@
         
         window.voltarParaCategorias = () => { 
             limparNavegacao(); 
-            // RESTAURA 2 COLUNAS PARA SUBCATEGORIAS
             document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
-            
             document.getElementById('viewSubcategorias').style.display='none'; 
             document.getElementById('viewCategorias').style.display='block'; 
             document.getElementById('btnVoltarInicio').style.display='block'; 
@@ -347,10 +353,7 @@
         window.abrirSubcategorias = (c, save=true) => {
             if(save) salvarNavegacao('subcats', c);
             lastCategory=c; 
-            
-            // GARANTE 2 COLUNAS PARA SUBCATEGORIAS
             document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
-            
             document.getElementById('viewCategorias').style.display='none'; 
             document.getElementById('viewSubcategorias').style.display='block'; 
             document.getElementById('painelNavegacao').style.display='block'; 
@@ -361,49 +364,22 @@
             document.getElementById('btnVoltarInicio').style.display='block'; 
             viewState='subcats';
             const l=document.getElementById('listaSubcats'); l.innerHTML=""; 
-            
-            // LÓGICA DE DELIVERY
             if(c === "Delivery") {
                 const itensDelivery = todosLocais.filter(i => i.temDelivery);
                 const subsDelivery = [...new Set(itensDelivery.map(i => i.subcategoria))].sort();
-                
-                const chipTudo = document.createElement('div'); 
-                chipTudo.className='subcat-chip'; 
-                chipTudo.textContent=`Ver Tudo Delivery`; 
-                chipTudo.onclick=()=>{ pesquisarPorSubcategoria("Delivery"); };
-                l.appendChild(chipTudo);
-
-                subsDelivery.forEach(s=>{ 
-                    const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; 
-                    d.onclick=()=>{ verificarConteudoSubcategoria(s) }; 
-                    l.appendChild(d); 
-                });
+                const chipTudo = document.createElement('div'); chipTudo.className='subcat-chip'; chipTudo.textContent=`Ver Tudo Delivery`; chipTudo.onclick=()=>{ pesquisarPorSubcategoria("Delivery"); }; l.appendChild(chipTudo);
+                subsDelivery.forEach(s=>{ const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; d.onclick=()=>{ verificarConteudoSubcategoria(s) }; l.appendChild(d); });
             } else {
                 let subs = estruturaCategorias[c] || [];
-                const chipTudo = document.createElement('div'); 
-                chipTudo.className='subcat-chip'; 
-                chipTudo.textContent=`Ver tudo de ${c}`; 
-                chipTudo.onclick=()=>{ pesquisarPorSubcategoria(c); }; 
-                l.appendChild(chipTudo);
-                
-                subs.forEach(s=>{ 
-                    const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; 
-                    d.onclick=()=>{ verificarConteudoSubcategoria(s) }; 
-                    l.appendChild(d); 
-                });
+                const chipTudo = document.createElement('div'); chipTudo.className='subcat-chip'; chipTudo.textContent=`Ver tudo de ${c}`; chipTudo.onclick=()=>{ pesquisarPorSubcategoria(c); }; l.appendChild(chipTudo);
+                subs.forEach(s=>{ const d=document.createElement('div'); d.className='subcat-chip'; d.textContent=s; d.onclick=()=>{ verificarConteudoSubcategoria(s) }; l.appendChild(d); });
             }
         }
         
         window.verificarConteudoSubcategoria = (subcat) => {
             lastSubcategory = subcat; 
-            
             let itensDaSub = [];
-            if(lastCategory === "Delivery") {
-                itensDaSub = todosLocais.filter(l => l.subcategoria === subcat && l.temDelivery === true);
-            } else {
-                itensDaSub = todosLocais.filter(l => l.subcategoria === subcat);
-            }
-
+            if(lastCategory === "Delivery") { itensDaSub = todosLocais.filter(l => l.subcategoria === subcat && l.temDelivery === true); } else { itensDaSub = todosLocais.filter(l => l.subcategoria === subcat); }
             const setoresUnicos = [...new Set(itensDaSub.map(i => i.setor).filter(s => s && s.trim() !== ""))].sort();
             if (setoresUnicos.length > 0) { abrirSetores(subcat, setoresUnicos); } else { pesquisarPorSubcategoria(subcat); }
         };
@@ -411,67 +387,32 @@
         window.abrirSetores = (subcat, listaSetores, save=true) => {
             if(!listaSetores) {
                 let itensDaSub = [];
-                if(lastCategory === "Delivery") {
-                    itensDaSub = todosLocais.filter(l => l.subcategoria === subcat && l.temDelivery === true);
-                } else {
-                    itensDaSub = todosLocais.filter(l => l.subcategoria === subcat);
-                }
+                if(lastCategory === "Delivery") { itensDaSub = todosLocais.filter(l => l.subcategoria === subcat && l.temDelivery === true); } else { itensDaSub = todosLocais.filter(l => l.subcategoria === subcat); }
                 listaSetores = [...new Set(itensDaSub.map(i => i.setor).filter(s => s && s.trim() !== ""))].sort();
             }
             if(save) salvarNavegacao('sectors', subcat, listaSetores);
-            
-            // GARANTE 2 COLUNAS PARA SETORES
             document.getElementById('listaSubcats').style.gridTemplateColumns = "1fr 1fr";
-            
-            viewState = 'sectors';
-            lastSubcategory = subcat;
-            document.getElementById('viewCategorias').style.display='none';
-            document.getElementById('viewSubcategorias').style.display='block';
-            document.getElementById('painelNavegacao').style.display='block';
-            document.getElementById('resultados').style.display='none';
-            document.getElementById('tituloCatSelecionada').textContent = subcat; 
-            const btnVoltarPainel = document.getElementById('btnVoltarNav');
-            btnVoltarPainel.onclick = () => { abrirSubcategorias(lastCategory); };
+            viewState = 'sectors'; lastSubcategory = subcat;
+            document.getElementById('viewCategorias').style.display='none'; document.getElementById('viewSubcategorias').style.display='block'; document.getElementById('painelNavegacao').style.display='block'; document.getElementById('resultados').style.display='none'; document.getElementById('tituloCatSelecionada').textContent = subcat; 
+            const btnVoltarPainel = document.getElementById('btnVoltarNav'); btnVoltarPainel.onclick = () => { abrirSubcategorias(lastCategory); };
             const l = document.getElementById('listaSubcats'); l.innerHTML=""; 
             const chipTudo = document.createElement('div'); chipTudo.className='subcat-chip'; chipTudo.textContent=`Ver tudo de ${subcat}`; chipTudo.onclick=()=>{ pesquisarPorSubcategoria(subcat); }; l.appendChild(chipTudo);
-            listaSetores.forEach(setor => { 
-                const d = document.createElement('div'); d.className='subcat-chip'; d.textContent = setor; 
-                d.onclick = () => { pesquisarPorSetor(subcat, setor); }; 
-                l.appendChild(d); 
-            });
+            listaSetores.forEach(setor => { const d = document.createElement('div'); d.className='subcat-chip'; d.textContent = setor; d.onclick = () => { pesquisarPorSetor(subcat, setor); }; l.appendChild(d); });
         };
 
         window.pesquisarPorSetor = (subcat, setor, save=true) => {
             if(save) salvarNavegacao('results_sector', setor, subcat);
             document.getElementById('painelNavegacao').style.display = 'none'; document.getElementById('resultados').style.display = 'block'; viewState = 'results_sector'; 
             const r = document.getElementById('resultados'); r.innerHTML="";
-            
             let filtrados = [];
-            if(lastCategory === "Delivery") {
-                filtrados = todosLocais.filter(l => l.subcategoria === subcat && l.setor === setor && l.temDelivery === true);
-            } else {
-                filtrados = todosLocais.filter(l => l.subcategoria === subcat && l.setor === setor);
-            }
-            
+            if(lastCategory === "Delivery") { filtrados = todosLocais.filter(l => l.subcategoria === subcat && l.setor === setor && l.temDelivery === true); } else { filtrados = todosLocais.filter(l => l.subcategoria === subcat && l.setor === setor); }
             renderizarListaCards(filtrados);
         };
         
         window.pesquisarPorSubcategoria = (t, save=true) => {
             if(save) salvarNavegacao('results_sub', t);
-            document.getElementById('busca').value = t; 
-            document.getElementById('painelNavegacao').style.display = 'none'; 
-            document.getElementById('resultados').style.display = 'block'; 
-            viewState = 'results_sub'; 
-            
-            if(t === "Delivery" && lastCategory === "Delivery") {
-                const f = todosLocais.filter(l => l.temDelivery === true);
-                renderizarListaCards(f);
-            } else if (lastCategory === "Delivery") {
-                const f = todosLocais.filter(l => l.subcategoria === t && l.temDelivery === true);
-                renderizarListaCards(f);
-            } else {
-                executarBusca(t.toLowerCase());
-            }
+            document.getElementById('busca').value = t; document.getElementById('painelNavegacao').style.display = 'none'; document.getElementById('resultados').style.display = 'block'; viewState = 'results_sub'; 
+            if(t === "Delivery" && lastCategory === "Delivery") { const f = todosLocais.filter(l => l.temDelivery === true); renderizarListaCards(f); } else if (lastCategory === "Delivery") { const f = todosLocais.filter(l => l.subcategoria === t && l.temDelivery === true); renderizarListaCards(f); } else { executarBusca(t.toLowerCase()); }
         };
 
         async function carregarDadosLocais() { const q=query(collection(db,"guia_cidades"),orderBy("nome")); const s=await getDocs(q); todosLocais=[]; s.forEach(d=>todosLocais.push({id:d.id,...d.data()})); aplicarFiltro(); }
@@ -482,10 +423,15 @@
             renderizarListaCards(f);
         }
 
+        // --- RENDERIZAÇÃO COM FILTRO DE SEGURANÇA (OCULTOS) ---
         function renderizarListaCards(lista) {
             const r = document.getElementById('resultados'); r.innerHTML="";
-            if(lista.length === 0) { r.innerHTML="<p style='color:white;text-align:center'>Nada encontrado.</p>"; return; }
-            lista.forEach(i => { 
+            
+            // FILTRO DE SEGURANÇA: Se estiver oculto pelo admin, não mostra
+            const listaSegura = lista.filter(i => !i.adminHidden);
+
+            if(listaSegura.length === 0) { r.innerHTML="<p style='color:white;text-align:center'>Nada encontrado.</p>"; return; }
+            listaSegura.forEach(i => { 
                 const img = (i.imagens && i.imagens[0]) || i.imagem || "https://via.placeholder.com/150"; 
                 let p = i.preco ? `<div class="price-display">R$ ${i.preco.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>` : '';
                 let infoPath = i.categoria || ""; if(i.subcategoria) infoPath += " > " + i.subcategoria; if(i.setor) infoPath += " > " + i.setor; 
@@ -524,7 +470,24 @@
         
         window.abrirModalCadastroUser=()=>{document.getElementById('modalCadastroUser').style.display='flex';window.toggleMenu&&window.toggleMenu();};
         window.fecharModalCadastro=(e)=>{if(!e||e.target.id==='modalCadastroUser')document.getElementById('modalCadastroUser').style.display='none';};
-        window.realizarCadastroUser=async()=>{ const cid=document.getElementById('cadCidadeSelect').value; const nom=document.getElementById('cadNome').value.trim(); const ema=document.getElementById('cadEmail').value.trim(); const sen=document.getElementById('cadSenha').value.trim(); if(!cid||!nom||!ema||!sen) return alert("Preencha tudo"); try { await addDoc(collection(db,"users"),{nome:nom,email:ema,senha:sen,role:'owner',cidadeId:cid,dataCadastro:new Date()}); await emailjs.send('service_cuesjea','template_dftiawx',{to_name:nom,to_email:ema,user_login:ema,user_password:sen}); alert("Cadastro feito!"); window.location.href="admin.html"; } catch(e){console.error(e);alert("Erro ao cadastrar.");} };
+        
+        window.realizarCadastroUser=async()=>{ 
+            const nom=document.getElementById('cadNome').value.trim(); 
+            const ema=document.getElementById('cadEmail').value.trim(); 
+            const sen=document.getElementById('cadSenha').value.trim(); 
+            const cid = cidadeAtualId;
+            if(!cid) return alert("Erro: Cidade não identificada. Navegue novamente.");
+            if(!nom||!ema||!sen) return alert("Preencha todos os campos."); 
+            try { 
+                await addDoc(collection(db,"users"),{nome:nom,email:ema,senha:sen,role:'owner',cidadeId:cid,dataCadastro:new Date()}); 
+                try { await emailjs.send('service_cuesjea','template_dftiawx',{to_name:nom,to_email:ema,user_login:ema,user_password:sen}); } catch(err){}
+                alert("Cadastro realizado com sucesso! Aguarde aprovação ou entre em contato."); 
+                fecharModalCadastro();
+            } catch(e){
+                console.error(e);
+                alert("Erro ao realizar cadastro.");
+            } 
+        };
     </script>
 </body>
 </html>
