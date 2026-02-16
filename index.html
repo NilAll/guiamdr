@@ -13,11 +13,27 @@
     <style>
         /* ESTILOS GERAIS */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #222; background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; color: white; padding: 10px 0; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        
+        /* FUNDO COM AJUSTE DE ALTURA (AUTO 100VH) */
+        body { 
+            background-color: #222; 
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: auto 100vh; 
+            background-attachment: fixed;
+            min-height: 100vh; 
+            color: white; 
+            padding: 10px 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            overflow-x: hidden; 
+        }
         
         #gradTop { position: fixed; top: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 1; background: linear-gradient(to bottom, rgba(0, 60, 180, 0.85), transparent); }
         #gradBottom { position: fixed; bottom: 0; left: 0; width: 100%; height: 35%; pointer-events: none; z-index: 1; background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent); }
         
+        /* LOGO RODAPÉ */
         .sponsor-logo { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 5; pointer-events: none; display: none; height: 50px; width: auto; object-fit: contain; }
         
         #appContent { display: none; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
@@ -44,7 +60,6 @@
         
         #resultados { width: 90%; max-width: 500px; padding-bottom: 80px; display: none; position: relative; z-index: 10; }
         
-        /* CARD */
         .card { background: rgba(255, 255, 255, 0.95); border-radius: 12px; overflow: hidden; margin-bottom: 15px; color: #333; display: flex; align-items: flex-start; padding: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); min-height: 100px; cursor: pointer; }
         .card-img { width: 85px; height: 85px; object-fit: cover; border-radius: 8px; margin-right: 15px; background: #ddd; flex-shrink: 0; }
         .card-content { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
@@ -56,7 +71,6 @@
         .tag-delivery { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .price-display { font-weight: bold; color: #333; font-size: 13px; }
 
-        /* MODAIS E POPUPS */
         #modalGaleria { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
         .galeria-header { width: 100%; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #111; color: white; border-bottom: 1px solid #333; flex-shrink: 0; }
         .galeria-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
@@ -99,7 +113,9 @@
     </style>
 </head>
 <body>
-    <div id="gradTop"></div><div id="gradBottom"></div><img id="logoPatra" class="sponsor-logo" src="">
+    <div id="gradTop"></div><div id="gradBottom"></div>
+    
+    <img id="logoPatra" class="sponsor-logo" style="display:none;" onerror="this.style.display='none'">
     
     <div id="appContent">
         <div class="header-container">
@@ -109,7 +125,7 @@
                 <button class="btn-hamburger" onclick="toggleMenu()">☰</button>
                 <div id="mainMenu" class="main-menu-dropdown">
                     <div class="menu-opt" onclick="abrirModalVipAccess()">💎 Área VIP</div>
-                    <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro Grátis</div>
+                    <div class="menu-opt" onclick="abrirModalCadastroUser()">👤 Cadastro</div>
                     <div class="menu-opt" onclick="abrirModalCidades(true)">📍 Trocar Cidade</div>
                     <div class="menu-opt" onclick="window.location.href='admin.html'">⚙️ Admin</div>
                 </div>
@@ -132,23 +148,24 @@
 
     <div id="modalGaleria"><div class="galeria-header"><h3 id="galeriaTitulo">Galeria</h3><button class="btn-close-galeria" onclick="fecharGaleria()">✕</button></div><div id="gridGaleriaFotos" class="gallery-grid-view"></div></div>
     <div id="modalLightbox" onclick="fecharLightbox()"><button class="btn-close-lightbox">✕</button><img id="imgLightbox" class="lightbox-img" src="" onclick="event.stopPropagation()"><div id="captionLightbox" class="lightbox-caption" onclick="event.stopPropagation()"></div></div>
+    
     <div id="modalVipAccess" class="city-modal" style="display:none" onclick="fecharModalVip(event)"><div class="city-modal-content form-user" onclick="event.stopPropagation()"><h2 style="margin-top:0; color:#ffc107;">💎 Área VIP</h2><p style="color:#666; font-size:13px;">Digite a Palavra Secreta:</p><input type="text" id="vipSecretInput" placeholder="Sua Senha" onkeypress="if(event.key==='Enter') validarVip()"><button class="btn-cad-user" style="background:#ffc107; color:black" onclick="validarVip()">Acessar</button><button class="btn-cad-user btn-want-vip" onclick="solicitarVipZap()">Quero ser VIP</button><button onclick="fecharModalVip()" style="margin-top:10px; background:none; border:none; color:#666; text-decoration:underline;">Cancelar</button></div></div>
     <div id="modalCidades" class="city-modal" style="display:none"><div class="city-modal-content"><h2 style="margin-top:0; color:#007bff;">Bem-vindo!</h2><p>Selecione sua cidade:</p><div id="listaCidadesSelect" style="max-height:300px;overflow-y:auto; border:1px solid #eee; border-radius:8px; margin-bottom:15px;"></div><button id="btnCancelarCidade" class="btn-cad-user" style="background:#dc3545; display:none;" onclick="fecharModalCidades()">Cancelar</button></div></div>
     
     <div id="modalCadastroUser" class="city-modal" style="display:none" onclick="fecharModalCadastro(event)">
         <div class="city-modal-content form-user" onclick="event.stopPropagation()">
-            <h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio Grátis</h2>
+            <h2 style="margin-top:0; color:#28a745;">Cadastre seu Negócio</h2>
             <p style="font-size:12px; color:#666; margin-bottom:15px;">Você será cadastrado na cidade atual.</p>
             <input id="cadNome" placeholder="Nome Completo / Responsável">
             <input id="cadEmail" placeholder="Email de Login">
             <input id="cadSenha" type="password" placeholder="Senha de Acesso">
-            <button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Criar Conta Grátis</button>
+            <button id="btnConfirmarCad" class="btn-cad-user" onclick="realizarCadastroUser()">Criar Conta</button>
             <button onclick="fecharModalCadastro()" style="margin-top:10px;background:none;border:none;color:#666;text-decoration:underline">Cancelar</button>
         </div>
     </div>
 
     <script type="module">
-        const VERSAO_ATUAL="27.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
+        const VERSAO_ATUAL="31.0"; if(localStorage.getItem("v_app")!==VERSAO_ATUAL){localStorage.setItem("v_app",VERSAO_ATUAL);location.reload(true);}
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, getDocs, getDoc, doc, query, orderBy, where, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
@@ -302,12 +319,12 @@
             try {
                 const g = await getDoc(doc(db,"config","geral")); if(g.exists()){ const d=g.data(); 
                 if(d.opacAzul!==undefined) document.getElementById('gradTop').style.background = `linear-gradient(to bottom, rgba(0, 60, 180, ${d.opacAzul/100}), transparent)`;
-                if(d.opacPreto!==undefined) document.getElementById('gradBottom').style.background = `linear-gradient(to top, rgba(0,0,0, ${d.opacPreto/100}), transparent)`;
+                if(d.opacPreto!==undefined) document.getElementById('gradBottom').style.background = `linear-gradient(to top, rgba(0, 0, 0, ${d.opacPreto/100}), transparent)`;
                 const header = document.querySelector('.header-logo');
                 if(d.headerSize) { header.style.height=d.headerSize+'px'; header.style.width='auto'; }
                 if(d.headerTop) header.style.marginTop=d.headerTop+'px';
                 const sponsor = document.getElementById('logoPatra');
-                if(d.sponsorSize) { sponsor.style.height=d.sponsorSize+'px'; sponsor.style.width='auto'; sponsor.style.maxWidth='none'; sponsor.style.display='block'; }
+                if(d.sponsorSize) { sponsor.style.height=d.sponsorSize+'px'; sponsor.style.width='auto'; sponsor.style.maxWidth='none'; }
                 if(d.sponsorBottom) sponsor.style.bottom=d.sponsorBottom+'px';
                 }
                 const c = await getDoc(doc(db,"config","categorias")); if(c.exists()) estruturaCategorias=c.data();
@@ -321,18 +338,42 @@
             document.getElementById('appContent').style.display = 'flex';
         }
 
+        // --- CORREÇÃO DE DUPLICATAS ---
         async function carregarCidades() {
-            const snap = await getDocs(collection(db,"cidades")); const l=document.getElementById('listaCidadesSelect'); l.innerHTML="";
-            snap.forEach(d => { const c=d.data(); l.innerHTML+=`<div class="city-item" onclick="selecionarCidade('${d.id}','${c.nome}','${c.uf}','${c.fundo}','${c.logoPatra}','${c.logoSize}','${c.logoBottom}')">${c.nome} - ${c.uf}</div>`; });
+            const snap = await getDocs(collection(db,"cidades")); 
+            const l=document.getElementById('listaCidadesSelect'); 
+            l.innerHTML="";
+            
+            const nomesVistos = new Set();
+
+            snap.forEach(d => { 
+                const c=d.data(); 
+                const chaveUnica = c.nome + '-' + c.uf;
+                if(!nomesVistos.has(chaveUnica)) {
+                    nomesVistos.add(chaveUnica);
+                    l.innerHTML+=`<div class="city-item" onclick="selecionarCidade('${d.id}','${c.nome}','${c.uf}','${c.fundo}','${c.logoPatra}','${c.logoSize}','${c.logoBottom}')">${c.nome} - ${c.uf}</div>`; 
+                }
+            });
             const saved = snap.docs.find(d=>d.id===cidadeAtualId); 
             if(saved) aplicarCidade(saved.data()); 
             else document.getElementById('modalCidades').style.display='flex';
         }
+
         window.selecionarCidade = (id,n,u,f,l,ls,lb) => { cidadeAtualId=id; localStorage.setItem("cidade_id",id); aplicarCidade({nome:n,uf:u,fundo:f,logoPatra:l,logoSize:ls,logoBottom:lb}); document.getElementById('modalCidades').style.display='none'; carregarDadosLocais(); resetarApp(); };
+        
         function aplicarCidade(c) {
             document.getElementById('busca').placeholder=`${c.nome} - ${c.uf}`;
             if(c.fundo) document.body.style.backgroundImage=`url('${c.fundo}')`;
-            const lp=document.getElementById('logoPatra'); if(c.logoPatra){ lp.src=c.logoPatra; lp.style.display='block'; } else lp.style.display='none';
+            
+            // --- CORREÇÃO DO ÍCONE QUEBRADO ---
+            const lp=document.getElementById('logoPatra'); 
+            if(c.logoPatra && c.logoPatra.trim().length > 10){ 
+                lp.src=c.logoPatra; 
+                lp.style.display='block'; 
+            } else { 
+                lp.style.display='none'; 
+                lp.src=''; // Garante limpeza
+            }
         }
 
         function renderizarCategorias() {
@@ -423,13 +464,9 @@
             renderizarListaCards(f);
         }
 
-        // --- RENDERIZAÇÃO COM FILTRO DE SEGURANÇA (OCULTOS) ---
         function renderizarListaCards(lista) {
             const r = document.getElementById('resultados'); r.innerHTML="";
-            
-            // FILTRO DE SEGURANÇA: Se estiver oculto pelo admin, não mostra
             const listaSegura = lista.filter(i => !i.adminHidden);
-
             if(listaSegura.length === 0) { r.innerHTML="<p style='color:white;text-align:center'>Nada encontrado.</p>"; return; }
             listaSegura.forEach(i => { 
                 const img = (i.imagens && i.imagens[0]) || i.imagem || "https://via.placeholder.com/150"; 
@@ -475,14 +512,19 @@
             const nom=document.getElementById('cadNome').value.trim(); 
             const ema=document.getElementById('cadEmail').value.trim(); 
             const sen=document.getElementById('cadSenha').value.trim(); 
+            
             const cid = cidadeAtualId;
+
             if(!cid) return alert("Erro: Cidade não identificada. Navegue novamente.");
             if(!nom||!ema||!sen) return alert("Preencha todos os campos."); 
+            
             try { 
                 await addDoc(collection(db,"users"),{nome:nom,email:ema,senha:sen,role:'owner',cidadeId:cid,dataCadastro:new Date()}); 
                 try { await emailjs.send('service_cuesjea','template_dftiawx',{to_name:nom,to_email:ema,user_login:ema,user_password:sen}); } catch(err){}
-                alert("Cadastro realizado com sucesso! Aguarde aprovação ou entre em contato."); 
-                fecharModalCadastro();
+                
+                alert("Cadastro realizado com sucesso! Faça login para continuar."); 
+                window.location.href = "admin.html";
+                
             } catch(e){
                 console.error(e);
                 alert("Erro ao realizar cadastro.");
