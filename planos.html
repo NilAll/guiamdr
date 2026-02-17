@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planos e Preços</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; text-align: center; color: #333; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        h1 { margin-bottom: 5px; color: #222; font-size: 28px; }
+        p.subtitle { color: #666; margin-bottom: 30px; font-size: 16px; }
+        
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; background: white; padding: 5px; display: inline-flex; border-radius: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .tab-btn { padding: 10px 30px; border: none; border-radius: 25px; background: transparent; cursor: pointer; font-weight: 600; font-size: 14px; color: #666; transition: 0.3s; }
+        .tab-btn.active { background: #007bff; color: white; box-shadow: 0 4px 10px rgba(0,123,255,0.3); }
+        
+        .plan-section { display: none; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; justify-content: center; }
+        .plan-section.active { display: grid; }
+        
+        .card { background: white; border-radius: 20px; padding: 30px 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); display: flex; flex-direction: column; transition: transform 0.3s; position: relative; border: 1px solid #fff; overflow: hidden; }
+        .card:hover { transform: translateY(-5px); border-color: #007bff; }
+        
+        .card.destaque { border: 2px solid #007bff; background: linear-gradient(to bottom, #ffffff, #f0f8ff); transform: scale(1.02); z-index: 2; }
+        .badge { position: absolute; top: 0; left: 0; width: 100%; background: #007bff; color: white; padding: 5px 0; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .plan-name { font-size: 24px; font-weight: 800; color: #333; margin-top: 15px; margin-bottom: 5px; }
+        
+        .period-selector { display: flex; justify-content: center; gap: 5px; background: #f1f3f5; padding: 4px; border-radius: 20px; margin-bottom: 15px; width: fit-content; margin-left: auto; margin-right: auto; }
+        .period-btn { padding: 6px 12px; font-size: 11px; border: none; border-radius: 15px; cursor: pointer; background: transparent; color: #666; font-weight: 600; transition: 0.2s; }
+        .period-btn.active { background: #0056b3; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card.destaque .period-btn.active { background: #007bff; }
+
+        .price-box { min-height: 80px; display: flex; flex-direction: column; justify-content: center; }
+        .plan-price { font-size: 42px; font-weight: 800; color: #222; margin: 0; line-height: 1; }
+        .plan-price span { font-size: 16px; color: #888; font-weight: normal; }
+        .total-price { font-size: 12px; color: #888; margin-top: 5px; }
+        
+        ul { list-style: none; padding: 0; margin: 25px 0; text-align: left; flex: 1; border-top: 1px solid #eee; padding-top: 20px; }
+        li { padding: 8px 0; color: #555; font-size: 14px; display: flex; align-items: flex-start; gap: 10px; }
+        li svg { width: 18px; height: 18px; fill: #28a745; flex-shrink: 0; margin-top: 2px; }
+        
+        .btn { background: #222; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: auto; font-size: 14px; text-transform: uppercase; transition: 0.2s; }
+        .btn:hover { background: #444; }
+        .card.destaque .btn { background: #007bff; box-shadow: 0 4px 15px rgba(0,123,255,0.4); }
+        .card.destaque .btn:hover { background: #0056b3; }
+        
+        .back-btn { position: absolute; top: 20px; left: 20px; text-decoration: none; color: #555; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; background: white; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        @media (max-width: 600px) {
+            .back-btn { position: relative; top: 0; left: 0; display: inline-flex; margin-bottom: 20px; float: left; }
+            .container { padding-top: 0; clear: both; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">⬅ Voltar ao App</a>
+
+    <div class="container">
+        <h1>Planos e Preços</h1>
+        <p class="subtitle">A solução ideal para alavancar o seu negócio</p>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchMainTab('assinatura')">Para Empresas</button>
+            <button class="tab-btn" onclick="switchMainTab('franquia')">Seja Franqueado</button>
+        </div>
+
+        <div id="sec-assinatura" class="plan-section active"><p>Carregando...</p></div>
+        <div id="sec-franquia" class="plan-section"><p>Carregando...</p></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
+        const app = initializeApp({apiKey:"AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",authDomain:"testegithub-e1ffb.firebaseapp.com",projectId:"testegithub-e1ffb",storageBucket:"testegithub-e1ffb.firebasestorage.app",messagingSenderId:"508103458559",appId:"1:508103458559:web:55bc2fe4dc61d7b5ee16ca"}); const db = getFirestore(app);
+        
+        let zapMaster = "";
+        let zapCidade = "";
+        const cidadeId = localStorage.getItem("cidade_id");
+        let planosCache = [];
+
+        async function init() {
+            // ZAPS
+            try {
+                const g = await getDoc(doc(db,'config','geral'));
+                if(g.exists()) zapMaster = g.data().zapAdmin || "";
+                if(cidadeId) {
+                    const c = await getDoc(doc(db,'cidades',cidadeId));
+                    if(c.exists()) zapCidade = c.data().adminZap || "";
+                }
+            } catch(e) {}
+
+            // PLANOS (FALLBACK SE VAZIO)
+            const p = await getDoc(doc(db,'config','planos'));
+            if(p.exists()) planosCache = p.data().lista || [];
+            
+            // SE A LISTA VIER VAZIA DO BANCO, USA OS PADRÕES VISUAIS
+            if(planosCache.length === 0) {
+                 planosCache = [
+                    {tipo:'assinatura', nome:'Básico', mensal:0, semestral:0, anual:0, destaque:false, itens:['Nome e Telefone','Link WhatsApp']},
+                    {tipo:'assinatura', nome:'Premium', mensal:29.90, semestral:149.90, anual:289.90, destaque:false, itens:['Fotos','Redes Sociais','Destaque']},
+                    {tipo:'assinatura', nome:'Master', mensal:59.90, semestral:299.90, anual:550.00, destaque:true, itens:['Topo da Lista','Banner','Selo VIP', 'Notificação Push']},
+                    {tipo:'franquia', nome:'Cidade Peq.', mensal:299.00, semestral:1500.00, anual:2800.00, destaque:false, itens:['Até 50k hab.','Exclusividade']},
+                    {tipo:'franquia', nome:'Cidade Méd.', mensal:499.00, semestral:2500.00, anual:4800.00, destaque:true, itens:['Até 100k hab.','Suporte 24h']},
+                    {tipo:'franquia', nome:'Capital', mensal:899.00, semestral:4500.00, anual:8500.00, destaque:false, itens:['Sem limite','Consultoria']}
+                ];
+            }
+            
+            render(planosCache.filter(x=>x.tipo==='assinatura'), 'sec-assinatura');
+            render(planosCache.filter(x=>x.tipo==='franquia'), 'sec-franquia');
+        }
+
+        function render(lista, idDiv) {
+            const div = document.getElementById(idDiv);
+            if(lista.length === 0) { div.innerHTML = "<p>Nenhum plano disponível.</p>"; return; }
+            
+            div.innerHTML = lista.map((p, idx) => {
+                const feats = p.itens.map(i => `<li><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> ${i}</li>`).join('');
+                
+                const pMensal = p.mensal || 0;
+                const pSemestral = p.semestral || 0;
+                const pAnual = p.anual || 0;
+                const uniqueId = `price-${idx}-${p.nome.replace(/\s+/g,'')}`;
+
+                let priceHtml = '';
+                if(pMensal === 0 && pSemestral === 0) {
+                    priceHtml = `<div class="plan-price">Grátis</div><div class="total-price">Para sempre</div>`;
+                } else {
+                    priceHtml = `<div class="plan-price">R$ ${pMensal.toLocaleString('pt-BR',{minimumFractionDigits:2})}<span>/mês</span></div><div class="total-price">Cobrado mensalmente</div>`;
+                }
+
+                // Se for Grátis, não mostra seletor de período
+                const showSelector = (pMensal > 0) ? 'block' : 'none';
+
+                return `
+                <div class="card ${p.destaque?'destaque':''}">
+                    ${p.destaque ? '<div class="badge">MAIS POPULAR</div>' : ''}
+                    <div class="plan-name">${p.nome}</div>
+                    
+                    <div class="period-selector" style="display:${showSelector}">
+                        <button class="period-btn active" onclick="mudarPeriodo(this, ${pMensal}, ${pSemestral}, ${pAnual}, '${uniqueId}')">Mensal</button>
+                        <button class="period-btn" onclick="mudarPeriodo(this, ${pMensal}, ${pSemestral}, ${pAnual}, '${uniqueId}')">Semestral</button>
+                        <button class="period-btn" onclick="mudarPeriodo(this, ${pMensal}, ${pSemestral}, ${pAnual}, '${uniqueId}')">Anual</button>
+                    </div>
+
+                    <div class="price-box" id="${uniqueId}">${priceHtml}</div>
+
+                    <ul>${feats}</ul>
+                    <button class="btn" onclick="contratar('${p.nome}', '${p.tipo}')">CONTRATAR AGORA</button>
+                </div>`;
+            }).join('');
+        }
+
+        window.mudarPeriodo = (btn, mensal, semestral, anual, idBox) => {
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const box = document.getElementById(idBox);
+            const tipo = btn.innerText;
+
+            if(tipo === "Mensal") {
+                box.innerHTML = `<div class="plan-price">R$ ${mensal.toLocaleString('pt-BR',{minimumFractionDigits:2})}<span>/mês</span></div><div class="total-price">Cobrado mensalmente</div>`;
+            } else if (tipo === "Semestral") {
+                const porMes = semestral / 6;
+                box.innerHTML = `<div class="plan-price">R$ ${porMes.toLocaleString('pt-BR',{minimumFractionDigits:2})}<span>/mês</span></div><div class="total-price">Total: R$ ${semestral.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`;
+            } else if (tipo === "Anual") {
+                const porMes = anual / 12;
+                box.innerHTML = `<div class="plan-price">R$ ${porMes.toLocaleString('pt-BR',{minimumFractionDigits:2})}<span>/mês</span></div><div class="total-price">Total: R$ ${anual.toLocaleString('pt-BR',{minimumFractionDigits:2})}</div>`;
+            }
+        };
+
+        window.switchMainTab = (tab) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.plan-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById('sec-'+tab).classList.add('active');
+        };
+
+        window.contratar = (plano, tipo) => {
+            const num = (tipo === 'franquia' || !zapCidade) ? zapMaster : zapCidade;
+            if(!num) return alert("Contato indisponível.");
+            const msg = `Olá! Gostaria de contratar o plano *${plano}* (${tipo}).`;
+            window.open(`https://wa.me/55${num.replace(/\D/g,'')}?text=${encodeURIComponent(msg)}`);
+        };
+
+        init();
+    </script>
+</body>
+</html>

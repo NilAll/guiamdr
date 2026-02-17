@@ -10,595 +10,432 @@
     <script>try{emailjs.init("vOaHzeApkyntx09x6");}catch(e){}</script>
     
     <style>
-        /* ESTILOS BASE */
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-user-select: none; user-select: none; }
-        input, textarea, select { -webkit-user-select: text; user-select: text; }
+        /* ESTILOS GERAIS */
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { padding: 20px; background: #f0f2f5; max-width: 900px; margin: 0 auto; color: #333; padding-bottom: 80px; }
-
+        
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 14px; }
+        label { font-weight: 600; font-size: 12px; color: #555; display: block; margin-bottom: 4px; }
+        
+        .btn { padding: 10px 15px; border-radius: 8px; border: none; cursor: pointer; color: white; font-weight: bold; font-size: 14px; }
+        .btn-primary { background: #007bff; } .btn-success { background: #28a745; } .btn-danger { background: #dc3545; } .btn-warning { background: #ffc107; color: #333; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; margin-left: 5px; }
+        
+        /* HEADER */
+        .header-admin { display: none; justify-content: space-between; align-items: center; margin-bottom: 20px; background: white; padding: 15px 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        
         /* LOGIN */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a1a1a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .login-box { text-align: center; background: #2c2c2c; padding: 40px; border-radius: 16px; width: 90%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .login-input { width: 100%; padding: 14px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; background: #333; color: white; font-size: 16px; text-align: center; }
-        .btn-login { background: #007bff; color: white; padding: 12px; width: 100%; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
-
-        /* HEADER */
-        .header-admin { display: none; justify-content: space-between; align-items: center; margin-bottom: 25px; background: white; padding: 15px 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .user-identify { font-size: 14px; color: #555; }
-        .user-identify strong { color: #007bff; }
+        .login-box { text-align: center; background: #2c2c2c; padding: 40px; border-radius: 16px; width: 90%; max-width: 320px; }
         
         /* CARDS */
-        .card { background: white; border-radius: 12px; margin-bottom: 15px; display: block; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; border-top: 4px solid #ccc; transition: all 0.3s ease; }
-        
-        #painelCidades { border-color: #ff5722; } 
-        #painelConfigCidade { border-color: #e91e63; } 
-        #painelUsuarios { border-color: #28a745; }
-        #painelVips { border-color: #ffc107; } 
-        #painelCategorias { border-color: #17a2b8; } 
-        #painelCadastro { border-color: #007bff; } 
-        #painelLista { border-color: #6c757d; } 
-
-        .card-header-area { padding: 20px 25px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; transition: background 0.2s; }
-        .card-header-area:hover { background: #f9f9f9; }
-        .card h2 { margin: 0; font-size: 18px; color: #444; display: flex; align-items: center; gap: 10px; pointer-events: none; }
-        .toggle-icon { font-size: 18px; color: #888; transition: transform 0.3s; }
-        .card-body { display: none; padding: 0 25px 25px 25px; border-top: 1px solid #eee; animation: fadeIn 0.3s; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; border-top: 4px solid #ccc; display: none; }
+        .card-header-area { display: flex; justify-content: space-between; cursor: pointer; align-items: center; }
+        .card h2 { margin: 0; font-size: 18px; }
+        .card-body { display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
         .card.open .card-body { display: block; }
-        .card.open .toggle-icon { transform: rotate(180deg); color: #333; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .manager-item, .plan-item { background: #f8f9fa; border: 1px solid #eee; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        
+        /* PREVIEW IMAGEM */
+        .preview-box { width: 100%; height: 100px; background: #eee; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
+        .preview-box img { max-width: 100%; max-height: 100%; }
 
-        /* FORMS */
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; margin-top: 15px; }
-        .form-full { width: 100%; margin-bottom: 15px; }
-        label { font-weight: 600; font-size: 13px; color: #666; margin-bottom: 6px; display: block; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; background: #fff; }
-        
-        .btn { border: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; color: white; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn:hover { opacity: 0.9; }
-        .btn-primary { background: #007bff; } .btn-success { background: #28a745; } .btn-danger { background: #dc3545; } .btn-warning { background: #ffc107; color: #333; } .btn-info { background: #17a2b8; } 
-        .btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 6px; }
-        .btn-row { display: flex; gap: 10px; margin-top: 15px; }
-
-        .manager-item { display: flex; justify-content: space-between; align-items: center; background: #f8f9fa; padding: 12px 15px; border: 1px solid #eee; margin-bottom: 8px; border-radius: 8px; flex-wrap: wrap; gap: 10px; }
-        
-        .user-block { display: flex; flex-direction: column; width: 100%; border-bottom: 1px solid #ddd; padding: 15px 0; }
-        .user-header { display: flex; justify-content: space-between; align-items: flex-start; }
-        .user-name { font-size: 15px; font-weight: bold; color: #333; }
-        .user-email { font-size: 12px; color: #666; }
-        .user-loja-tag { margin-top: 5px; background: #e3f2fd; color: #0d47a1; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .user-controls { display: flex; gap: 10px; margin-top: 10px; }
-        .status-blocked { text-decoration: line-through; color: red; }
-        
-        .cat-block { border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 15px; overflow: hidden; background: white; }
-        .cat-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #fff; cursor: pointer; }
-        .sub-manager-container { display: none; background: #f4f6f8; padding: 10px; border-top: 1px solid #e0e0e0; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee; align-items: center; }
-        .menu-adder { display: flex; gap: 10px; align-items: center; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        
-        .modal-icons { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; display: none; align-items: center; justify-content: center; }
-        .modal-icons-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 12px; text-align: center; }
-        #inputCustomIcon { font-size: 40px; text-align: center; padding: 10px; width: 100%; margin-bottom: 20px; }
-        
-        .gallery-list-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
-        .gallery-item-admin { display: flex; align-items: flex-start; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        .gallery-thumb-admin { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; margin-right: 15px; }
-        .gallery-info-admin { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .palpite-row { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; transition: background 0.2s; }
-        .palpite-winner { background: #d4edda !important; border-left: 5px solid #28a745; }
-        
-        .list-thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; margin-right: 15px; background: #ddd; border: 1px solid #ccc; }
-
-        /* PREVIEW DE CONFIG */
-        .preview-box { width: 100%; height: 150px; background: #333; margin-top: 10px; display: flex; align-items: center; justify-content: center; border-radius: 8px; overflow: hidden; border: 1px solid #ccc; }
-        .preview-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        /* USER BLOCK */
+        .user-block { display: flex; flex-direction: column; width: 100%; border-bottom: 1px solid #ddd; padding: 10px 0; }
+        .user-header { display: flex; justify-content: space-between; }
+        .user-controls { margin-top: 5px; display: flex; gap: 5px; }
     </style>
 </head>
 <body>
 
     <div id="loginScreen">
         <div class="login-box">
-            <img src="logo.png" style="max-width:120px; margin-bottom:20px; cursor: pointer;" alt="Logo" onclick="window.location.href='index.html'">
-            <h3 style="color:white; margin-bottom:20px;">Acesso Administrativo</h3>
-            <input id="inputUsuario" class="login-input" placeholder="Usuário">
-            <input id="inputSenha" type="password" class="login-input" placeholder="Senha" onkeypress="if(event.key==='Enter') fazerLogin()">
-            <button class="btn btn-primary" style="margin-top:20px; width:100%; font-size:16px;" onclick="fazerLogin()">ENTRAR</button>
+            <img src="logo.png" style="height:60px; margin-bottom:20px; cursor: pointer;" onclick="window.location.href='index.html'" onerror="this.style.display='none'">
+            <h3>Acesso Restrito</h3>
+            <input id="inputUsuario" placeholder="Usuário" style="text-align:center">
+            <input id="inputSenha" type="password" placeholder="Senha" style="text-align:center" onkeypress="if(event.key==='Enter') fazerLogin()">
+            <button class="btn btn-primary" style="width:100%" onclick="fazerLogin()">ENTRAR</button>
         </div>
     </div>
 
     <div class="header-admin" id="headerAdmin">
-        <div class="header-left">
+        <div>
             <h2 style="margin:0; font-size:20px;">Painel de Gestão</h2>
-            <div id="userDisplay" class="user-identify">...</div>
+            <div id="userDisplay" style="color:#007bff; font-size:13px; font-weight:bold; margin-top:5px;"></div>
         </div>
         <div>
-            <a href="index.html" class="btn btn-secondary btn-sm">🏠 Ver App</a>
-            <button onclick="logout()" class="btn btn-danger btn-sm" style="margin-left:10px;">🚪 Sair</button>
+            <a href="index.html" class="btn btn-primary btn-sm">🏠 Ver App</a> 
+            <button onclick="logout()" class="btn btn-danger btn-sm">Sair</button>
         </div>
     </div>
 
-    <div class="card" id="painelCidades">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>🏙️ Cidades e Administradores</h2><span class="toggle-icon">▼</span>
-        </div>
+    <div class="card" id="painelCidades" style="border-color:#ff5722;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>🏙️ Cidades e Admins</h2><span>▼</span></div>
         <div class="card-body">
-            <div id="listaCidades" style="margin-bottom:20px;">Carregando...</div>
-            <div style="background:#f8f9fa; padding:15px; border-radius:8px; border:1px solid #ddd;">
-                <h3 id="tituloCidadeForm" style="font-size:15px; margin-top:0; color:#ff5722;">Cadastrar Cidade e Admin</h3>
-                
-                <div class="form-grid"><div><label>Nome Cidade</label><input id="novaCidadeNome"></div><div><label>UF</label><input id="novaCidadeUF"></div></div>
-                
-                <div class="form-full">
-                    <label>Imagem de Fundo (Padrão/Exemplo)</label>
-                    <input id="novaCidadeFundo" placeholder="https://... (Admin local poderá trocar)">
-                </div>
-
-                <hr style="margin:15px 0; border:0; border-top:1px solid #ddd;">
-                <h4 style="margin:0 0 10px 0; font-size:14px; color:#333;">Dados do Administrador da Cidade</h4>
-                <div class="form-full"><label>Nome Completo</label><input id="adminNome"></div>
-                <div class="form-grid"><div><label>CPF</label><input id="adminCPF"></div><div><label>WhatsApp</label><input id="adminZap"></div></div>
-                <div class="form-full"><label>Endereço Completo</label><input id="adminEnd"></div>
-                <div class="form-full"><label>E-mail (Contato)</label><input id="adminEmailContato"></div>
-                <div class="form-grid" style="background:#eef; padding:10px; border-radius:6px;">
-                    <div><label style="color:#007bff">Login de Acesso</label><input id="novaCidadeLogin"></div>
-                    <div><label style="color:#007bff">Senha de Acesso</label><input id="novaCidadeSenha"></div>
-                </div>
-                
-                <div class="btn-row">
-                    <button id="btnSalvarCidade" class="btn btn-success" style="width:100%;" onclick="salvarCidade()">+ Salvar Cidade</button>
-                    <button id="btnCancelarCidade" class="btn btn-danger" style="display:none; width:100%;" onclick="limparFormCidade()">Cancelar Edição</button>
-                </div>
+            <div id="listaCidades"></div>
+            <hr>
+            <h3>Nova Cidade + Admin</h3>
+            <input id="novaCidadeNome" placeholder="Nome Cidade"><input id="novaCidadeUF" placeholder="UF">
+            <input id="novaCidadeFundo" placeholder="Img Fundo Padrão (URL)">
+            
+            <h4 style="font-size:14px; margin-top:15px;">Dados do Admin Local</h4>
+            <input id="adminNome" placeholder="Nome Completo"><input id="adminEmailContato" placeholder="Email"><input id="adminZap" placeholder="WhatsApp">
+            <input id="adminCPF" placeholder="CPF"><input id="adminEnd" placeholder="Endereço">
+            <div style="background:#eef; padding:10px; border-radius:8px; margin-top:10px;">
+                <input id="novaCidadeLogin" placeholder="Login Acesso"><input id="novaCidadeSenha" placeholder="Senha Acesso">
             </div>
+            <button class="btn btn-success" style="width:100%; margin-top:10px;" onclick="salvarCidade()">Salvar Cidade</button>
         </div>
     </div>
 
-    <div class="card" id="painelConfigCidade" style="display:none;">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>🎨 Aparência da Cidade</h2><span class="toggle-icon">▼</span>
-        </div>
+    <div class="card" id="painelPlanos" style="border-color:#6610f2;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>💰 Gerenciar Planos</h2><span>▼</span></div>
         <div class="card-body">
-            <p style="color:#666; font-size:13px;">Cole o link da imagem e aguarde o preview aparecer antes de salvar.</p>
+            <h3 id="tituloPlanos" style="margin-top:0; color:#6610f2;">Adicionar / Editar Plano</h3>
             
-            <div class="form-full">
-                <label>URL da Imagem de Fundo (Oficial)</label>
-                <input id="inputCidadeFundo" placeholder="https://..." onchange="atualizarPreview('previewFundo', this.value)">
-                <div class="preview-box"><img id="previewFundo" src="" alt="Sem imagem"></div>
+            <div style="display:flex; gap:10px">
+                <div style="flex:1"><label>Tipo</label><select id="planoTipo"><option value="assinatura">Assinatura</option><option value="franquia">Franquia</option></select></div>
+                <div style="flex:1"><label>Destaque</label><select id="planoCor"><option value="white">Normal</option><option value="blue">Destaque (Azul)</option></select></div>
             </div>
             
-            <div class="form-full">
-                <label>URL da Logo no Topo</label>
-                <input id="inputCidadeLogo" placeholder="https://..." onchange="atualizarPreview('previewLogo', this.value)">
-                <div class="preview-box" style="height:80px; background:#ddd;"><img id="previewLogo" src="" alt="Sem logo"></div>
+            <label>Nome do Plano</label>
+            <input id="planoNome" placeholder="Ex: Master">
+            
+            <div style="background:#f8f9fa; padding:10px; border-radius:8px; border:1px solid #ddd; margin-bottom:10px;">
+                <h4 style="margin:0 0 10px 0;">Preços (Use ponto para centavos. 0 = Grátis)</h4>
+                <div style="display:flex; gap:10px">
+                    <div style="flex:1"><label>Mensal (R$)</label><input id="planoPrecoMensal" type="number" placeholder="0.00"></div>
+                    <div style="flex:1"><label>Semestral (Total)</label><input id="planoPrecoSemestral" type="number" placeholder="0.00"></div>
+                    <div style="flex:1"><label>Anual (Total)</label><input id="planoPrecoAnual" type="number" placeholder="0.00"></div>
+                </div>
+            </div>
+
+            <label>Itens do Plano (Separe por ponto e vírgula ; )</label>
+            <textarea id="planoItens" placeholder="Fotos; Mapa; Link Zap..." style="height:80px"></textarea>
+            
+            <div style="display:flex; gap:10px;">
+                <button id="btnSalvarPlano" class="btn btn-success" style="flex:1" onclick="salvarPlano()">Salvar Plano</button>
+                <button id="btnCancelarPlano" class="btn btn-danger" style="flex:1; display:none;" onclick="cancelarEdicaoPlano()">Cancelar</button>
             </div>
             
+            <hr>
+            <h3>Planos Ativos</h3>
+            <div id="listaPlanosCadastrados"></div>
+        </div>
+    </div>
+
+    <div class="card" id="painelConfigCidade" style="border-color:#e91e63;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>🎨 Aparência da Cidade</h2><span>▼</span></div>
+        <div class="card-body">
+            <input id="inputCidadeFundo" placeholder="URL Fundo Oficial" onchange="el('prevFundo').src=this.value">
+            <div class="preview-box"><img id="prevFundo" alt="Fundo"></div>
+            <input id="inputCidadeLogo" placeholder="URL Logo Topo" onchange="el('prevLogo').src=this.value">
+            <div class="preview-box"><img id="prevLogo" alt="Logo"></div>
             <button class="btn btn-primary" onclick="salvarConfiguracaoCidade()">Salvar Aparência</button>
         </div>
     </div>
 
-    <div class="card" id="painelUsuarios">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>👥 Gerenciar Estabelecimentos</h2><span class="toggle-icon">▼</span>
-        </div>
+    <div class="card" id="painelUsuarios" style="border-color:#28a745;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>👥 Estabelecimentos</h2><span>▼</span></div>
         <div class="card-body">
-            <div style="margin-bottom:15px;">
-                <input id="buscaUsuarioInput" placeholder="🔍 Pesquisar por Dono ou Nome do Estabelecimento..." onkeyup="filtrarUsuarios()" style="width:100%; padding:12px; font-size:15px; border:2px solid #ddd;">
-            </div>
-            <div id="listaUsuarios">
-                <p style="color:#777; text-align:center; padding:20px;">Use a busca acima para encontrar um estabelecimento.</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="card" id="painelVips">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>💎 Membros VIP</h2><span class="toggle-icon">▼</span>
-        </div>
-        <div class="card-body">
-            <div class="form-grid"><div><label>Nome</label><input id="vipNome"></div><div><label>WhatsApp</label><input type="number" id="vipPhone"></div></div>
-            <div class="form-grid"><div><label>Email</label><input type="email" id="vipEmail"></div><div><label>Senha VIP</label><input type="text" id="vipPalavra"></div></div>
-            <button id="btnSalvarVip" class="btn btn-success" style="width:100%;" onclick="salvarVip()">Cadastrar VIP</button>
-            <hr style="margin:20px 0; border:0; border-top:1px solid #eee;"><div id="listaVips"></div>
+            <input id="buscaUsuarioInput" placeholder="🔍 Buscar por nome..." onkeyup="filtrarUsuarios()">
+            <div id="listaUsuarios"></div>
         </div>
     </div>
 
-    <div class="card" id="painelPalpites">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>🎲 Palpites / Sorteios</h2><span class="toggle-icon">▼</span>
-        </div>
+    <div class="card" id="painelCadastro" style="border-color:#007bff;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>🏪 Cadastrar / Editar</h2><span>▼</span></div>
         <div class="card-body">
-            <button class="btn btn-danger btn-sm" style="margin-bottom:15px;" onclick="limparPalpites()">🗑️ Limpar Lista</button>
-            <div id="listaPalpites" style="border:1px solid #ddd; border-radius:8px; max-height:400px; overflow-y:auto;"></div>
+            <h3 id="tituloForm">Novo Cadastro</h3>
+            <input id="nome" placeholder="Nome do Local">
+            <input id="descricao" placeholder="Descrição Curta">
+            <div style="display:flex; gap:10px;">
+                <select id="categoria" onchange="changeCat()"></select>
+                <select id="subcategoria"></select>
+            </div>
+            <select id="setor" disabled><option>Setor...</option></select>
+            <input id="imagem" placeholder="URL Foto Capa">
+            <input id="cidade" placeholder="Endereço Completo">
+            
+            <div id="camposPadrao">
+                <input id="contato" placeholder="WhatsApp"><input id="instagram" placeholder="Instagram"><input id="linkMapa" placeholder="Link Maps">
+                <div style="display:flex; gap:10px;"><input id="precoAtual" placeholder="Preço"><input id="precoAntigo" placeholder="Preço Antigo"></div>
+                <div style="background:#eee; padding:10px; border-radius:8px;">
+                    <label><input type="checkbox" id="checkDelivery" onclick="if(this.checked){el('boxInfoDelivery').style.display='block'}else{el('boxInfoDelivery').style.display='none'}"> 🛵 Delivery</label>
+                    <label style="margin-left:10px"><input type="checkbox" id="checkPubli"> 📢 Banner</label>
+                    <label style="margin-left:10px"><input type="checkbox" id="checkPartner"> ⭐ Parceiro</label>
+                    <div id="boxInfoDelivery" style="display:none; margin-top:10px; border-top:1px solid #ccc; padding-top:10px;">
+                        <input id="prodNome" placeholder="Item" style="width:60%"><input id="prodPreco" placeholder="Preço" style="width:30%"><button class="btn btn-info btn-sm" onclick="addItemMenu()">Ok</button>
+                        <div id="lista-cardapio-preview"></div>
+                        <label>Brinde:</label> <select id="deliveryBrinde"></select>
+                    </div>
+                    <div id="boxPubli" style="display:none; margin-top:10px;"><input id="imgPubli" placeholder="URL Banner"></div>
+                </div>
+            </div>
+
+            <div id="boxGaleriaManager" style="display:none; background:#fff3cd; padding:10px; margin-bottom:10px;">
+                <h4>Galeria</h4>
+                <input id="inputNovaFoto" placeholder="URL Foto"><button class="btn btn-warning btn-sm" onclick="addFotoGaleria()">Add</button>
+                <div id="previewGaleria"></div>
+            </div>
+
+            <button class="btn btn-success" id="btnSalvar" style="width:100%" onclick="salvarOuAtualizar()">Salvar</button>
+            <button class="btn btn-danger" id="btnCancelar" style="width:100%; margin-top:10px; display:none;" onclick="limparForm()">Cancelar</button>
+            
+            <select id="selCidadeCadastro" style="display:none"></select>
         </div>
+    </div>
+
+    <div class="card" id="painelLista" style="border-color:#6c757d;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>📋 Lista de Cadastros</h2><span>▼</span></div>
+        <div class="card-body"><div id="lista-locais"></div></div>
+    </div>
+
+    <div class="card" id="painelVips" style="border-color:#ffc107; display:none;">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>💎 VIPs</h2><span>▼</span></div>
+        <div class="card-body">
+            <input id="vipNome" placeholder="Nome"><input id="vipPhone" placeholder="Zap"><input id="vipEmail" placeholder="Email"><input id="vipPalavra" placeholder="Senha">
+            <button class="btn btn-success" style="width:100%" onclick="salvarVip()">Salvar VIP</button>
+            <div id="listaVips" style="margin-top:10px"></div>
+        </div>
+    </div>
+
+    <div class="card" id="painelPalpites" style="display:none">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>🎲 Sorteios</h2><span>▼</span></div>
+        <div class="card-body"><button class="btn btn-danger" onclick="limparPalpites()">Limpar</button><div id="listaPalpites"></div></div>
     </div>
 
     <div class="card" id="painelCategorias">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>📂 Categorias e Ícones</h2><span class="toggle-icon">▼</span>
-        </div>
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>📂 Categorias</h2><span>▼</span></div>
         <div class="card-body">
             <div id="listaGestaoCategorias"></div>
-            <div style="margin-top:20px; display:flex; gap:10px;"><input id="novaCategoriaInput" placeholder="Nome da Nova Categoria" style="flex:1;"><button class="btn btn-success" onclick="adicionarCategoria()">+ Criar</button></div>
+            <input id="novaCategoriaInput" placeholder="Nova Categoria"><button class="btn btn-success" onclick="adicionarCategoria()">Criar</button>
         </div>
     </div>
     
-    <div class="card" id="painelMasterConfig">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2>⚙️ Configurações Gerais</h2><span class="toggle-icon">▼</span>
-        </div>
+    <div class="card" id="painelMasterConfig" style="display:none">
+        <div class="card-header-area" onclick="toggleCard(this.parentElement)"><h2>⚙️ Config</h2><span>▼</span></div>
         <div class="card-body">
-            <div class="form-grid"><div><label>Nome App</label><input type="text" id="confNomeCidade"></div><div><label>WhatsApp Admin</label><input type="number" id="confZapAdmin"></div></div>
-            <button class="btn btn-primary" style="width:100%;" onclick="salvarConfigGlobal()">Salvar Configurações</button>
+            <input id="confNomeCidade" placeholder="Nome App"><input id="confZapAdmin" placeholder="Zap Master">
+            <button class="btn btn-primary" onclick="salvarConfigGlobal()">Salvar</button>
         </div>
     </div>
 
-    <div class="card" id="painelCadastro" style="display:block;">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h2 id="tituloForm">🏪 Cadastrar / Editar Local</h2><span class="toggle-icon">▼</span>
-        </div>
-        <div class="card-body">
-            <div class="form-full" id="divSelCidade" style="display:none;"><label style="color:#ff5722;">Cidade</label><select id="selCidadeCadastro" style="border:1px solid #ff5722"></select></div>
-            <div class="form-grid"><div><label>Categoria</label><select id="categoria"><option value="">Selecione...</option></select></div><div><label>Subcategoria</label><select id="subcategoria" disabled><option value="">...</option></select></div></div>
-            <div class="form-full"><label>Setor (Opcional)</label><select id="setor" disabled><option value="">...</option></select></div>
-            <div class="form-full"><label>Nome do Local</label><input id="nome"></div>
-            <div class="form-full"><label>Descrição Curta</label><input id="descricao" maxlength="60"></div>
-            <div class="form-full"><label>Foto de Capa (URL)</label><input id="imagem" placeholder="Link da imagem principal ou logo"></div>
-            <div id="camposPadrao">
-                <div class="form-grid"><div><label>Preço (Opcional)</label><input id="precoAtual"></div><div><label>Preço Antigo</label><input id="precoAntigo"></div></div>
-                <div class="form-full"><label>Endereço</label><input id="cidade"></div>
-                <div class="form-grid"><div><label>Link Maps</label><input id="linkMapa"></div><div><label>WhatsApp</label><input id="contato"></div></div>
-                <div class="form-full"><label>Instagram</label><input id="instagram"></div>
-                <div class="checkbox-group">
-                    <label style="color:#28a745; font-weight:bold;"><input type="checkbox" id="checkDelivery" onclick="verificarTermosDelivery(this)"> 🛵 Delivery</label>
-                    <label><input type="checkbox" id="checkPubli"> 📢 Banner</label>
-                    <label style="color:#ffc107; font-weight:bold;"><input type="checkbox" id="checkPartner"> ⭐ Parceiro</label>
-                </div>
-                <div id="boxInfoDelivery" style="display:none; margin-top:15px; border-top:1px solid #ddd; padding-top:10px;">
-                    <h4>📝 Cardápio Delivery</h4>
-                    <div class="menu-adder"><input id="prodNome" placeholder="Item"><input id="prodPreco" placeholder="Preço" style="width:80px;"><button class="btn btn-info btn-sm" onclick="addItemMenu()">Add</button></div>
-                    <div id="lista-cardapio-preview" style="margin-top:10px;"></div>
-                    <label style="margin-top:10px; color:#28a745;">🎁 Brinde do Sorteio</label>
-                    <select id="deliveryBrinde"><option value="">Adicione itens primeiro...</option></select>
-                </div>
-                <div id="boxPubli" style="display:none; margin-top:10px;"><label>Imagem Banner</label><input id="imgPubli"></div>
-            </div>
-            <div id="boxGaleriaManager" style="display:none; background:#fff3e0; padding:15px; margin-bottom:15px;">
-                <h4>📷 Fotos da Galeria</h4>
-                <div class="form-grid"><div><input id="inputNovaFoto" placeholder="URL Foto"></div><button class="btn btn-warning" onclick="addFotoGaleria()">Add</button></div>
-                <div id="previewGaleria" class="gallery-list-container"></div>
-            </div>
-            <div class="btn-row"><button id="btnSalvar" class="btn btn-success" onclick="salvarOuAtualizar()">Salvar Registro</button><button id="btnCancelar" class="btn btn-danger" style="display:none;" onclick="limparForm()">Cancelar</button></div>
+    <div id="modalIconPicker" class="modal-icons" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">
+        <div class="modal-icons-content" style="background:white;padding:20px;border-radius:10px;text-align:center;">
+            <h3>Ícone</h3><input type="text" id="inputCustomIcon" style="font-size:30px;text-align:center;width:50px;">
+            <button class="btn btn-success" onclick="salvarIconeCustomizado()">OK</button>
         </div>
     </div>
-
-    <div class="card" id="painelLista" style="display:block;">
-        <div class="card-header-area" onclick="toggleCard(this.parentElement)">
-            <h3>📋 Lista de Cadastros</h3><span class="toggle-icon">▼</span>
-        </div>
-        <div class="card-body">
-            <div id="lista-locais"></div>
-        </div>
-    </div>
-
-    <div id="modalTermos" class="modal-icons"><div class="modal-icons-content"><h3>Termos Delivery</h3><p>Taxa de manutenção e 1 Brinde a cada ciclo.</p><button class="btn btn-success" onclick="aceitarTermos()">Concordo</button></div></div>
-    <div id="modalIconPicker" class="modal-icons"><div class="modal-icons-content"><h3>Ícone</h3><input type="text" id="inputCustomIcon"><button class="btn btn-success" onclick="salvarIconeCustomizado()">Salvar</button></div></div>
 
     <script type="module">
-        const VERSAO_ATUAL="26.0"; 
-        if(localStorage.getItem("v_adm")!==VERSAO_ATUAL){localStorage.setItem("v_adm",VERSAO_ATUAL);location.reload(true);}
-        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, getDoc, setDoc, onSnapshot, query, where, getDocs, orderBy, limit, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
-        const app=initializeApp({apiKey:"AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",authDomain:"testegithub-e1ffb.firebaseapp.com",projectId:"testegithub-e1ffb",storageBucket:"testegithub-e1ffb.firebasestorage.app",messagingSenderId:"508103458559",appId:"1:508103458559:web:55bc2fe4dc61d7b5ee16ca"}); 
-        const db=getFirestore(app); const el=id=>document.getElementById(id);
-        let currentUser=null, listaSubs={}, listaSetores={}, customIcons={}, idEditando=null, idCidadeEditando=null, catEditing=null, idVipEditando=null, cardapio=[], fotosGaleria=[], todosLocaisCache=[], usuariosCache=[], cidadesCache=[];
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, query, where, onSnapshot, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        const app = initializeApp({apiKey:"AIzaSyDsTWnP2cmsUIDeDlotoR1uELMAba_-dyw",authDomain:"testegithub-e1ffb.firebaseapp.com",projectId:"testegithub-e1ffb",storageBucket:"testegithub-e1ffb.firebasestorage.app",messagingSenderId:"508103458559",appId:"1:508103458559:web:55bc2fe4dc61d7b5ee16ca"}); 
+        const db = getFirestore(app); const el = id => document.getElementById(id);
+        let currentUser=null, planosCache=[], listaSubs={}, listaSetores={}, customIcons={}, idEditando=null, idCidadeEditando=null, indexPlanoEditando=null, catEditing=null, idVipEditando=null, cardapio=[], fotosGaleria=[], todosLocaisCache=[], usuariosCache=[], cidadesCache=[];
 
-        window.toggleCard = (card) => { card.classList.toggle('open'); };
-
-        window.fazerLogin=async()=>{
-            const u=el('inputUsuario').value.trim(),p=el('inputSenha').value; 
-            if(!u||!p) return alert("Preencha tudo"); 
-            
-            if(u==='admin'&&p==='admin123'){ 
-                currentUser={role:'master', nome: 'Administrador Geral', patente: 'MASTER'}; 
-                init(); return; 
-            } 
-            try{
-                let q=query(collection(db,"users"),where("email","==",u),where("senha","==",p));
-                let s=await getDocs(q);
-                if(!s.empty){
-                    const d = s.docs[0].data();
-                    if (d.blockedAccess) { alert("Acesso Bloqueado pelo Admin."); return; } 
-                    currentUser={role:'owner', userId: s.docs[0].id, cityId: d.cidadeId, nome: d.nome, patente: 'PARCEIRO'};
-                    init(); return;
-                }
-                let q2=query(collection(db,"cidades"),where("login","==",u),where("senha","==",p));
-                let s2=await getDocs(q2);
-                if(!s2.empty){
-                    const d = s2.docs[0].data();
-                    currentUser={role:'city',cityId:s2.docs[0].id, nome: d.adminNome || d.nome, patente: 'ADMIN CIDADE'};
-                    init(); return;
-                }
-                alert("Dados incorretos");
-            }catch(e){console.error(e);alert("Erro conexão");}
+        window.toggleCard = c => c.classList.toggle('open');
+        window.fazerLogin = async () => {
+            const u=el('inputUsuario').value.trim(), p=el('inputSenha').value.trim();
+            if(!u || !p) return alert("Preencha tudo");
+            if(u==='admin' && p==='admin123') { currentUser={role:'master', nome:'Master', patente:'MASTER'}; init(); return; }
+            try {
+                let q = query(collection(db,'cidades'), where('login','==',u), where('senha','==',p));
+                let s = await getDocs(q);
+                if(!s.empty) { const d = s.docs[0].data(); currentUser={role:'city', cityId:s.docs[0].id, nome: d.adminNome || d.nome, patente:'ADMIN CIDADE'}; init(); return; }
+                let q2 = query(collection(db,'users'), where('email','==',u), where('senha','==',p));
+                let s2 = await getDocs(q2);
+                if(!s2.empty) { const d = s2.docs[0].data(); if(d.blockedAccess) return alert("Acesso bloqueado."); currentUser={role:'owner', userId:s2.docs[0].id, cityId:d.cidadeId, nome: d.nome, patente:'PARCEIRO'}; init(); return; }
+                alert("Dados inválidos");
+            } catch(e) { console.error(e); alert("Erro de conexão"); }
         };
+        window.logout = () => location.reload();
 
-        window.logout = () => { window.location.reload(); };
+        function init() {
+            el('loginScreen').style.display='none'; el('headerAdmin').style.display='flex';
+            el('userDisplay').innerText = `Logado: ${currentUser.nome} (${currentUser.patente})`;
 
-        function init(){
-            el('loginScreen').style.display='none';
-            el('headerAdmin').style.display='flex'; 
-            el('userDisplay').innerHTML = `Logado como: <strong>${currentUser.nome}</strong> (${currentUser.patente})`;
-
-            const m=currentUser.role==='master'; 
-            const c=currentUser.role==='city'; 
-            const o=currentUser.role==='owner';
-            
-            el('painelCidades').style.display = m ? 'block' : 'none'; 
-            el('painelMasterConfig').style.display = m ? 'block' : 'none'; 
-            el('painelUsuarios').style.display = c ? 'block' : 'none'; 
-            el('painelConfigCidade').style.display = c ? 'block' : 'none'; 
-            el('painelPalpites').style.display = (c || o) ? 'block' : 'none';
-            el('painelVips').style.display = (c || o) ? 'block' : 'none'; 
-            el('painelCadastro').style.display = (c || o) ? 'block' : 'none';
-            el('painelLista').style.display = (c || o) ? 'block' : 'none'; 
-            el('painelCategorias').style.display = 'block'; 
-            
-            loadData(); 
-            if(c || o) carregarPalpites();
+            if(currentUser.role === 'master') { 
+                el('painelCidades').style.display='block'; 
+                el('painelPlanos').style.display='block'; 
+                el('painelMasterConfig').style.display='block'; 
+            }
+            if(currentUser.role === 'city') { el('painelUsuarios').style.display='block'; el('painelCadastro').style.display='block'; el('painelConfigCidade').style.display='block'; }
+            if(currentUser.role === 'owner') { el('painelCadastro').style.display='block'; }
+            if(currentUser.role !== 'master') { el('painelLista').style.display='block'; el('painelVips').style.display='block'; el('painelPalpites').style.display='block'; }
+            el('painelCategorias').style.display='block';
+            loadData(); if(currentUser.role!=='master') carregarPalpites();
         }
         
-        async function loadData(){
-            if(currentUser.role === 'master'){
-                onSnapshot(collection(db,"cidades"),s=>{
-                    el('selCidadeCadastro').innerHTML='<option value="">Selecione a Cidade</option>'; 
-                    el('listaCidades').innerHTML=""; 
-                    cidadesCache = [];
-                    s.forEach(d=>{
-                        const cd = d.data();
-                        const cidadeObj = { id: d.id, ...cd };
-                        cidadesCache.push(cidadeObj);
-                        el('selCidadeCadastro').innerHTML+=`<option value="${d.id}">${cd.nome}</option>`; 
-                        el('listaCidades').innerHTML+=`
-                        <div class="manager-item">
-                            <div>
-                                <b>${cd.nome} - ${cd.uf}</b><br>
-                                <small>Admin: ${cd.adminNome || 'N/A'}</small>
-                            </div>
-                            <button class="btn btn-warning btn-sm" onclick='editCidade("${d.id}")'>✏️ Editar</button>
-                        </div>`;
-                    });
-                });
-            }
-            
-            if(currentUser.role === 'city'){
-                const docSnap = await getDoc(doc(db, "cidades", currentUser.cityId));
-                if(docSnap.exists()){
-                    const d = docSnap.data();
-                    el('inputCidadeFundo').value = d.fundo || "";
-                    el('inputCidadeLogo').value = d.logoPatra || "";
-                    if(d.fundo) el('previewFundo').src = d.fundo;
-                    if(d.logoPatra) el('previewLogo').src = d.logoPatra;
-                }
-            }
+        async function loadData() {
+            onSnapshot(doc(db,'config','categorias'), s=>{ listaSubs=s.data()||{}; renderCats(); });
+            onSnapshot(doc(db,'config','setores'), s=>{ listaSetores=s.data()||{}; });
+            onSnapshot(doc(db,'config','icons'), s=>{ customIcons=s.data()||{}; renderCats(); });
+            onSnapshot(doc(db,'config','geral'), s=>{ if(s.exists()){ const d=s.data(); el('confZapAdmin').value=d.zapAdmin||""; el('confNomeCidade').value=d.titulo||""; }});
 
-            onSnapshot(doc(db,"config","categorias"),s=>{listaSubs=s.exists()?s.data():{"_order":[]};renderCats();});
-            onSnapshot(doc(db,"config","setores"),s=>{listaSetores=s.exists()?s.data():{};});
-            onSnapshot(doc(db,"config","icons"),s=>{customIcons=s.exists()?s.data():{};renderCats();});
-            onSnapshot(doc(db,"config","geral"),s=>{if(s.exists()){const d=s.data();el('confZapAdmin').value=d.zapAdmin||"";el('confNomeCidade').value=d.titulo||"";}});
-            onSnapshot(collection(db,"vips"),s=>{el('listaVips').innerHTML="";s.forEach(d=>el('listaVips').innerHTML+=`<div class="manager-item"><div><b>${d.data().nome}</b> (${d.data().palavra})</div><div><button class="btn btn-warning btn-sm" onclick="editVip('${d.id}','${d.data().nome}','${d.data().nasc}','${d.data().email}','${d.data().palavra}','${d.data().whatsapp}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delVip('${d.id}')">X</button></div></div>`);});
-            
-            let q=query(collection(db,"guia_cidades")); 
-            if(currentUser.role==='city' || currentUser.role==='owner') q=query(collection(db,"guia_cidades"),where("cidadeId","==",currentUser.cityId));
-            if(currentUser.role==='owner') q=query(collection(db,"guia_cidades"),where("ownerId","==",currentUser.userId)); 
-            
-            onSnapshot(q,s=>{
-                el('lista-locais').innerHTML="";
-                todosLocaisCache = [];
-                s.forEach(d=>{
-                    const item=d.data(); 
-                    todosLocaisCache.push({id: d.id, ...item});
-                    const statusText = (item.adminHidden && currentUser.role !== 'owner') ? '<span style="color:red; font-weight:bold;">[OCULTO]</span>' : '';
-                    let imgUrl = item.imagem || "https://via.placeholder.com/50?text=Sem+Foto";
-                    if(item.categoria === "Galeria de Fotos" || !item.imagem) {
-                        if(item.galeria_fotos && item.galeria_fotos.length > 0) {
-                            const primeira = item.galeria_fotos[0];
-                            imgUrl = typeof primeira === 'string' ? primeira : (primeira.url || imgUrl);
-                        }
+            if(currentUser.role==='master') {
+                onSnapshot(collection(db,'cidades'), s=>{
+                    el('listaCidades').innerHTML = s.docs.map(d=>`<div class="manager-item"><div><b>${d.data().nome}</b><br><small>${d.data().adminNome||''}</small></div><button class="btn btn-warning btn-sm" onclick='editCidade("${d.id}")'>Editar</button></div>`).join('');
+                    cidadesCache = s.docs.map(d=>({id:d.id,...d.data()}));
+                });
+                
+                // CARREGAR E CRIAR PLANOS DE EXEMPLO AUTOMATICAMENTE (INCLUINDO MASTER)
+                onSnapshot(doc(db,'config','planos'), s=>{
+                    if(s.exists() && s.data().lista && s.data().lista.length>0) {
+                        planosCache = s.data().lista;
+                    } else {
+                        // CRIA DADOS FICTÍCIOS NO BANCO SE ESTIVER VAZIO
+                        planosCache = [
+                            {tipo:'assinatura', nome:'Básico', mensal:0, semestral:0, anual:0, destaque:false, itens:['Nome e Telefone','Link WhatsApp']},
+                            {tipo:'assinatura', nome:'Premium', mensal:29.90, semestral:149.90, anual:289.90, destaque:false, itens:['Fotos','Redes Sociais','Destaque']},
+                            {tipo:'assinatura', nome:'Master', mensal:59.90, semestral:299.90, anual:550.00, destaque:true, itens:['Topo da Lista','Banner','Selo VIP', 'Notificação Push']}, // NOVO PLANO MASTER ADICIONADO
+                            {tipo:'franquia', nome:'Cidade Peq.', mensal:299.00, semestral:1500.00, anual:2800.00, destaque:false, itens:['Até 50k hab.','Exclusividade']},
+                            {tipo:'franquia', nome:'Cidade Méd.', mensal:499.00, semestral:2500.00, anual:4800.00, destaque:true, itens:['Até 100k hab.','Suporte 24h']},
+                            {tipo:'franquia', nome:'Capital', mensal:899.00, semestral:4500.00, anual:8500.00, destaque:false, itens:['Sem limite','Consultoria']}
+                        ];
+                        setDoc(doc(db,'config','planos'), {lista: planosCache});
                     }
-                    el('lista-locais').innerHTML+=`<div class="manager-item" style="justify-content:start;"><img src="${imgUrl}" class="list-thumb"><div style="flex:1;"><b>${item.nome}</b> ${statusText}<br><small>${item.categoria}</small></div><div style="margin-left:auto;"><button class="btn btn-warning btn-sm" onclick="editLocal('${d.id}')">✏️</button><button class="btn btn-danger btn-sm" onclick="delLocal('${d.id}')">X</button></div></div>`;
+                    renderPlanos();
                 });
-                if(currentUser.role === 'city') carregarCacheUsuarios();
-            });
-            if(currentUser.role === 'city') carregarCacheUsuarios();
-        }
-
-        window.atualizarPreview = (idImg, url) => {
-            const img = el(idImg);
-            if(url && url.length > 5) { img.src = url; } else { img.src = ""; }
-        };
-
-        // --- FUNÇÕES DE EDIÇÃO DE CIDADE (MASTER) ---
-        window.editCidade = (id) => {
-            const data = cidadesCache.find(c => c.id === id);
-            if(!data) return alert("Erro ao carregar dados.");
-            idCidadeEditando = id;
-            el('tituloCidadeForm').innerText = "✏️ Editando Cidade: " + data.nome;
-            el('novaCidadeNome').value = data.nome || "";
-            el('novaCidadeUF').value = data.uf || "";
-            el('novaCidadeLogin').value = data.login || "";
-            el('novaCidadeSenha').value = data.senha || "";
-            el('novaCidadeFundo').value = data.fundo || ""; 
-            el('adminNome').value = data.adminNome || "";
-            el('adminCPF').value = data.adminCPF || "";
-            el('adminZap').value = data.adminZap || "";
-            el('adminEmailContato').value = data.adminEmail || "";
-            el('adminEnd').value = data.adminEnd || "";
+            }
             
-            el('btnSalvarCidade').innerText = "Salvar Alterações";
-            el('btnCancelarCidade').style.display = 'block';
-            el('painelCidades').scrollIntoView({behavior:'smooth'});
-        };
-
-        window.limparFormCidade = () => {
-            idCidadeEditando = null;
-            el('tituloCidadeForm').innerText = "Cadastrar Cidade e Admin";
-            el('novaCidadeNome').value=""; el('novaCidadeUF').value=""; el('novaCidadeLogin').value=""; el('novaCidadeSenha').value=""; el('novaCidadeFundo').value=""; 
-            el('adminNome').value=""; el('adminCPF').value=""; el('adminZap').value=""; el('adminEmailContato').value=""; el('adminEnd').value="";
-            el('btnSalvarCidade').innerText = "+ Salvar Cidade e Admin";
-            el('btnCancelarCidade').style.display = 'none';
-        };
-
-        window.salvarCidade=async()=>{
-            const d = {
-                nome:el('novaCidadeNome').value, uf:el('novaCidadeUF').value, login:el('novaCidadeLogin').value, senha:el('novaCidadeSenha').value, fundo:el('novaCidadeFundo').value,
-                adminNome:el('adminNome').value, adminCPF:el('adminCPF').value, adminZap:el('adminZap').value, adminEmail:el('adminEmailContato').value, adminEnd:el('adminEnd').value
+            if(currentUser.role !== 'master') {
+                let q = query(collection(db,'guia_cidades'), where('cidadeId','==',currentUser.cityId));
+                if(currentUser.role==='owner') q = query(collection(db,'guia_cidades'), where('ownerId','==',currentUser.userId));
+                onSnapshot(q, s=>{
+                    todosLocaisCache = []; el('lista-locais').innerHTML="";
+                    s.forEach(d=>{
+                        const item=d.data(); todosLocaisCache.push({id:d.id, ...item});
+                        let img = item.imagem || "https://via.placeholder.com/50";
+                        if(item.categoria==="Galeria de Fotos" && item.galeria_fotos?.length>0) img = typeof item.galeria_fotos[0]==='string' ? item.galeria_fotos[0] : item.galeria_fotos[0].url;
+                        el('lista-locais').innerHTML+=`<div class="manager-item"><div style="display:flex;align-items:center;gap:10px"><img src="${img}" style="width:50px;height:50px;object-fit:cover;border-radius:5px"><div><b>${item.nome}</b><br><small>${item.categoria}</small></div></div><button class="btn btn-warning btn-sm" onclick="editLocal('${d.id}')">Editar</button></div>`;
+                    });
+                    if(currentUser.role==='city') carregarCacheUsuarios();
+                });
+                if(currentUser.role==='city') {
+                    const c = await getDoc(doc(db,'cidades',currentUser.cityId));
+                    if(c.exists()) { el('inputCidadeFundo').value=c.data().fundo||""; el('inputCidadeLogo').value=c.data().logoPatra||""; el('prevFundo').src=c.data().fundo||""; el('prevLogo').src=c.data().logoPatra||""; }
+                }
+            }
+        }
+        
+        // --- FUNÇÕES DE PLANOS ---
+        window.salvarPlano = async () => {
+            const novo = { 
+                tipo: el('planoTipo').value, 
+                nome: el('planoNome').value, 
+                destaque: el('planoCor').value==='blue', 
+                itens: el('planoItens').value.split(';').map(x=>x.trim()).filter(x=>x),
+                mensal: parseFloat(el('planoPrecoMensal').value) || 0,
+                semestral: parseFloat(el('planoPrecoSemestral').value) || 0,
+                anual: parseFloat(el('planoPrecoAnual').value) || 0
             };
-            if(idCidadeEditando) { await updateDoc(doc(db,"cidades",idCidadeEditando), d); alert("Cidade Atualizada!"); } 
-            else { await addDoc(collection(db,"cidades"), d); alert("Cidade Criada!"); }
-            limparFormCidade();
+
+            if(!novo.nome) return alert("Preencha o nome do plano.");
+
+            if(indexPlanoEditando !== null) {
+                planosCache[indexPlanoEditando] = novo;
+                alert("Plano Atualizado!");
+            } else {
+                planosCache.push(novo); 
+                alert("Plano Adicionado!");
+            }
+
+            await setDoc(doc(db,'config','planos'), {lista: planosCache}); 
+            cancelarEdicaoPlano();
         };
 
-        // --- SALVAR CONFIG CIDADE (ADMIN DA CIDADE) ---
-        window.salvarConfiguracaoCidade = async () => {
-            if(!currentUser.cityId) return;
-            const fundo = el('inputCidadeFundo').value.trim();
-            const logo = el('inputCidadeLogo').value.trim();
-            await updateDoc(doc(db, "cidades", currentUser.cityId), { fundo: fundo, logoPatra: logo });
-            alert("Aparência Salva com Sucesso!");
+        window.editarPlano = (index) => {
+            const p = planosCache[index];
+            indexPlanoEditando = index;
+            el('tituloPlanos').innerText = "✏️ Editando Plano: " + p.nome;
+            el('btnSalvarPlano').innerText = "Atualizar Plano";
+            el('btnCancelarPlano').style.display = "block";
+            
+            el('planoTipo').value = p.tipo;
+            el('planoNome').value = p.nome;
+            el('planoCor').value = p.destaque ? 'blue' : 'white';
+            el('planoPrecoMensal').value = p.mensal;
+            el('planoPrecoSemestral').value = p.semestral;
+            el('planoPrecoAnual').value = p.anual;
+            el('planoItens').value = p.itens.join('; ');
+            
+            el('painelPlanos').scrollIntoView();
         };
 
-        function carregarCacheUsuarios() {
-            let qUser = query(collection(db, "users"), where("cidadeId", "==", currentUser.cityId));
-            onSnapshot(qUser, (snap)=>{
-                usuariosCache = [];
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    const localDoUser = todosLocaisCache.find(l => l.ownerId === doc.id);
-                    usuariosCache.push({ uid: doc.id, data: u, nomeLoja: localDoUser ? localDoUser.nome : '', localId: localDoUser ? localDoUser.id : null, isHidden: localDoUser ? localDoUser.adminHidden : false });
-                });
-            });
+        window.cancelarEdicaoPlano = () => {
+            indexPlanoEditando = null;
+            el('tituloPlanos').innerText = "Adicionar / Editar Plano";
+            el('btnSalvarPlano').innerText = "+ Salvar Plano";
+            el('btnCancelarPlano').style.display = "none";
+            el('planoNome').value=""; el('planoItens').value=""; 
+            el('planoPrecoMensal').value=""; el('planoPrecoSemestral').value=""; el('planoPrecoAnual').value="";
+        };
+
+        window.removerPlano = async (i) => { if(confirm("Apagar?")) { planosCache.splice(i,1); await setDoc(doc(db,'config','planos'), {lista:planosCache}); } };
+        function renderPlanos() { 
+            el('listaPlanosCadastrados').innerHTML = planosCache.map((p,i) => `
+                <div class="plan-item" style="${p.destaque?'border-left:5px solid blue':''}">
+                    <div>
+                        <b>${p.nome}</b> (${p.tipo})<br>
+                        <small>Mensal: R$${p.mensal} | Sem: R$${p.semestral} | Anual: R$${p.anual}</small>
+                    </div>
+                    <div>
+                        <button class="btn btn-warning btn-sm" onclick="editarPlano(${i})">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="removerPlano(${i})">X</button>
+                    </div>
+                </div>`).join(''); 
         }
 
-        window.filtrarUsuarios = () => {
-            const termo = el('buscaUsuarioInput').value.toLowerCase().trim();
-            const div = el('listaUsuarios');
-            div.innerHTML = "";
-            if(termo.length === 0) { div.innerHTML = '<p style="color:#777; text-align:center; padding:20px;">Use a busca acima para encontrar um estabelecimento.</p>'; return; }
-            const filtrados = usuariosCache.filter(u => u.data.nome.toLowerCase().includes(termo) || u.nomeLoja.toLowerCase().includes(termo));
-            if(filtrados.length === 0) { div.innerHTML = '<p style="text-align:center;">Nenhum encontrado.</p>'; return; }
-            filtrados.forEach(u => {
-                const btnBlockAccess = u.data.blockedAccess ? `<button class="btn btn-danger btn-sm" onclick="toggleUserAccess('${u.uid}', false)">Desbloquear Acesso</button>` : `<button class="btn btn-success btn-sm" onclick="toggleUserAccess('${u.uid}', true)">Bloquear Acesso</button>`;
-                let btnHideShop = "";
-                if(u.localId) { btnHideShop = u.isHidden ? `<button class="btn btn-danger btn-sm" onclick="toggleShopVisibility('${u.localId}', false)">Publicar Loja</button>` : `<button class="btn btn-info btn-sm" onclick="toggleShopVisibility('${u.localId}', true)">Ocultar Loja</button>`; }
-                const styleBlocked = u.data.blockedAccess ? 'border-left: 5px solid red; background:#ffebee;' : '';
-                const lojaDisplay = u.nomeLoja ? u.nomeLoja : '<span style="color:#999">Sem loja criada</span>';
-                div.innerHTML += `<div class="user-block" style="${styleBlocked}"><div class="user-header"><div><div class="user-name ${u.data.blockedAccess?'status-blocked':''}">${u.data.nome}</div><div class="user-email">${u.data.email}</div><div class="user-loja-tag">🏠 ${lojaDisplay}</div></div></div><div class="user-controls">${btnBlockAccess}${btnHideShop}</div></div>`;
-            });
+        // --- CIDADES ---
+        window.editCidade = (id) => {
+            const data = cidadesCache.find(c => c.id === id); idCidadeEditando = id;
+            el('tituloCidadeForm').innerText = "✏️ Editando: " + data.nome;
+            el('novaCidadeNome').value = data.nome||""; el('novaCidadeUF').value = data.uf||""; el('novaCidadeLogin').value = data.login||""; el('novaCidadeSenha').value = data.senha||""; el('novaCidadeFundo').value = data.fundo||""; el('adminNome').value = data.adminNome||""; el('adminCPF').value = data.adminCPF||""; el('adminZap').value = data.adminZap||""; el('adminEmailContato').value = data.adminEmail||""; el('adminEnd').value = data.adminEnd||"";
+            el('painelCidades').scrollIntoView();
+        };
+        window.salvarCidade=async()=>{
+            const d = { nome:el('novaCidadeNome').value, uf:el('novaCidadeUF').value, login:el('novaCidadeLogin').value, senha:el('novaCidadeSenha').value, fundo:el('novaCidadeFundo').value, adminNome:el('adminNome').value, adminCPF:el('adminCPF').value, adminZap:el('adminZap').value, adminEmail:el('adminEmailContato').value, adminEnd:el('adminEnd').value };
+            if(idCidadeEditando) await updateDoc(doc(db,"cidades",idCidadeEditando), d); else await addDoc(collection(db,"cidades"), d);
+            alert("Salvo!"); idCidadeEditando=null; el('tituloCidadeForm').innerText="Nova Cidade"; el('novaCidadeNome').value=""; el('novaCidadeLogin').value="";
         };
 
-        window.toggleUserAccess = async (uid, status) => { await updateDoc(doc(db, "users", uid), { blockedAccess: status }); };
-        window.toggleShopVisibility = async (lid, status) => { await updateDoc(doc(db, "guia_cidades", lid), { adminHidden: status }); };
-
-        function carregarPalpites() {
-            if(!currentUser.cityId) return;
-            const q = query(collection(db, "vip_palpites"), where("cidadeId", "==", currentUser.cityId));
-            onSnapshot(q, (snap) => {
-                const div = el('listaPalpites'); div.innerHTML = "";
-                let palpites = []; snap.forEach(doc => palpites.push({ id: doc.id, ...doc.data() }));
-                palpites.sort((a,b) => (b.data?.seconds || 0) - (a.data?.seconds || 0));
-                palpites.forEach(d => {
-                    const style = d.isWinner ? 'background:#d4edda; border-left:5px solid green;' : '';
-                    div.innerHTML += `<div class="palpite-row" style="${style}" onclick="toggleVencedor('${d.id}', ${d.isWinner})"><span class="palpite-num">${d.numero}</span><span style="margin-left:10px;">${d.vipNome} quer <b>${d.brinde}</b></span>${d.isWinner?' 🏆':''}</div>`;
-                });
-            });
-        }
-        window.toggleVencedor = async (id, s) => { if(confirm("Mudar status de vencedor?")) await updateDoc(doc(db, "vip_palpites", id), { isWinner: !s }); };
-        window.limparPalpites = async () => { if(confirm("Limpar tudo?")) { const q = query(collection(db, "vip_palpites"), where("cidadeId", "==", currentUser.cityId)); const s = await getDocs(q); const b = writeBatch(db); s.forEach(d=>b.delete(d.ref)); await b.commit(); }};
-
-        window.addFotoGaleria = () => { fotosGaleria.push({ url: el('inputNovaFoto').value, legenda: "" }); el('inputNovaFoto').value=""; renderGaleriaPreview(); };
-        window.removeFotoGaleria = (i) => { fotosGaleria.splice(i,1); renderGaleriaPreview(); };
-        window.updateFotoGaleria = (i, f, v) => { fotosGaleria[i][f] = v; };
-        function renderGaleriaPreview() { el('previewGaleria').innerHTML = fotosGaleria.map((x,i)=>`<div class="gallery-item-admin"><img src="${x.url||x}" class="gallery-thumb-admin"><input value="${x.legenda||''}" onchange="updateFotoGaleria(${i},'legenda',this.value)" placeholder="Legenda"><button onclick="removeFotoGaleria(${i})">X</button></div>`).join(''); }
-
-        el('categoria').addEventListener('change', () => {
-            const cat = el('categoria').value; const s=el('subcategoria'); s.innerHTML='<option value="">Selecione...</option>'; s.disabled=true; 
-            if(cat && listaSubs[cat]){s.disabled=false;listaSubs[cat].forEach(x=>s.innerHTML+=`<option value="${x}">${x}</option>`);}
-            if (cat === "Galeria de Fotos") { el('camposPadrao').style.display = 'none'; el('boxGaleriaManager').style.display = 'block'; } else { el('camposPadrao').style.display = 'block'; el('boxGaleriaManager').style.display = 'none'; }
-        });
-
+        // --- CADASTRO GERAL ---
         window.salvarOuAtualizar = async () => {
             try {
                 let targetCityId = currentUser.cityId;
                 if(currentUser.role === 'master') targetCityId = el('selCidadeCadastro').value;
-                if(!targetCityId) throw new Error("Cidade não selecionada.");
-
-                const d = {
-                    cidadeId: targetCityId, nome: el('nome').value, nomeBusca: el('nome').value.toLowerCase(), descricao: el('descricao').value, categoria: el('categoria').value, subcategoria: el('subcategoria').value, setor: el('setor').value, cidade: el('cidade').value, galeria_fotos: fotosGaleria, contato: el('contato').value, instagram: el('instagram').value, imagem: el('imagem').value, preco: parseFloat(el('precoAtual').value) || 0, precoAntigo: parseFloat(el('precoAntigo').value) || 0, isPartner: el('checkPartner').checked, temDelivery: el('checkDelivery').checked, deliveryBrinde: el('deliveryBrinde').value, cardapio: cardapio, publi: { ativa: el('checkPubli').checked, img: el('imgPubli').value }, linkMapa: el('linkMapa').value
-                };
-
+                const d = { cidadeId: targetCityId, nome: el('nome').value, nomeBusca: el('nome').value.toLowerCase(), descricao: el('descricao').value, categoria: el('categoria').value, subcategoria: el('subcategoria').value, setor: el('setor').value, cidade: el('cidade').value, galeria_fotos: fotosGaleria, contato: el('contato').value, instagram: el('instagram').value, imagem: el('imagem').value, preco: parseFloat(el('precoAtual').value)||0, precoAntigo: parseFloat(el('precoAntigo').value)||0, isPartner: el('checkPartner').checked, temDelivery: el('checkDelivery').checked, deliveryBrinde: el('deliveryBrinde').value, cardapio: cardapio, publi: { ativa: el('checkPubli').checked, img: el('imgPubli').value }, linkMapa: el('linkMapa').value };
                 if(currentUser.role === 'owner') d.ownerId = currentUser.userId;
-                
-                if(idEditando) { await updateDoc(doc(db,"guia_cidades",idEditando), d); } else { await addDoc(collection(db,"guia_cidades"), d); }
-                alert("Salvo com sucesso!"); limparForm();
-            } catch(e) { console.error(e); alert("Erro ao salvar: " + e.message); }
+                if(idEditando) await updateDoc(doc(db,"guia_cidades",idEditando), d); else await addDoc(collection(db,"guia_cidades"), d);
+                alert("Salvo!"); limparForm();
+            } catch(e) { alert("Erro ao salvar: "+e.message); }
         };
-
-        window.editLocal = async (id) => {
-            try {
-                const d = (await getDoc(doc(db, "guia_cidades", id))).data(); idEditando = id;
-                el('tituloForm').textContent="✏️ Editando: "+d.nome; 
-                el('nome').value = d.nome; el('descricao').value = d.descricao || ""; el('cidade').value = d.cidade || ""; 
-                if(currentUser.role === 'master') el('selCidadeCadastro').value = d.cidadeId;
-
-                const selCat = el('categoria');
-                if (!Array.from(selCat.options).some(opt => opt.value === d.categoria) && d.categoria) { const temp = document.createElement('option'); temp.value = d.categoria; temp.text = d.categoria; selCat.add(temp); }
-                selCat.value = d.categoria; 
-                
-                const selSub = el('subcategoria'); selSub.innerHTML = '<option value="">Selecione...</option>'; selSub.disabled = true;
-                if (d.categoria && listaSubs[d.categoria]) { selSub.disabled = false; listaSubs[d.categoria].forEach(x => selSub.innerHTML += `<option value="${x}">${x}</option>`); }
-                selSub.value = d.subcategoria;
-
-                const selSetor = el('setor'); selSetor.innerHTML = '<option value="">Selecione...</option>'; selSetor.disabled = true;
-                if (d.subcategoria && listaSetores[d.subcategoria]) { selSetor.disabled = false; listaSetores[d.subcategoria].forEach(x => selSetor.innerHTML += `<option value="${x}">${x}</option>`); }
-                selSetor.value = d.setor || "";
-
-                el('imagem').value = d.imagem || "";
-
-                if(d.categoria==="Galeria de Fotos") { fotosGaleria = d.galeria_fotos||[]; renderGaleriaPreview(); el('camposPadrao').style.display = 'none'; el('boxGaleriaManager').style.display = 'block'; } 
-                else { el('linkMapa').value=d.linkMapa||""; el('contato').value=d.contato; el('instagram').value=d.instagram; el('precoAtual').value=d.preco; el('precoAntigo').value=d.precoAntigo||""; el('checkPartner').checked=d.isPartner; el('checkPubli').checked=d.publi?.ativa; el('imgPubli').value=d.publi?.img||""; if(d.publi?.ativa) el('boxPubli').style.display='block'; el('checkDelivery').checked=d.temDelivery; if(d.temDelivery) el('boxInfoDelivery').style.display='block'; cardapio=d.cardapio||[]; renderMenu(); atualizarSelectBrindes(); el('deliveryBrinde').value=d.deliveryBrinde||""; el('camposPadrao').style.display = 'block'; el('boxGaleriaManager').style.display = 'none'; }
-                
-                el('btnSalvar').innerText="Atualizar"; el('btnCancelar').style.display='inline'; 
-                const card = el('painelCadastro'); card.classList.add('open'); card.scrollIntoView({behavior: 'smooth'});
-            } catch(e) { console.error(e); alert("Erro ao carregar dados para edição."); }
+        window.editLocal = (id) => {
+            const d = todosLocaisCache.find(x => x.id === id); idEditando = id; el('tituloForm').innerText="Editando: "+d.nome;
+            el('nome').value=d.nome; el('descricao').value=d.descricao; el('cidade').value=d.cidade; el('categoria').value=d.categoria; changeCat(); el('subcategoria').value=d.subcategoria; el('imagem').value=d.imagem||"";
+            if(d.categoria==="Galeria de Fotos") fotosGaleria = d.galeria_fotos||[]; else { cardapio=d.cardapio||[]; renderMenu(); }
+            el('painelCadastro').classList.add('open'); el('painelCadastro').scrollIntoView(); el('btnSalvar').innerText="Atualizar"; el('btnCancelar').style.display='block';
         };
+        window.limparForm = () => { idEditando=null; el('tituloForm').innerText="Novo Cadastro"; el('nome').value=""; el('descricao').value=""; el('imagem').value=""; el('btnSalvar').innerText="Salvar"; el('btnCancelar').style.display='none'; cardapio=[]; fotosGaleria=[]; renderMenu(); renderGaleria(); };
 
-        window.limparForm=()=>{ idEditando=null; el('tituloForm').textContent="🏪 Cadastrar"; el('nome').value=""; el('descricao').value=""; el('cidade').value=""; el('imagem').value=""; el('btnSalvar').innerText="Cadastrar"; el('btnCancelar').style.display='none'; cardapio=[]; renderMenu(); fotosGaleria=[]; renderGaleriaPreview(); el('checkDelivery').checked=false; el('boxInfoDelivery').style.display='none'; el('linkMapa').value=""; el('contato').value=""; el('instagram').value=""; el('precoAtual').value=""; el('precoAntigo').value=""; el('checkPartner').checked=false; el('checkPubli').checked=false; el('imgPubli').value=""; };
-        window.delLocal=async(id)=>{if(confirm("Apagar?"))await deleteDoc(doc(db,"guia_cidades",id));};
+        // --- AUXILIARES ---
+        window.changeCat = () => { const c = el('categoria').value; const s = el('subcategoria'); s.innerHTML=""; if(listaSubs[c]) listaSubs[c].forEach(x=>s.innerHTML+=`<option>${x}</option>`); el('camposPadrao').style.display = c==="Galeria de Fotos"?'none':'block'; el('boxGaleriaManager').style.display = c==="Galeria de Fotos"?'block':'none'; };
+        window.addItemMenu = () => { cardapio.push({nome:el('prodNome').value, preco:el('prodPreco').value}); el('prodNome').value=""; renderMenu(); };
+        function renderMenu() { el('lista-cardapio-preview').innerHTML = cardapio.map((x,i)=>`<div>${x.nome} <button onclick="cardapio.splice(${i},1);renderMenu()">x</button></div>`).join(''); const s=el('deliveryBrinde'); s.innerHTML=""; cardapio.forEach(c=>s.innerHTML+=`<option>${c.nome}</option>`); }
+        window.addFotoGaleria = () => { fotosGaleria.push(el('inputNovaFoto').value); el('inputNovaFoto').value=""; renderGaleria(); };
+        function renderGaleria() { el('previewGaleria').innerHTML = fotosGaleria.map((x,i)=>`<div><img src="${x}" style="height:50px"><button onclick="fotosGaleria.splice(${i},1);renderGaleria()">x</button></div>`).join(''); }
+        function carregarPalpites() { onSnapshot(query(collection(db,"vip_palpites"), where("cidadeId","==",currentUser.cityId)), s=>{ el('listaPalpites').innerHTML = s.docs.map(d=>`<div class="manager-item"><span>${d.data().numero} - ${d.data().vipNome} (${d.data().brinde})</span></div>`).join(''); }); }
+        window.salvarVip = async () => { await addDoc(collection(db,"vips"), {nome:el('vipNome').value, palavra:el('vipPalavra').value}); alert("Salvo"); };
+        window.salvarConfigGlobal = async () => { await setDoc(doc(db,"config","geral"),{titulo:el('confNomeCidade').value,zapAdmin:el('confZapAdmin').value},{merge:true});alert("Salvo"); };
+        window.salvarConfiguracaoCidade = async () => { if(currentUser.role!=='city') return; await updateDoc(doc(db,"cidades",currentUser.cityId), {fundo:el('inputCidadeFundo').value, logoPatra:el('inputCidadeLogo').value}); alert("Salvo"); };
+        window.renderCats = () => { const d=el('listaGestaoCategorias'); d.innerHTML=""; Object.keys(listaSubs).forEach(k => { if(k!=='_order') d.innerHTML+=`<div class="cat-block"><div class="cat-header"><b>${k}</b></div></div>`; }); }
+        window.adicionarCategoria = async () => { const n=el('novaCategoriaInput').value; if(n){ listaSubs[n]=[]; await setDoc(doc(db,"config","categorias"), listaSubs); } };
         
-        window.addItemMenu = () => {cardapio.push({nome:el('prodNome').value, preco:el('prodPreco').value}); el('prodNome').value=""; renderMenu(); atualizarSelectBrindes();};
-        function renderMenu() {el('lista-cardapio-preview').innerHTML = cardapio.map((x,i)=>`<div>${x.nome} - ${x.preco} <button onclick="cardapio.splice(${i},1);renderMenu();atualizarSelectBrindes();">X</button></div>`).join('');}
-        function atualizarSelectBrindes() {const sel = el('deliveryBrinde'); const atual = sel.value;sel.innerHTML = '<option value="">Selecione do Menu...</option>';cardapio.forEach(item => { sel.innerHTML += `<option value="${item.nome}">${item.nome}</option>`; });sel.value = atual;}
-        
-        window.salvarVip=async()=>{ await addDoc(collection(db,"vips"), { nome:el('vipNome').value, email:el('vipEmail').value, palavra:el('vipPalavra').value, whatsapp:el('vipPhone').value }); alert("VIP Salvo"); el('vipNome').value=""; el('vipEmail').value=""; el('vipPalavra').value=""; el('vipPhone').value=""; };
-        window.editVip=(id,n,da,e,p,ph)=>{el('vipNome').value=n; el('vipEmail').value=e; el('vipPalavra').value=p; el('vipPhone').value=ph; idVipEditando=id;};
-        window.delVip=async(id)=>{if(confirm("Apagar?"))await deleteDoc(doc(db,"vips",id));};
-
-        function renderCats(){const d=el('listaGestaoCategorias');d.innerHTML="";(listaSubs["_order"]||[]).forEach(c=>{let ic=customIcons[c]||"📂";d.innerHTML+=`<div class="cat-block"><div class="cat-header"><div style="font-weight:bold;">${ic} ${c}</div><div><button class="btn btn-info btn-sm" onclick="openIcon('${c}')">Icon</button><button class="btn btn-warning btn-sm" onclick="editCat('${c}')">✏️</button><button class="btn btn-secondary btn-sm" onclick="toggleSubs('${c}')">Subs</button><button class="btn btn-danger btn-sm" onclick="delCat('${c}')">X</button></div></div><div id="subs-${c}" class="sub-manager-container">${(listaSubs[c]||[]).map((s,i)=>`<div class="sub-item"><div>${s}</div><div><button class="btn btn-secondary btn-sm" style="padding:2px;" onclick="toggleSetores('${s}')">Set</button><button class="btn btn-danger btn-sm" style="padding:2px;" onclick="delSub('${c}',${i})">X</button></div></div><div id="setores-${s}" class="sector-manager-container">${(listaSetores[s]||[]).map((st,sti)=>`<div class="sector-item"><span>${st}</span> <button class="btn btn-danger btn-sm" style="padding:0;" onclick="delSetor('${s}',${sti})">x</button></div>`).join('')}<div style="display:flex; margin-top:5px;"><input id="new-setor-${s}" class="input-inline"><button class="btn btn-success btn-sm" onclick="addSetor('${s}')">+</button></div></div>`).join('')}<div style="display:flex; margin-top:10px;"><input id="new-sub-${c}" style="flex:1;"><button class="btn btn-success btn-sm" onclick="addSub('${c}')">+ Add</button></div></div></div>`;});}
-        window.openIcon=c=>{catEditing=c;el('modalIconPicker').style.display='flex';el('inputCustomIcon').value=customIcons[c]||"";};
-        window.salvarIconeCustomizado=async()=>{const v=el('inputCustomIcon').value.trim();if(v)customIcons[catEditing]=v;else delete customIcons[catEditing];await setDoc(doc(db,"config","icons"),customIcons);el('modalIconPicker').style.display='none';};
-        window.adicionarCategoria=async()=>{const n=el('novaCategoriaInput').value.trim();if(!n)return;if(!listaSubs["_order"])listaSubs["_order"]=[];listaSubs["_order"].push(n);await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();el('novaCategoriaInput').value="";};
-        window.delCat=async(n)=>{if(confirm("Apagar?")){listaSubs["_order"]=listaSubs["_order"].filter(x=>x!==n);delete listaSubs[n];await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();}};
-        window.toggleSubs=id=>{const x=document.getElementById('subs-'+id);x.style.display=x.style.display==='block'?'none':'block';};
-        window.toggleSetores=id=>{const x=document.getElementById('setores-'+id);x.style.display=x.style.display==='block'?'none':'block';};
-        window.addSub=async(c)=>{const v=document.getElementById('new-sub-'+c).value.trim();if(!v)return;if(!listaSubs[c])listaSubs[c]=[];listaSubs[c].push(v);await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();};
-        window.delSub=async(c,i)=>{if(confirm("Apagar?")){listaSubs[c].splice(i,1);await setDoc(doc(db,"config","categorias"),listaSubs);renderCats();}};
-        window.addSetor=async(s)=>{const v=document.getElementById('new-setor-'+s).value.trim();if(!v)return;if(!listaSetores[s])listaSetores[s]=[];listaSetores[s].push(v);await setDoc(doc(db,"config","setores"),listaSetores);renderCats();};
-        window.delSetor=async(s,i)=>{if(confirm("Apagar?")){listaSetores[s].splice(i,1);await setDoc(doc(db,"config","setores"),listaSetores);renderCats();}};
-        el('subcategoria').onchange=()=>{const s=el('subcategoria').value; const st=el('setor'); st.innerHTML='<option value="">Selecione...</option>'; st.disabled=true; if(s&&listaSetores[s]){st.disabled=false;listaSetores[s].forEach(x=>st.innerHTML+=`<option value="${x}">${x}</option>`);}};
-        
-        window.verificarTermosDelivery=(c)=>{if(c.checked){el('modalTermos').style.display='flex'; c.checked=false;}else el('boxInfoDelivery').style.display='none';};
-        window.aceitarTermos=()=>{el('checkDelivery').checked=true;el('boxInfoDelivery').style.display='block';el('modalTermos').style.display='none';};
-        window.salvarConfigGlobal=async()=>{await setDoc(doc(db,"config","geral"),{titulo:el('confNomeCidade').value,zapAdmin:el('confZapAdmin').value},{merge:true});alert("Salvo");};
-        window.salvarCidade=async()=>{await addDoc(collection(db,"cidades"),{nome:el('novaCidadeNome').value,uf:el('novaCidadeUF').value,login:el('novaCidadeLogin').value,senha:el('novaCidadeSenha').value});alert("Salvo");};
+        function carregarCacheUsuarios() { onSnapshot(query(collection(db,"users"),where("cidadeId","==",currentUser.cityId)), s=>{ usuariosCache=[]; s.forEach(d=>{ const u=d.data(); const l=todosLocaisCache.find(x=>x.ownerId===d.id); usuariosCache.push({uid:d.id, data:u, loja:l}); }); }); }
+        window.filtrarUsuarios = () => { const t=el('buscaUsuarioInput').value.toLowerCase(); el('listaUsuarios').innerHTML = usuariosCache.filter(u=>u.data.nome.toLowerCase().includes(t)).map(u=>`<div class="manager-item"><b>${u.data.nome}</b><br><small>${u.loja?u.loja.nome:'Sem loja'}</small></div>`).join(''); }
     </script>
 </body>
 </html>
